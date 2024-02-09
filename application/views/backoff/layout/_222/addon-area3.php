@@ -8,136 +8,34 @@ $(document).ajaxStop($.unblockUI);
     form_cok();
     fillgrid();
 
-    //------sementara---------------
-/*
-    var ka3 = $('#ft_nmr1').val();
-    var kj = 'K';
-        $.ajax({
-            type: "POST",
-            url: '<?php echo base_url();?>markas/core1/get_nmr2/'+ka3+kj,
-            success: function(data) {
-                var data1 = JSON.parse(data);
-                $("#ft_nmr2 > option").remove();
-                $("#ft_nmr2").empty().append('<option value="000.00.000"></option>').val('--Pilih--').trigger('change');
-                $.each(data1,function(id,data1) {
-                    var opt = $('<option />');
-                    opt.val(id);
-                    opt.text(data1.replace('_',' '));
-                    $('#ft_nmr2').append(opt);
-                });
-            },
-            error: function (jqXHR, textStatus, errorThrown)
-            {
-                new PNotify({
-                    title: 'Kesalahan Sistim',
-                    type: 'danger',
-                    text: 'Gagal menyusun data #ft_nmr2_1',
-                    styling: 'bootstrap3'
-                });
-            catat("Gagal menyusun data #ft_nmr2_1");
-            }
-        });
-
-        var jns = decode_cookie(getCookie('trx_jns'));
-        var kj = $('#ft_jns').val();
-        $('#ft_nmr2').val('');
-        $.ajax({
-            type: "POST",
-            url: "<?php echo base_url().'markas/core1/get_nmr1/';?>"+jns+kj,
-            success: function(gka3) {
-                var gka = JSON.parse(gka3);
-                $("#ft_nmr1 > option").remove();
-                $.each(gka,function(id,gka) {
-                    var opt = $('<option />');
-                    opt.val(id);
-                    opt.text(gka.replace('_',' '));
-                    $('#ft_nmr1').append(opt);
-                });
-            }
-        });
-*/
-    //------sementara---------------
 });
-
-/*
-
-$('#ft_nmr1').change(function(){
-    $("#ft_nmr2").empty().append('<option value="000.00.000"></option>').val('--Pilih--').trigger('change');
-    var ka3 = $('#ft_nmr1').val();
-    var kj = $('#ft_jns').val();
-    $.ajax({
-        type: "POST",
-        url: '<?php echo base_url();?>markas/core1/get_nmr2/'+ka3+kj,
-        success: function(data) {
-            var data1 = JSON.parse(data);
-            $.each(data1,function(id,data1) {
-                var opt = $('<option />');
-                opt.val(id);
-                opt.text(data1);
-                $('#ft_nmr2').append(opt);
-            });
-        },
-        error: function (jqXHR, textStatus, errorThrown)
-        {
-            new PNotify({
-                title: 'Kesalahan Sistim',
-                type: 'danger',
-                text: 'Gagal menyusun data #ft_nmr2_2',
-                styling: 'bootstrap3'
-            });
-        catat("Gagal menyusun data #ft_nmr2_2");
-        }
-    });
-});
-
-$('#ft_nmr1').change(function(){
-
-    $("#fte_nmr2").empty().append('<option value="000.00.000"></option>').val('--Pilih--').trigger('change');
-    var ka3 = $('#ft_nmr1').val();
-    var kj = $('#fte_jns').val();
-    $.ajax({
-        type: "POST",
-        url: '<?php echo base_url();?>markas/core1/get_nmr2/'+ka3+kj,
-        success: function(data) {
-            var data1 = JSON.parse(data);
-            $.each(data1,function(id,data1) {
-                var opt = $('<option />');
-                opt.val(id);
-                opt.text(data1);
-                $('#fte_nmr2').append(opt);
-            });
-        },
-        error: function (jqXHR, textStatus, errorThrown)
-        {
-            new PNotify({
-                title: 'Kesalahan Sistim',
-                type: 'danger',
-                text: 'Gagal menyusun data',
-                styling: 'bootstrap3'
-            });
-        }
-    });
-});
-*/
 
 $("#transaksi").submit(function (e){
   e.preventDefault();
   var url = $(this).attr('action');
-  var data = $(this).serialize();
+  var dataser = $(this).serialize();
   var detcat1 = $('#ft_ket').val();
   var detcat2 = $('#ft_jum').val();
-  $.ajax({
-      url:url,
-      type:'POST',
-      data:data
-  }).done(function (data){
-      $('#ft_nmr2').val('');
-      $('#ft_nama').val('');
-      $('#ft_ket').val('');
-      $('#ft_jum').val('');
-  catat("Isi data " + detcat1 + " " + detcat2);
-  });
-    fillgrid();
+  if(detcat2>0){
+    $.ajax({
+      url : url,
+      type: "POST",
+      dataType: "JSON",
+      data: dataser,
+      success: function(data){
+        $('#ft_nmr1').val(''),trigger('change');
+        $('#ft_nmr2').val('').trigger('change');
+        $('#ft_nama').val('');
+        $('#ft_ket').val('');
+        $('#ft_jum').val('');
+        catat("Isi data " + detcat1 + " " + detcat2);
+        fillgrid();
+      },
+      error: function (jqXHR, textStatus, errorThrown)
+      {
+      }
+    });
+  }
 });
 
 $('#ft_jns').select2({
@@ -269,7 +167,6 @@ function hapustransaksi(id){
               timer: 1000,
               showConfirmButton: false
             });
-//                swal("Maaf!", "Proses Koreksi " + id + " dengan " + inputValue + " gagal. Mohon coba lagi!", "danger");
           }
       })
     }, 3000);
@@ -360,7 +257,7 @@ function convertDate(inputFormat) {
               "serverSide": true, //Feature control DataTables' server-side processing mode.
               "order": [], //Initial no order.
 
-              "dom": '<"top">rt<"bottom"i><"clear">',
+              "dom": '<"top">rt<"bottom"><"clear">',
               "buttons": [
               {
                   "extend": 'print',

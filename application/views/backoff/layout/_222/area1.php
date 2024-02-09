@@ -56,7 +56,6 @@
                         <div class="row">
                             <div class="animated flipInY col-lg-12 col-md-12 col-sm-12 col-xs-12">
                               <div class="tile-stats">
-
                               <div id="mainb" style="height:400px;"></div>
                             </div>
                           </div>

@@ -11,6 +11,7 @@ class Auth extends CI_Controller
 	public function __construct()
 	{
 		parent::__construct();
+		$this->load->model('dbcore1','',TRUE);
 		$this->load->database();
 		$this->load->library(array('ion_auth', 'form_validation'));
 		$this->load->helper(array('url', 'language'));
@@ -47,8 +48,7 @@ class Auth extends CI_Controller
 			{
 				$this->data['users'][$k]->groups = $this->ion_auth->get_users_groups($user->id)->result();
 			}
-
-			redirect('/markas/corex', 'refresh');
+			redirect('/markas/core1', 'refresh');
 //			$this->_render_page('auth/index', $this->data);
 		}
 	}
@@ -59,6 +59,8 @@ class Auth extends CI_Controller
 	public function login()
 	{
 		$this->data['title'] = $this->lang->line('login_heading');
+		$this->dbcore1->delcok('simcek1');
+		$this->dbcore1->delcok('simakses');
 
 		// validate form input
 		$this->form_validation->set_rules('identity', str_replace(':', '', $this->lang->line('login_identity_label')), 'required');
@@ -69,6 +71,10 @@ class Auth extends CI_Controller
 			// check to see if the user is logging in
 			// check for "remember me"
 			$remember = (bool)$this->input->post('remember');
+			$cuser = $this->dbcore1->cek_useraktif($this->input->post('identity'));
+			if($cuser){
+				$this->dbcore1->simcok('simcek1',$this->dbcore1->routekey($cuser['username']));
+			}
 
 			if ($this->ion_auth->login($this->input->post('identity'), $this->input->post('password'), $remember))
 			{

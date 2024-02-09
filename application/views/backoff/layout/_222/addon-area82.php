@@ -1,6 +1,7 @@
 <script>
 $(document).ajaxStop($.unblockUI);
 $(document).ready(function (){
+  setCookie('seto','82');
   catat('Buka modul Neraca');
   cekreport();
   fillgrid($('#fl_tgl1').val(),$('#fl_tgl2').val());
@@ -54,14 +55,35 @@ function cekreport(){
         valcari:''
       }),
       success: function(itahun) {
-        var isidata = JSON.parse(itahun);
-        var icel = '';
-        for (var i = 0; i <= isidata.length-1; i++) {
-          icel += '<div><button class="btn btn-app red pull-right" onclick="cekdetreport(\''+isidata[i].waktu+'\')">'+isidata[i].waktu+'</btn></div>';
-          icel += '<div id="list'+isidata[i].waktu+'"  class="tagsinput" style="width:100%;"></div>';
-          icel += '<hr/>';
+        if(itahun != ''){
+          var isidata = JSON.parse(itahun);
+          var icel = '';
+          for (var i = 0; i <= isidata.length-1; i++) {
+            icel += '<div><button class="btn btn-app red pull-right" onclick="cekdetreport(\''+isidata[i].waktu+'\')">'+isidata[i].waktu+'</btn></div>';
+            icel += '<div id="list'+isidata[i].waktu+'"  class="tagsinput" style="width:100%;"></div>';
+            icel += '<hr/>';
+          }
+          $('#buttable').append(icel);
+        } else {
+          $("#myNav").css('width','100%');
+          $('.sidebar').css('opacity',0);
+          swal({
+            title: "Data Kosong",
+            text: "Halaman dapat dibuka jika sudah ada data yang diposting!",
+            type: "warning",
+            timer: 5000,
+            showCancelButton: false,
+            showConfirmButton: true,
+            closeOnConfirm: false,
+            animation: "pop"
+          },
+          function(inputValue){
+            setTimeout(function(){
+              location.replace('/markas/core1');
+            }, 1000);
+          });
         }
-        $('#buttable').append(icel);
+
       },
       error: function (jqXHR, textStatus, errorThrown)
       {
@@ -740,6 +762,7 @@ function fillgrid(ftgawal,ftgakhir){
 
     $('.dt-button').addClass('btn btn-icon btn-success heartbeat animated delay-1s');
     $('.btn').removeClass('dt-button');
+    $.unblockUI();
 //    reload_table()
 }
 //---------------------------------------///

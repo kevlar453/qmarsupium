@@ -2,6 +2,7 @@
   $(document).ajaxStop($.unblockUI);
   $(document).ready(function (){
     catat('Buka modul Rincian Billing HIS');
+    setCookie('seto','83');
         fillgrid('0');
   });
 

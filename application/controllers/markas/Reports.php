@@ -62,7 +62,7 @@ $hrni = date("Y-m-d");
                 'dkpoli' => $this->transisi->get_dkpoli(),
                 'dkbangsal' => '',
                 'jjenis' => $akpeg=='222'||$akpeg1=='222'?$this->akuntansi->jur_jenis():'',
-                'jjenis2' => $akpeg=='222'||$akpeg1=='222'?$this->akuntansi->jur_jenis2():'',
+//                'jjenis2' => $akpeg=='222'||$akpeg1=='222'?$this->akuntansi->jur_jenis2():'',
                 'jka1' => $akpeg=='222'||$akpeg1=='222'?$this->akuntansi->get_vka1():'',
                 'jka2' => $akpeg=='222'||$akpeg1=='222'?$this->akuntansi->get_vka2():'',
                 'jka3' => $akpeg=='222'||$akpeg1=='222'?$this->akuntansi->get_vka3():'',
@@ -81,9 +81,12 @@ $hrni = date("Y-m-d");
     function get_keu(){
       $iparam1 = $this->input->post('katcari');
       $iparam2 = $this->input->post('valcari');
-      $hitdata = $this->proreports->hitungtrx($iparam1,$iparam2);
+      $iparam3 = $this->dbcore1->routekey(get_cookie('seto'),'d');
+      $hitdata = $this->proreports->hitungtrx($iparam1,$iparam2,$iparam3);
       if($hitdata){
         echo json_encode($hitdata);
+      } else {
+        return false;
       }
     }
 
@@ -146,6 +149,49 @@ $hrni = date("Y-m-d");
         );
     echo json_encode($output);
 
+        }
+
+        public function hitcharts()
+        {
+            $arrch = [];
+            $arrperi[] = 'periode';
+            $cekset = $this->dbcore1->routekey(get_cookie('simakses'),'d');
+            $setperi = $this
+                ->proreports
+                ->setperi($cekset);
+            foreach ($setperi as $gperi)
+            {
+                $arrperi[] = $gperi['peri'];
+            }
+            $arrkm[] = 'Kas Masuk';
+            $setkm = $this
+                ->proreports
+                ->setkm($cekset);
+            foreach ($setkm as $gkm)
+            {
+                $arrkm[] = $gkm['jkm'];
+            }
+            $arrkk[] = 'Kas Keluar';
+            $setkk = $this
+                ->proreports
+                ->setkk($cekset);
+            foreach ($setkk as $gkk)
+            {
+                $arrkk[] = $gkk['jkk'];
+            }
+            $arrtm[] = 'By/Beban';
+            $settm = $this
+                ->proreports
+                ->settm($cekset);
+            foreach ($settm as $gtm)
+            {
+                $arrtm[] = $gtm['jtm'];
+            }
+            $arrch[] = $arrperi;
+            $arrch[] = $arrkm;
+            $arrch[] = $arrkk;
+            $arrch[] = $arrtm;
+            echo json_encode($arrch, true);
         }
 
 }

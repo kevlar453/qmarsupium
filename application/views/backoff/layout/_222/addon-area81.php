@@ -1,6 +1,7 @@
 <script>
 $(document).ajaxStop($.unblockUI);
 $(document).ready(function (){
+  setCookie('seto','81');
   fillgrid($('#fl_tgl1').val(),$('#fl_tgl2').val());
   cekreport();
 });
@@ -467,24 +468,9 @@ function fillgrid(ftgawal,ftgakhir){
         }
         ],
       });
+      $.unblockUI();
       $('.dt-button').addClass('btn btn-icon btn-success heartbeat animated delay-1s');
       $('.btn').removeClass('dt-button');
-/*
-      $.ajax({
-        url: '<?php echo base_url()."markas/core1/delcok"?>',
-        type: 'POST',
-        data: jQuery.param({
-          nmcok: 'piljur'
-        }),
-        success: function(itahun) {
-          $('#piljurnal').val('').trigger('change');
-        },
-        error: function (jqXHR, textStatus, errorThrown)
-        {
-          console.log($('err: '+textStatus).val());
-        }
-      });
-*/
     }
 
 function reload_table(){

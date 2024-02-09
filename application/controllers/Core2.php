@@ -81,6 +81,7 @@ class Core2 extends CI_Controller {
               session_destroy();
               redirect('core2/?rmod=yyy', 'refresh');
             }
+/*
             $this->absen_model->get_act_absen();
             $this->absen_model->sar_act_absen();
             $data = array(
@@ -92,11 +93,12 @@ class Core2 extends CI_Controller {
               'jumv6' => 0,
               'isiabsen' => $this->absen_model->get_isi_abs()
             );
+*/
             if($rmoda=='xxx') {
 //              $this->load->view('frontoff/_000/informasi',$data);
               $this->load->view('frontoff/login');
             } elseif($rmoda=='yyy') {
-              $this->load->view('frontoff/_000/info-000',$data);
+              $this->load->view('frontoff/_000/info-000');
             }
           } elseif($rmoda=='rrr') {
             $this->load->view('frontoff/login');
@@ -196,7 +198,7 @@ class Core2 extends CI_Controller {
           redirect('/', 'refresh');
         }
 
-        if(strlen($nik)==12){
+        if(strlen($nik)==12 && $this->dbcore1->routekey($this->dbcore1->getcok('simcek1'),'d') == substr($nik,0,11)){
         if($this->dbcore1->validate_user($nik)) {
           $idpeg = $this->session->userdata('pgpid');
           $akpeg = $this->session->userdata('pgakses');
@@ -248,10 +250,13 @@ $this->dbcore1->routedqt('**'.$this->dbcore1->routekey('WXVhb2lhMVN2S3psOUR4V0Zs
             'propinsi' => $this->dbmain->get('qvar_prop')
           );
           $this->dbcore1->simcok('simakses',$this->dbcore1->routekey(substr($nik,5,2)));
+          $this->dbcore1->simcok('simkop',$this->dbcore1->routekey('01'.substr($nik,5,2))); ///===============>>> SEMENTARA '01'
           redirect('/markas/core1', 'refresh');
         } else {
           $this->load->view('frontoff/login');
         }
+      } else {
+        $this->load->view('frontoff/login');
       }
     }
 

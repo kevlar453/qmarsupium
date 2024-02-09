@@ -48,6 +48,7 @@ $.each(config.data.datasets, function(i, dataset) {
 });
 $(document).ajaxStop($.unblockUI);
 $(document).ready(function (){
+  setCookie('seto','4');
   catat('Buka modul Buku Besar');
   var ca1 = '111.01.00.00';
   var ca2 = $('#fl_tgl1').val();
@@ -56,7 +57,7 @@ $(document).ready(function (){
   fillgrid(ca1,ca2,ca3);
   var ctx = document.getElementById("chart_buku").getContext("2d");
   window.myLine = new Chart(ctx, config);
-//  $('#menu_toggle').click();
+
 });
 
 $("#saringbuku").click(function (e){
@@ -144,14 +145,35 @@ function cekreport(){
         valcari:''
       }),
       success: function(itahun) {
-        var isidata = JSON.parse(itahun);
-        var icel = '';
-        for (var i = 0; i <= isidata.length-1; i++) {
-          icel += '<div><button class="btn btn-app red pull-right" onclick="cekdetreport(\''+isidata[i].waktu+'\')">'+isidata[i].waktu+'</btn></div>';
-          icel += '<div id="list'+isidata[i].waktu+'"  class="tagsinput" style="width:100%;"></div>';
-          icel += '<hr/>';
+        if(itahun != ''){
+          var isidata = JSON.parse(itahun);
+          var icel = '';
+          for (var i = 0; i <= isidata.length-1; i++) {
+            icel += '<div><button class="btn btn-app red pull-right" onclick="cekdetreport(\''+isidata[i].waktu+'\')">'+isidata[i].waktu+'</btn></div>';
+            icel += '<div id="list'+isidata[i].waktu+'"  class="tagsinput" style="width:100%;"></div>';
+            icel += '<hr/>';
+          }
+          $('#buttable').append(icel);
+        } else {
+          $("#myNav").css('width','100%');
+          $('.sidebar').css('opacity',0);
+          swal({
+            title: "Data Kosong",
+            text: "Halaman dapat dibuka jika sudah ada data yang diposting!",
+            type: "warning",
+            timer: 5000,
+            showCancelButton: false,
+            showConfirmButton: true,
+            closeOnConfirm: false,
+            animation: "pop"
+          },
+          function(inputValue){
+            setTimeout(function(){
+              location.replace('/markas/core1');
+            }, 1000);
+          });
         }
-        $('#buttable').append(icel);
+
       },
       error: function (jqXHR, textStatus, errorThrown)
       {
@@ -675,6 +697,7 @@ var ktx = ktx1.replace('&',' DAN ');
         $('.dt-button').addClass('btn btn-icon btn-success heartbeat animated delay-1s');
         $('.btn').removeClass('dt-button');
         catat("Saring Buku Besar " + kode + " range: " + td1 + " to " + td2);
+        $.unblockUI();
     }
 
     function reload_table(){

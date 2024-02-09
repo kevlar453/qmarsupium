@@ -136,8 +136,9 @@
                                     <th>Tanggal</th>
                                     <th>No.Jurnal</th>
                                     <th>Keterangan</th>
-                                    <th>Nilai</th>
+                                    <th>Selisih</th>
                                     <th>Jml. Trx</th>
+                                    <th>Post</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -147,8 +148,9 @@
                                     <th>Tanggal</th>
                                     <th>No.Jurnal</th>
                                     <th>Keterangan</th>
-                                    <th>Nilai</th>
+                                    <th>Selisih</th>
                                     <th>Jml. Trx</th>
+                                    <th>Post</th>
                                 </tr>
                             </tfoot>
                         </table>

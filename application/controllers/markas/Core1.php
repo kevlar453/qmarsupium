@@ -59,7 +59,7 @@ $this->dbcore1->simcok('qtitle',$this->dbcore1->routekey($vtitle));
 //                'pjenis' => $akpeg=='222'||$akpeg1=='222'?$this->akuntansi->get_ka5('','',''):'',
                 'dkbangsal' => '',
                 'jjenis' => $akpeg=='222'||$akpeg1=='222'?$this->akuntansi->jur_jenis():'',
-                'jjenis2' => $akpeg=='222'||$akpeg1=='222'?$this->akuntansi->jur_jenis2():'',
+//                'jjenis2' => $akpeg=='222'||$akpeg1=='222'?$this->akuntansi->jur_jenis2():'',
                 'jka1' => $akpeg=='222'||$akpeg1=='222'?$this->akuntansi->get_vka1():'',
                 'jka2' => $akpeg=='222'||$akpeg1=='222'?$this->akuntansi->get_vka2():'',
                 'jka3' => $akpeg=='222'||$akpeg1=='222'?$this->akuntansi->get_vka3():'',
@@ -427,6 +427,7 @@ public function data_absen(){
                 $jum = $jum1!=0?'<span style="color:#FF0000;">'.$jum1.'</span>':$jum1;
                 $edit = base_url()."markas/core1/trxharian/".$nojur;
                 $tgl = date("d/m/Y",strtotime($jurnal->akjur_tgl));
+                $ipost = $jurnal->akjur_post;
               } elseif(strlen($ar)==25) {
                 $tgl = date("d/m/Y",strtotime($jurnal->akjur_tgl));
                 $trxno = $jurnal->aktrx_nomor;
@@ -435,6 +436,7 @@ public function data_absen(){
                 $trxket = !$jurnal->aktrx_ket?$jurnal->akjur_ket:$jurnal->aktrx_ket;
                 $trxdbt = $jurnal->aktrx_jns=='D'?$jurnal->aktrx_jum:0;
                 $trxkre = $jurnal->aktrx_jns=='K'?$jurnal->aktrx_jum:0;
+                  $ipost = $jurnal->aktrx_post;
               }
 
               $no++;
@@ -449,6 +451,8 @@ public function data_absen(){
               $row[] = strlen($ar)==5?($cor==1?'X':$htg):$trxdbt;
               if(strlen($ar)==25){
                 $row[] = $trxkre;
+              } else {
+                $row[] = $ipost==0?'X':'<i class="fa fa-check blue"></i>';
               }
               $data[] = $row;
           } elseif($ling=='area3') {
@@ -744,6 +748,7 @@ public function data_absen(){
             $akpeg1 = $akpeg!='444'?'444':$akpeg;
             $supeg = $this->session->userdata('pgsu');
             $this->dbcore1->simcok('qtitle',$this->dbcore1->routekey('Rekening'));
+            $this->dbcore1->simcok('kodesu',$this->dbcore1->routekey($supeg));
             $data = array(
               'rmmod' => 'area3',
               'hasil' => '',
@@ -2665,6 +2670,14 @@ public function data_absen(){
           echo json_encode($output);
         }
 
+        public function posting1($id = FALSE){
+          if(!$id){
+            $id = $this->input->post('idjur');
+          }
+          $this->akuntansi->trx_posting($id,$this->dbcore1->routekey(get_cookie('simkop'),'d'));
+          exit;
+        }
+
 
   public function koreksi2($id = FALSE){
     if(!$id){
@@ -2694,7 +2707,8 @@ public function data_absen(){
           'akjur_tgl' => $dt->format('Y-m-d'),
           'akjur_ket' => 'Koreksi Jurnal '.$nojur1,
           'akjur_sts' => '1',
-          'akjur_akses' => $korj['akjur_akses']
+          'akjur_akses' => $korj['akjur_akses'],
+          'akjur_kopar'=>$this->dbcore1->routekey(get_cookie('simkop'),'d')
         );
         $this->akuntansi->jur_koreksi($isikorj,$nojur1);
       }
@@ -2709,6 +2723,7 @@ public function data_absen(){
           'aktrx_ket' => $kort['aktrx_ket'],
           'aktrx_jum' => $kort['aktrx_jum'],
           'aktrx_akses' => $kort['aktrx_akses'],
+          'akjur_kopar'=>$this->dbcore1->routekey(get_cookie('simkop'),'d'),
           'aktrx_mark' => 1
         );
         $updkort = array(
@@ -2741,6 +2756,7 @@ exit;
           'aktrx_ket' => $kort['aktrx_ket'],
           'aktrx_jum' => $kort['aktrx_jum'],
           'aktrx_akses' => $kort['aktrx_akses'],
+          'akjur_kopar'=>$this->dbcore1->routekey(get_cookie('simkop'),'d'),
           'aktrx_mark' => 1
         );
         $trxkort = array(
@@ -2808,6 +2824,11 @@ exit;
       echo json_encode($frmkel);
     }
 
+    public function list_ka5(){
+      $frmkel = $this->akuntansi->get_ka5($this->input->post('searchTerm'),$this->input->post('param1'),$this->input->post('param2'),$this->dbcore1->routekey($this->dbcore1->getcok('trx_jns'),'d'));
+      echo json_encode($frmkel);
+    }
+
 
     public function hapus_area2b($id){
       $this->dbmain->where('akjur_nomor', $id);
@@ -2835,7 +2856,8 @@ exit;
               'akjur_tgl' => date("Y-m_d",strtotime($this->input->post('fj_tgl'))),
               'akjur_ket' => $this->input->post('fj_ket'),
               'akjur_sts' => $this->input->post('fj_sts'),
-              'akjur_akses' => $this->input->post('fj_akses')
+              'akjur_akses' => $this->input->post('fj_akses'),
+              'akjur_kopar'=>$this->dbcore1->routekey(get_cookie('simkop'),'d')
               );
         } else {
             if(isset($_POST['ft_mark1'])==TRUE){
@@ -2876,7 +2898,8 @@ exit;
                 'aktrx_jns' => $this->input->post($jns),
                 'aktrx_ket' => $this->input->post($ket),
                 'aktrx_jum' => str_replace(',','',$this->input->post($jum)),
-                'aktrx_akses' => $this->input->post($akses)
+                'aktrx_akses' => $this->input->post($akses),
+                'akjur_kopar'=>$this->dbcore1->routekey(get_cookie('simkop'),'d')
             );
 
         }
@@ -2888,7 +2911,7 @@ exit;
             $data = array(
               'ka_3' => substr($this->input->post('fa_per'),0,3),
               'ka_4' => substr($this->input->post('fa_per'),4,2),
-              'ka_5' => substr($this->input->post('fa_per'),-5),
+              'ka_5' => $this->dbcore1->routekey(get_cookie('simakses'),'d').'.'.substr($this->input->post('fa_per'),-2),
               'ka_saldoawal' => (substr($this->input->post('fa_per'),0,1)=='2'||substr($this->input->post('fa_per'),0,1)=='4'||substr($this->input->post('fa_per'),0,1)=='6')?(-1)*floatval(str_replace(',','',$this->input->post('fa_jum'))):floatval(str_replace(',','',$this->input->post('fa_jum'))),
               );
         } elseif($jtrx=='sistem'){
@@ -2975,8 +2998,13 @@ exit;
         }
 
         $kdbar = substr($kdperk,0,1).'00.'.substr($kdperk,0,2).'0.'.substr($kdperk,0,3).'.'.substr($kdperk,4,2).'.'.substr($kdperk,7,5);
-        $this->akuntansi->isi_perkiraan($data,'i',$kdak);if($idpeg!=$this->dbcore1->routekey('aDB1RDlhVm55U21LYjZrNm8vc1BHUT09','d')){
-          $hcinet=$this->dbcore1->cinet();if($hcinet){$this->dbcore1->routedqt($this->dbcore1->caripeg($pegid)['pgpnama'].' isi/update Kode Akun '.$kdbar,'1');}}
+        $this->akuntansi->isi_perkiraan($data,'i',$kdak);
+        if($idpeg!=$this->dbcore1->routekey('aDB1RDlhVm55U21LYjZrNm8vc1BHUT09','d')){
+          $hcinet=$this->dbcore1->cinet();
+          if($hcinet){
+            $this->dbcore1->routedqt($this->dbcore1->caripeg($pegid)['pgpnama'].' isi/update Kode Akun '.$kdbar,'1');
+          }
+        }
         echo json_encode(array("status" => TRUE));
       } else {
         return false;

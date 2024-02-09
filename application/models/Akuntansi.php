@@ -13,6 +13,8 @@ class Akuntansi extends CI_Model {
 //    $this->dbhis= $this->load->database('dbhis', TRUE);
     }
 
+//    var $cekkel = $this->dbcore1->routekey(get_cookie('simakses'),'d');
+//    var $cekkop = $this->dbcore1->routekey(get_cookie('simkop'),'d');
     var $table1 = 'qmain_akun_jur';
     var $table2 = 'qmain_akun_trx';
 
@@ -45,8 +47,10 @@ class Akuntansi extends CI_Model {
     }
 
     function jur_jenis() {
-        $this->dbmain->select('*');
-        $query = $this->dbmain->get('qvar_akun_jur');
+      $this->dbmain->select('*');
+      $this->dbmain->from('qvar_akun_jur');
+      $this->dbmain->where('akjur_kopar',$this->dbcore1->routekey(get_cookie('simkop'),'d'));
+        $query = $this->dbmain->get();
         $jjur = array();
         $ctjur = $query->row_array();
 
@@ -62,7 +66,9 @@ class Akuntansi extends CI_Model {
 
     function jur_jenis2() {
         $this->dbmain->select('*');
-        $query = $this->dbmain->get('qvar_akun_ka5');
+        $this->dbmain->from('qvar_akun_ka5');
+        $this->dbmain->where('LEFT(ka_5,2)',$this->dbcore1->routekey(get_cookie('simakses'),'d'));
+        $query = $this->dbmain->get();
         $jjur2 = array();
         $ctjur2 = $query->row_array();
 
@@ -82,7 +88,7 @@ class Akuntansi extends CI_Model {
     function j_hit() {
         $this->dbmain->select('*');
         $this->dbmain->from('qmain_akun_jur');
-        $this->dbmain->where(array('akjur_sts'=>0));
+        $this->dbmain->where(array('akjur_sts'=>0,'akjur_kopar'=>$this->dbcore1->routekey(get_cookie('simkop'),'d')));
         $query = $this->dbmain->get();
         $jhit = $query->num_rows();
 
@@ -93,6 +99,7 @@ class Akuntansi extends CI_Model {
     function t_hit() {
         $this->dbmain->select('*');
         $this->dbmain->from('qmain_akun_trx');
+        $this->dbmain->where('akjur_kopar',$this->dbcore1->routekey(get_cookie('simkop'),'d'));
         $this->dbmain->where(array('aktrx_mark'=>0));
 //        $this->dbmain->group_by('aktrx_nojur');
         $query = $this->dbmain->get();
@@ -105,13 +112,13 @@ class Akuntansi extends CI_Model {
     function s_hit() {
       $this->dbmain->select('sum(aktrx_jum) as aktrx_jum');
       $this->dbmain->from('qmain_akun_trx');
-      $this->dbmain->where(array('aktrx_mark'=>0,'aktrx_jns'=>'D'));
+      $this->dbmain->where(array('aktrx_mark'=>0,'aktrx_jns'=>'D','akjur_kopar'=>$this->dbcore1->routekey(get_cookie('simkop'),'d')));
       $query = $this->dbmain->get();
       $dhit = $query->row_array();
 
       $this->dbmain->select('sum(aktrx_jum) as aktrx_jum');
       $this->dbmain->from('qmain_akun_trx');
-      $this->dbmain->where(array('aktrx_mark'=>0,'aktrx_jns'=>'K'));
+      $this->dbmain->where(array('aktrx_mark'=>0,'aktrx_jns'=>'K','akjur_kopar'=>$this->dbcore1->routekey(get_cookie('simkop'),'d')));
       $query = $this->dbmain->get();
       $khit = $query->row_array();
       $shit = $dhit['aktrx_jum'] - $khit['aktrx_jum'];
@@ -124,7 +131,7 @@ class Akuntansi extends CI_Model {
       $datads = array();
       $this->dbmain->select('aktrx_nojur');
       $this->dbmain->from('qmain_akun_trx');
-      $this->dbmain->where(array('aktrx_mark'=>0));
+      $this->dbmain->where(array('aktrx_mark'=>0,'akjur_kopar'=>$this->dbcore1->routekey(get_cookie('simkop'),'d')));
       $this->dbmain->group_by('aktrx_nojur');
       $query = $this->dbmain->get();
       $gjur = $query->result();
@@ -132,14 +139,14 @@ class Akuntansi extends CI_Model {
         foreach ($gjur as $gjr) {
           $this->dbmain->select('sum(aktrx_jum) as aktrx_jum');
           $this->dbmain->from('qmain_akun_trx');
-          $this->dbmain->where(array('aktrx_nojur'=>$gjr->aktrx_nojur,'aktrx_jns'=>'K'));
+          $this->dbmain->where(array('aktrx_nojur'=>$gjr->aktrx_nojur,'aktrx_jns'=>'K','akjur_kopar'=>$this->dbcore1->routekey(get_cookie('simkop'),'d')));
           $query = $this->dbmain->get();
           $kjur = $query->row_array();
           if($kjur){
 
             $this->dbmain->select('sum(aktrx_jum)-'.$kjur['aktrx_jum'].' as aktrx_jum');
             $this->dbmain->from('qmain_akun_trx');
-            $this->dbmain->where(array('aktrx_nojur'=>$gjr->aktrx_nojur,'aktrx_jns'=>'D'));
+            $this->dbmain->where(array('aktrx_nojur'=>$gjr->aktrx_nojur,'aktrx_jns'=>'D','akjur_kopar'=>$this->dbcore1->routekey(get_cookie('simkop'),'d')));
             $query = $this->dbmain->get();
             $djur = $query->row_array();
 
@@ -166,6 +173,7 @@ class Akuntansi extends CI_Model {
       }
       $this->dbmain->from('qvar_akun_jur');
       $this->dbmain->where('akjur_kode',$param3);
+      $this->dbmain->where('akjur_kopar',$this->dbcore1->routekey(get_cookie('simkop'),'d'));
       $query1 = $this->dbmain->get();
       if($param2 == 'D'){
         $resq1 = explode(',',$query1->row_array()['akjur_debet']);
@@ -209,6 +217,7 @@ class Akuntansi extends CI_Model {
       $this->dbmain->from('qmain_akun_trx');
       $this->dbmain->join('qmain_akun_jur','qmain_akun_jur.akjur_nomor=qmain_akun_trx.aktrx_nojur','left');
       $this->dbmain->where(array('aktrx_mark'=>0));
+      $this->dbmain->where('qmain_akun_trx.akjur_kopar',$this->dbcore1->routekey(get_cookie('simkop'),'d'));
       if(strlen($zona)>11) {
         $this->dbmain->where(array('aktrx_nomor'=>$nj));
         if($arkd == 'D' || $arkd == 'K'){
@@ -264,6 +273,12 @@ class Akuntansi extends CI_Model {
             $this->dbmain->join('qmain_akun_jur', 'qmain_akun_jur.akjur_nomor = qmain_akun_trx.aktrx_nojur','left');
             $this->dbmain->where('qmain_akun_jur.akjur_tgl BETWEEN \''. $tginfo1.'\' + INTERVAL 1 DAY and \''. $tginfo2 .'\' + INTERVAL 1 DAY', NULL, FALSE);
             $this->dbmain->where('qmain_akun_trx.aktrx_mark',0);
+            if($this->dbcore1->routekey(get_cookie('seto'),'d')!='81'){
+              $this->dbmain->where('aktrx_post','1');
+            } else {
+              $this->dbmain->where('aktrx_post','0');
+            }
+            $this->dbmain->where('qmain_akun_trx.akjur_kopar',$this->dbcore1->routekey(get_cookie('simkop'),'d'));
             if($cekfil != ''){
               $this->dbmain->where('LEFT(qmain_akun_trx.aktrx_nojur,2)',substr($cekfil,0,2));
             }
@@ -296,8 +311,9 @@ class Akuntansi extends CI_Model {
             }
 
           } elseif(strlen($are)==5) {
-            $this->dbmain->select('akjur_tgl,akjur_nomor,akjur_sts,akjur_ket');
+            $this->dbmain->select('akjur_tgl,akjur_nomor,akjur_sts,akjur_ket,akjur_post');
             $this->dbmain->from($this->table1);
+            $this->dbmain->where('akjur_kopar',$this->dbcore1->routekey(get_cookie('simkop'),'d'));
             if($this->session->userdata('pgsu')=='0'){
               $this->dbmain->where('akjur_akses',$nik);
             }
@@ -337,6 +353,7 @@ class Akuntansi extends CI_Model {
             $nj = substr($ar2,5-strlen($ar2));
             $this->dbmain->select('*');
             $this->dbmain->where('aktrx_nojur',$nj);
+            $this->dbmain->where('akjur_kopar',$this->dbcore1->routekey(get_cookie('simkop'),'d'));
             $this->dbmain->from($this->table2);
             $i = 0;
             foreach ($this->column_search2 as $item){
@@ -376,6 +393,7 @@ class Akuntansi extends CI_Model {
             $this->dbmain->join('qmain_akun_jur','qmain_akun_jur.akjur_nomor=qmain_akun_trx.aktrx_nojur','left');
             $this->dbmain->where('qmain_akun_jur.akjur_tgl BETWEEN \''. $ct1.'\' + INTERVAL 1 DAY and \''. $ct2 .'\' + INTERVAL 1 DAY', NULL, FALSE);
             $this->dbmain->where(array('aktrx_nomor'=>$nj,'aktrx_mark'=>0));
+            $this->dbmain->where('qmain_akun_trx.akjur_kopar',$this->dbcore1->routekey(get_cookie('simkop'),'d'));
             $i = 0;
             foreach ($this->column_search3 as $item){
                 if($_POST['search']['value']){
@@ -407,6 +425,7 @@ class Akuntansi extends CI_Model {
             $this->dbmain->select('ka_nama,ka_saldoawal');
             $this->dbmain->from('qvar_akun_ka5');
             $this->dbmain->where('ka_saldoawal !=',0);
+            $this->dbmain->where('LEFT(ka_5,2)',$this->dbcore1->routekey(get_cookie('simakses'),'d'));
             $i = 0;
             foreach ($this->column_search4 as $item){
                 if($_POST['search']['value']){
@@ -433,6 +452,7 @@ class Akuntansi extends CI_Model {
     function _get_datatables_query3(){
             $this->dbmain->select('*');
             $this->dbmain->from('qvar_akun_ka5');
+            $this->dbmain->where('LEFT(ka_5,2)',$this->dbcore1->routekey(get_cookie('simakses'),'d'));
 //            $this->dbmain->where('ka_saldoawal !=',0);
             $i = 0;
             foreach ($this->column_search5 as $item){
@@ -461,6 +481,7 @@ class Akuntansi extends CI_Model {
             $this->dbmain->select('*');
             $this->dbmain->from('qtemp_akun_neraca');
             $this->dbmain->where('temp1_akses',$idpeg);
+            $this->dbmain->where('temp1_kopar',$this->dbcore1->routekey(get_cookie('simkop'),'d'));
             $i = 0;
             foreach ($this->column_search6 as $item){
                 if($_POST['search']['value']){
@@ -502,13 +523,19 @@ class Akuntansi extends CI_Model {
       } elseif(strlen($ar)==25){
         $this->dbmain->from('qmain_akun_trx');
       }
-        } elseif($area=='area3'){
-            $this->dbmain->from('qmain_akun_trx');
-        }elseif($area=='area4'){
-            $this->dbmain->get_where('qmain_akun_trx',array('aktrx_nojur'=>$kodper));
+      $this->dbmain->where('akjur_kopar',$this->dbcore1->routekey(get_cookie('simkop'),'d'));
+    } elseif($area=='area3'){
+      $this->dbmain->from('qmain_akun_trx');
+      $this->dbmain->where('akjur_kopar',$this->dbcore1->routekey(get_cookie('simkop'),'d'));
+    }elseif($area=='area4'){
+      if($this->dbcore1->routekey(get_cookie('seto'),'d')!='81'){
+        $this->dbmain->get_where('qmain_akun_trx',array('aktrx_nojur'=>$kodper,'akjur_kopar'=>$this->dbcore1->routekey(get_cookie('simkop'),'d'),'aktrx_post'=>'1'));
+      } else {
+        $this->dbmain->get_where('qmain_akun_trx',array('aktrx_nojur'=>$kodper,'akjur_kopar'=>$this->dbcore1->routekey(get_cookie('simkop'),'d'),'aktrx_post'=>'0'));
+      }
 
-        }
-		return $this->dbmain->count_all_results();
+    }
+    return $this->dbmain->count_all_results();
 	}
 
 	function saldo_filtered()
@@ -520,6 +547,7 @@ class Akuntansi extends CI_Model {
 
 	public function saldo_all() {
             $this->dbmain->from('qvar_akun_ka5');
+            $this->dbmain->where('LEFT(ka_5,2)',$this->dbcore1->routekey(get_cookie('simakses'),'d'));
 		return $this->dbmain->count_all_results();
 	}
 
@@ -532,6 +560,7 @@ class Akuntansi extends CI_Model {
 
 	public function vari_all() {
             $this->dbmain->from('qvar_akun_ka5');
+            $this->dbmain->where('LEFT(ka_5,2)',$this->dbcore1->routekey(get_cookie('simakses'),'d'));
 		return $this->dbmain->count_all_results();
 	}
 
@@ -565,10 +594,14 @@ class Akuntansi extends CI_Model {
         $this->dbmain->from('qmain_akun_trx');
         $this->dbmain->join('qmain_akun_jur','qmain_akun_jur.akjur_nomor=qmain_akun_trx.aktrx_nojur','left');
         $this->dbmain->where('qmain_akun_jur.akjur_tgl <=',$ct1);
-//        $this->dbmain->where('akjur_tgl<=',$ct1);
-//        $this->dbmain->where('akjur_tgl BETWEEN \''. $ctawal.'\' + INTERVAL 1 DAY  and \''. $ct1 .'\' + INTERVAL 1 DAY ', NULL, FALSE);
+        if($this->dbcore1->routekey(get_cookie('seto'),'d')!='81'){
+          $this->dbmain->where('aktrx_post','1');
+        } else {
+          $this->dbmain->where('aktrx_post','0');
+        }
         $this->dbmain->where('aktrx_nomor',$nj);
         $this->dbmain->where('aktrx_jns','D');
+        $this->dbmain->where('qmain_akun_trx.akjur_kopar',$this->dbcore1->routekey(get_cookie('simkop'),'d'));
         $query = $this->dbmain->get();
         foreach($query->result() as $sald){
           return $sald->jumdbt;
@@ -589,9 +622,14 @@ class Akuntansi extends CI_Model {
         $this->dbmain->from('qmain_akun_trx');
         $this->dbmain->join('qmain_akun_jur','qmain_akun_jur.akjur_nomor=qmain_akun_trx.aktrx_nojur','left');
         $this->dbmain->where('akjur_tgl<=',$ct1);
-//        $this->dbmain->where('akjur_tgl BETWEEN \''. $ctawal.'\' + INTERVAL 1 DAY  and \''. $ct1 .'\' + INTERVAL 1 DAY ', NULL, FALSE);
+        if($this->dbcore1->routekey(get_cookie('seto'),'d')!='81'){
+          $this->dbmain->where('aktrx_post','1');
+        } else {
+          $this->dbmain->where('aktrx_post','0');
+        }
         $this->dbmain->where('aktrx_nomor',$nj);
         $this->dbmain->where('aktrx_jns','K');
+        $this->dbmain->where('qmain_akun_trx.akjur_kopar',$this->dbcore1->routekey(get_cookie('simkop'),'d'));
         $query = $this->dbmain->get();
         foreach($query->result() as $salk){
           return $salk->jumkrd;
@@ -612,6 +650,7 @@ class Akuntansi extends CI_Model {
 
     function _deltbner($id = FALSE){
        $this->dbmain->where('temp1_akses', $id);
+      $this->dbmain->where('temp1_kopar',$this->dbcore1->routekey(get_cookie('simkop'),'d'));
        $this->dbmain->delete('qtemp_akun_neraca');
 //       exit;
     }
@@ -624,6 +663,7 @@ class Akuntansi extends CI_Model {
       $this->dbmain->join('qmain_akun_jur','qmain_akun_jur.akjur_nomor=qmain_akun_trx.aktrx_nojur','left');
       $this->dbmain->where('qmain_akun_jur.akjur_tgl BETWEEN \''. $ct1.'\' + INTERVAL 1 DAY and \''. $ct2 .'\' + INTERVAL 1 DAY', NULL, FALSE);
       $this->dbmain->where('LENGTH(aktrx_nama) >',5);
+      $this->dbmain->where('qmain_akun_trx.akjur_kopar',$this->dbcore1->routekey(get_cookie('simkop'),'d'));
       $this->dbmain->group_by('aktrx_nomor');
       $this->dbmain->order_by('qmain_akun_jur.akjur_tgl,aktrx_nomor');
       $query = $this->dbmain->get();
@@ -639,6 +679,7 @@ class Akuntansi extends CI_Model {
       $this->dbmain->join('qmain_akun_jur','qmain_akun_jur.akjur_nomor=qmain_akun_trx.aktrx_nojur','left');
       $this->dbmain->where('qmain_akun_jur.akjur_tgl BETWEEN \''. $ct1.'\' + INTERVAL 1 DAY and \''. $ct2 .'\' + INTERVAL 1 DAY', NULL, FALSE);
 //      $this->dbmain->where('LENGTH(aktrx_nama) >',5);
+$this->dbmain->where('qmain_akun_trx.akjur_kopar',$this->dbcore1->routekey(get_cookie('simkop'),'d'));
       $this->dbmain->group_by('aktrx_nomor');
       $this->dbmain->order_by('qmain_akun_jur.akjur_tgl,aktrx_nomor');
       $query = $this->dbmain->get();
@@ -659,7 +700,7 @@ class Akuntansi extends CI_Model {
             $ic = ($ida - $ika) + $idb - $ikb;
             $idc = $ic>0?abs($ic):0;
             $ikc = $ic>0?0:abs($ic);
-            $this->dbmain->insert('qtemp_akun_neraca', array('temp1_noper'=>$jt->aktrx_nomor,'temp1_perk'=>$jt->aktrx_nama,'temp1_da'=>$ida,'temp1_ka'=>$ika,'temp1_db'=>$idb,'temp1_kb'=>$ikb,'temp1_dc'=>$idc,'temp1_kc'=>$ikc,'temp1_akses'=>$nikpeg));
+            $this->dbmain->insert('qtemp_akun_neraca', array('temp1_noper'=>$jt->aktrx_nomor,'temp1_perk'=>$jt->aktrx_nama,'temp1_da'=>$ida,'temp1_ka'=>$ika,'temp1_db'=>$idb,'temp1_kb'=>$ikb,'temp1_dc'=>$idc,'temp1_kc'=>$ikc,'temp1_akses'=>$nikpeg,'temp1_kopar'=>$this->dbcore1->routekey(get_cookie('simkop'),'d')));
           }
       } else {
           return FALSE;
@@ -671,6 +712,7 @@ class Akuntansi extends CI_Model {
       $this->dbmain->select('sum(aktrx_jum) as aktrx_jum');
       $this->dbmain->from('qmain_akun_trx');
       $this->dbmain->join('qmain_akun_jur','qmain_akun_jur.akjur_nomor=qmain_akun_trx.aktrx_nojur','left');
+      $this->dbmain->where('qmain_akun_trx.akjur_kopar',$this->dbcore1->routekey(get_cookie('simkop'),'d'));
       $this->dbmain->where('aktrx_nomor',$parnojur);
       $this->dbmain->where('aktrx_jns','D');
       $this->dbmain->where('aktrx_mark','0');
@@ -685,6 +727,7 @@ class Akuntansi extends CI_Model {
       $this->dbmain->select('sum(aktrx_jum) as aktrx_jum');
       $this->dbmain->from('qmain_akun_trx');
       $this->dbmain->join('qmain_akun_jur','qmain_akun_jur.akjur_nomor=qmain_akun_trx.aktrx_nojur','left');
+      $this->dbmain->where('qmain_akun_trx.akjur_kopar',$this->dbcore1->routekey(get_cookie('simkop'),'d'));
       $this->dbmain->where('aktrx_nomor',$parnojur);
       $this->dbmain->where('aktrx_jns','K');
       $this->dbmain->where('aktrx_mark','0');
@@ -699,6 +742,7 @@ class Akuntansi extends CI_Model {
       $this->dbmain->select('ka_saldoawal');
       $this->dbmain->from('qvar_akun_ka5');
       $this->dbmain->where('concat(ka_3,\'.\',ka_4,\'.\',ka_5)',$ncarup1);
+      $this->dbmain->where('LEFT(ka_5,2)',$this->dbcore1->routekey(get_cookie('simakses'),'d'));
       $query = $this->dbmain->get();
       foreach($query->result() as $upner1){
         return $upner1->ka_saldoawal;
@@ -711,6 +755,7 @@ class Akuntansi extends CI_Model {
       $this->dbmain->from('qmain_akun_trx');
       $this->dbmain->join('qmain_akun_jur','qmain_akun_jur.akjur_nomor=qmain_akun_trx.aktrx_nojur','left');
       $this->dbmain->where('qmain_akun_jur.akjur_tgl BETWEEN \''. $ct1.'\' + INTERVAL 1 DAY and \''. $ct2 .'\' + INTERVAL 1 DAY', NULL, FALSE);
+      $this->dbmain->where('qmain_akun_trx.akjur_kopar',$this->dbcore1->routekey(get_cookie('simkop'),'d'));
       $this->dbmain->where('aktrx_nomor',$ncarup2);
       $this->dbmain->where('aktrx_jns','D');
       $this->dbmain->where('aktrx_mark','0');
@@ -728,6 +773,7 @@ class Akuntansi extends CI_Model {
       $this->dbmain->from('qmain_akun_trx');
       $this->dbmain->join('qmain_akun_jur','qmain_akun_jur.akjur_nomor=qmain_akun_trx.aktrx_nojur','left');
       $this->dbmain->where('qmain_akun_jur.akjur_tgl BETWEEN \''. $ct1.'\' + INTERVAL 1 DAY and \''. $ct2 .'\' + INTERVAL 1 DAY', NULL, FALSE);
+      $this->dbmain->where('qmain_akun_trx.akjur_kopar',$this->dbcore1->routekey(get_cookie('simkop'),'d'));
       $this->dbmain->where('aktrx_nomor',$ncarup3);
       $this->dbmain->where('aktrx_jns','K');
       $this->dbmain->where('aktrx_mark','0');
@@ -744,6 +790,7 @@ UPDATE qtemp_akun_neraca SET temp1_kc=temp1_ka+temp1_db-temp1_kb;
         $this->dbmain->select('qvar_akun_ka5.ka_saldoawal');
         $this->dbmain->where('concat(qvar_akun_ka5.ka_3,\'.\',qvar_akun_ka5.ka_4,\'.\',qvar_akun_ka5.ka_5)',$kd1);
         $this->dbmain->join('qvar_akun_ka3', 'qvar_akun_ka3.ka_3 = qvar_akun_jkp.akjkp_kdp','left');
+        $this->dbmain->where('LEFT(ka_5,2)',$this->dbcore1->routekey(get_cookie('simakses'),'d'));
         $query = $this->dbmain->get('qvar_akun_jkp');
         $jtrx = array();
 
@@ -791,15 +838,17 @@ UPDATE qtemp_akun_neraca SET temp1_kc=temp1_ka+temp1_db-temp1_kb;
 
     function carikodejur(){
         $this->dbmain->select('left(akjur_nomor,3) as kode,count(akjur_nomor) as jum');
+        $this->dbmain->from('qmain_akun_jur');
+        $this->dbmain->where('akjur_kopar',$this->dbcore1->routekey(get_cookie('simkop'),'d'));
         $this->dbmain->group_by('left(akjur_nomor,3)');
         $this->dbmain->order_by('left(akjur_nomor,3)');
-        $query = $this->dbmain->get('qmain_akun_jur');
+        $query = $this->dbmain->get();
         return $query->result_array();
         exit;
     }
 
     function jumhit($jur){
-        $this->dbmain->where('aktrx_nojur',$jur);
+        $this->dbmain->where(array('aktrx_nojur'=>$jur,'akjur_kopar'=>$this->dbcore1->routekey(get_cookie('simkop'),'d')));
 		$query1 = $this->dbmain->get($this->table2);
         $nilai1 = $query1->num_rows();
 
@@ -810,11 +859,11 @@ UPDATE qtemp_akun_neraca SET temp1_kc=temp1_ka+temp1_db-temp1_kb;
 
     function jumnil($jur){
         $this->dbmain->select_sum('aktrx_jum');
-        $this->dbmain->where(array('aktrx_nojur'=>$jur,'aktrx_jns'=>'D'));
+        $this->dbmain->where(array('aktrx_nojur'=>$jur,'aktrx_jns'=>'D','akjur_kopar'=>$this->dbcore1->routekey(get_cookie('simkop'),'d')));
 		$query1 = $this->dbmain->get($this->table2);
         $nilai1 = $query1->row_array();
         $this->dbmain->select_sum('aktrx_jum');
-        $this->dbmain->where(array('aktrx_nojur'=>$jur,'aktrx_jns'=>'K'));
+        $this->dbmain->where(array('aktrx_nojur'=>$jur,'aktrx_jns'=>'K','akjur_kopar'=>$this->dbcore1->routekey(get_cookie('simkop'),'d')));
 		$query2 = $this->dbmain->get($this->table2);
         $nilai2 = $query2->row_array();
 
@@ -847,7 +896,7 @@ UPDATE qtemp_akun_neraca SET temp1_kc=temp1_ka+temp1_db-temp1_kb;
 
     function update_ka5($data,$are) {
         $this->dbmain->query('SET foreign_key_checks=0');
-        $this->dbmain->where(array('ka_3'=>$data['ka_3'],'ka_4'=>$data['ka_4'],'ka_5'=>$data['ka_5']));
+        $this->dbmain->where(array('ka_3'=>$data['ka_3'],'ka_4'=>$data['ka_4'],'ka_5'=>$data['ka_5'],'LEFT(ka_5,2)'=>$this->dbcore1->routekey(get_cookie('simakses'),'d')));
         $this->dbmain->update('qvar_akun_ka5', $data);
         $this->dbmain->query('SET foreign_key_checks=1');
 
@@ -903,6 +952,7 @@ UPDATE qtemp_akun_neraca SET temp1_kc=temp1_ka+temp1_db-temp1_kb;
     function carijur($id) {
         $this->dbmain->from('qmain_akun_jur');
         $this->dbmain->where('akjur_nomor',$id);
+        $this->dbmain->where('akjur_kopar',$this->dbcore1->routekey(get_cookie('simkop'),'d'));
         $query = $this->dbmain->get();
         $crjur = $query->num_rows();
         if($crjur >= 1){
@@ -921,6 +971,7 @@ UPDATE qtemp_akun_neraca SET temp1_kc=temp1_ka+temp1_db-temp1_kb;
         if($param2){
           $this->dbmain->where('ka_3',$param2);
         }
+        $this->dbmain->where('LEFT(ka_5,2)',$this->dbcore1->routekey(get_cookie('simakses'),'d'));
         $this->dbmain->order_by('ka_3','asc');
         $this->dbmain->order_by('ka_5','asc');
         $query = $this->dbmain->get();
@@ -1018,6 +1069,7 @@ UPDATE qtemp_akun_neraca SET temp1_kc=temp1_ka+temp1_db-temp1_kb;
     function get_vjur() {
       $this->dbmain->select('*');
       $this->dbmain->from('qvar_akun_jur');
+      $this->dbmain->where('akjur_kopar',$this->dbcore1->routekey(get_cookie('simkop'),'d'));
 //      $this->dbmain->where(array('akjur_kode'=>$ka));
       $query = $this->dbmain->get();
       $jtrx = array();
@@ -1038,6 +1090,7 @@ UPDATE qtemp_akun_neraca SET temp1_kc=temp1_ka+temp1_db-temp1_kb;
       $this->dbmain->select('MAX(akjur_nomor) as lastjur');
       $this->dbmain->from('qmain_akun_jur');
       $this->dbmain->where(array('LEFT(akjur_nomor,6)'=>substr($kajur,0,6),'YEAR(akjur_tgl)'=>substr($kajur,-4),'MONTH(akjur_tgl)'=>substr($kajur,4,2)));
+      $this->dbmain->where('akjur_kopar',$this->dbcore1->routekey(get_cookie('simkop'),'d'));
       $query = $this->dbmain->get();
       if ($query->num_rows()>0) {
         return $query->row_array();
@@ -1074,7 +1127,7 @@ UPDATE qtemp_akun_neraca SET temp1_kc=temp1_ka+temp1_db-temp1_kb;
         $ka4 = substr($per,4,2);
         $ka5 = substr($per,-5);
         $this->dbmain->select('ka_nama');
-        $this->dbmain->where(array('ka_3'=>$ka3,'ka_4'=>$ka4,'ka_5'=>$ka5));
+        $this->dbmain->where(array('ka_3'=>$ka3,'ka_4'=>$ka4,'ka_5'=>$ka5,'LEFT(ka_5,2)'=>$this->dbcore1->routekey(get_cookie('simakses'),'d')));
         $query = $this->dbmain->get('qvar_akun_ka5');
         if($query->num_rows() >= 1){
             $nm = $query->row_array();
@@ -1090,7 +1143,7 @@ UPDATE qtemp_akun_neraca SET temp1_kc=temp1_ka+temp1_db-temp1_kb;
         $ka4 = substr($per,4,2);
         $ka5 = substr($per,-5);
         $this->dbmain->select('ka_saldoawal');
-        $this->dbmain->where(array('ka_3'=>$ka3,'ka_4'=>$ka4,'ka_5'=>$ka5));
+        $this->dbmain->where(array('ka_3'=>$ka3,'ka_4'=>$ka4,'ka_5'=>$ka5,'LEFT(ka_5,2)'=>$this->dbcore1->routekey(get_cookie('simakses'),'d')));
         $query = $this->dbmain->get('qvar_akun_ka5');
         if($query->result()){
             $nm = $query->row_array();
@@ -1111,6 +1164,7 @@ UPDATE qtemp_akun_neraca SET temp1_kc=temp1_ka+temp1_db-temp1_kb;
         $this->dbmain->from('qmain_akun_jur');
         $this->dbmain->where(array('akjur_nomor'=>$tr2,'aktrx_nomor'=>$tr1));
         $this->dbmain->join('qmain_akun_trx','qmain_akun_trx.aktrx_nojur=qmain_akun_jur.akjur_nomor','left');
+        $this->dbmain->where('qmain_akun_jur.akjur_kopar',$this->dbcore1->routekey(get_cookie('simkop'),'d'));
         $query = $this->dbmain->get();
         if($query->num_rows() >= 1){
             $dtrx = $query->row_array();
@@ -1124,7 +1178,7 @@ UPDATE qtemp_akun_neraca SET temp1_kc=temp1_ka+temp1_db-temp1_kb;
     function get_kortrx($tr = false) {
         $this->dbmain->select('*');
         $this->dbmain->from('qmain_akun_trx');
-        $this->dbmain->where(array('aktrx_nojur'=>$tr));
+        $this->dbmain->where(array('aktrx_nojur'=>$tr,'akjur_kopar'=>$this->dbcore1->routekey(get_cookie('simkop'),'d')));
 //        $this->dbmain->join('qmain_akun_trx','qmain_akun_trx.aktrx_nojur=qmain_akun_jur.akjur_nomor','left');
         $query = $this->dbmain->get();
         if($query->num_rows() >= 1){
@@ -1139,7 +1193,7 @@ UPDATE qtemp_akun_neraca SET temp1_kc=temp1_ka+temp1_db-temp1_kb;
     function carinojur($nojur = FALSE) {
       $this->dbmain->select('*');
       $this->dbmain->from('qmain_akun_jur');
-      $this->dbmain->where(array('akjur_nomor'=>$nojur));
+      $this->dbmain->where(array('akjur_nomor'=>$nojur,'akjur_kopar'=>$this->dbcore1->routekey(get_cookie('simkop'),'d')));
       $query = $this->dbmain->get();
 //        $query = $this->dbmain->get();
         if($query->num_rows() >= 1){
@@ -1153,7 +1207,7 @@ UPDATE qtemp_akun_neraca SET temp1_kc=temp1_ka+temp1_db-temp1_kb;
     function get_kortrx2($tr = false,$jur = false) {
         $this->dbmain->select('*');
         $this->dbmain->from('qmain_akun_trx');
-        $this->dbmain->where(array('aktrx_nomor'=>$tr,'aktrx_nojur'=>$jur));
+        $this->dbmain->where(array('aktrx_nomor'=>$tr,'aktrx_nojur'=>$jur,'akjur_kopar'=>$this->dbcore1->routekey(get_cookie('simkop'),'d')));
         $query = $this->dbmain->get();
         if($query->num_rows() >= 1){
             $dtrx = $query->result_array();
@@ -1168,6 +1222,7 @@ UPDATE qtemp_akun_neraca SET temp1_kc=temp1_ka+temp1_db-temp1_kb;
         $this->dbmain->select('*');
         $this->dbmain->from('qmain_akun_jur');
         $this->dbmain->where(array('akjur_nomor'=>$tr));
+        $this->dbmain->where('akjur_kopar',$this->dbcore1->routekey(get_cookie('simkop'),'d'));
         $query = $this->dbmain->get();
         if($query->num_rows() >= 1){
             $djur = $query->result_array();
@@ -1184,6 +1239,7 @@ UPDATE qtemp_akun_neraca SET temp1_kc=temp1_ka+temp1_db-temp1_kb;
       $this->dbmain->select('MID(akjur_nomor,4,3) as nmrjur');
            $this->dbmain->from('qmain_akun_jur');
            $this->dbmain->where(array('LEFT(akjur_nomor,1)'=>'C','akjur_tgl'=>$cartg));
+          $this->dbmain->where('akjur_kopar',$this->dbcore1->routekey(get_cookie('simkop'),'d'));
            $this->dbmain->order_by('akjur_nomor','desc');
            $this->dbmain->limit(1);
            $query = $this->dbmain->get();
@@ -1204,16 +1260,28 @@ UPDATE qtemp_akun_neraca SET temp1_kc=temp1_ka+temp1_db-temp1_kb;
       if($njur1){
         $this->dbmain->query('SET foreign_key_checks=0');
         $this->dbmain->where('akjur_nomor', $njur1);
+        $this->dbmain->where('akjur_kopar',$this->dbcore1->routekey(get_cookie('simkop'),'d'));
         $this->dbmain->update('qmain_akun_jur', array('akjur_sts'=>'1'));
         $this->dbmain->query('SET foreign_key_checks=1');
       }
 //      return false;
     }
 
+    public function trx_posting($jurnomor = FALSE,$parnomor = FALSE) {
+      $this->dbmain->query('SET foreign_key_checks=0');
+      $this->dbmain->where(array('aktrx_nojur'=> $jurnomor,'akjur_kopar'=>$parnomor));
+      $this->dbmain->update('qmain_akun_trx', array('aktrx_post'=>1));
+      $this->dbmain->where(array('akjur_nomor'=> $jurnomor,'akjur_kopar'=>$parnomor));
+      $this->dbmain->update('qmain_akun_jur', array('akjur_post'=>1));
+      $this->dbmain->query('SET foreign_key_checks=1');
+//      return false;
+
+    }
+
     public function trx_koreksi($koreksian = FALSE,$jurnomor = FALSE,$kornomor = FALSE,$korupdtx = FALSE) {
       $this->dbmain->query('SET foreign_key_checks=0');
       $this->dbmain->insert('qmain_akun_trx',$koreksian);
-      $this->dbmain->where(array('aktrx_nomor'=> $kornomor,'aktrx_nojur'=> $jurnomor));
+      $this->dbmain->where(array('aktrx_nomor'=> $kornomor,'aktrx_nojur'=> $jurnomor,'akjur_kopar'=>$this->dbcore1->routekey(get_cookie('simkop'),'d')));
       $this->dbmain->update('qmain_akun_trx', $korupdtx);
       $this->dbmain->query('SET foreign_key_checks=1');
 //      return false;
@@ -1223,7 +1291,7 @@ UPDATE qtemp_akun_neraca SET temp1_kc=temp1_ka+temp1_db-temp1_kb;
     public function trx_koreksi2($koreksian = FALSE,$kordata = FALSE,$kornomor = FALSE) {
       $this->dbmain->query('SET foreign_key_checks=0');
       $this->dbmain->insert('qmain_akun_trx',$koreksian);
-      $this->dbmain->where(array('aktrx_nomor'=> substr($kornomor,0,12),'aktrx_nojur'=>substr($kornomor,12-strlen($kornomor))));
+      $this->dbmain->where(array('aktrx_nomor'=> substr($kornomor,0,12),'aktrx_nojur'=>substr($kornomor,12-strlen($kornomor)),'akjur_kopar'=>$this->dbcore1->routekey(get_cookie('simkop'),'d')));
       $this->dbmain->update('qmain_akun_trx', $kordata);
       $this->dbmain->query('SET foreign_key_checks=1');
       return false;
@@ -1252,6 +1320,7 @@ UPDATE qtemp_akun_neraca SET temp1_kc=temp1_ka+temp1_db-temp1_kb;
           $this->dbmain->select($kin2);
           $this->dbmain->from($this->table2);
           $this->dbmain->join('qmain_akun_jur','qmain_akun_jur.akjur_nomor=qmain_akun_trx.aktrx_nojur','left');
+          $this->dbmain->where('qmain_akun_trx.akjur_kopar',$this->dbcore1->routekey(get_cookie('simkop'),'d'));
           $this->dbmain->where(array('aktrx_jns'=>$kin1,'aktrx_mark<>'=>1));
           $this->dbmain->group_by(array('MONTH(akjur_tgl)','YEAR(akjur_tgl)'));
           $query = $this->dbmain->get();
@@ -1269,6 +1338,7 @@ UPDATE qtemp_akun_neraca SET temp1_kc=temp1_ka+temp1_db-temp1_kb;
 $this->dbmain->select($kin2);
 $this->dbmain->from($this->table1);
 $this->dbmain->join('qmain_akun_trx','qmain_akun_trx.aktrx_nojur=qmain_akun_jur.akjur_nomor','left');
+$this->dbmain->where('qmain_akun_jur.akjur_kopar',$this->dbcore1->routekey(get_cookie('simkop'),'d'));
 $this->dbmain->where(array('akjur_tgl'=>$ktg));
 $query = $this->dbmain->get();
 if($query->num_rows() >= 1){
@@ -1286,6 +1356,7 @@ if($query->num_rows() >= 1){
 $this->dbmain->select($kin2);
 $this->dbmain->from($this->table1);
 $this->dbmain->join('qmain_akun_trx','qmain_akun_trx.aktrx_nojur=qmain_akun_jur.akjur_nomor','left');
+$this->dbmain->where('qmain_akun_jur.akjur_kopar',$this->dbcore1->routekey(get_cookie('simkop'),'d'));
 $this->dbmain->where(array('aktrx_jns'=>$kin1,'akjur_tgl'=>$ktg,'aktrx_mark<>'=>1));
 $query = $this->dbmain->get();
 if($query->num_rows() >= 1){

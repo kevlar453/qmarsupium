@@ -20,12 +20,7 @@
                         <div class="input-group input-group-sm">
                             <?php
                                 echo form_label('PERKIRAAN','fa_noacc',array('class'=>'input-group-addon')); ?> <?php echo form_error('fa_noacc');
-                                echo form_dropdown('fa_per', $jjenis2, '#', 'id="fa_per" class="select2_single form-control" style="float: left;" onchange = "new PNotify({
-                                    title: \'Informasi\',
-                                    type: \'warning\',
-                                    text: \'Perkiraan dipilih\',
-                                    styling: \'bootstrap3\'
-                                    });"');
+                                echo form_dropdown(array('id'=>'fa_per','class'=>'select2_single form-control','style'=>'float: left;'));
                             ?>
 
                         </div>

@@ -42,6 +42,7 @@
         var data = table.row(this).data();
         var ctrx = data[1];
         var ccor = data[4];
+        var cpost = data[5];
 
         $.ajax({
          type: "post",
@@ -70,12 +71,12 @@
                dettbl += '</tr>';
              }
              if(ccor != 'X'){
-               addt = "<a class=\"btn btn-lg btn-warning\" href=\"javascript:void(0)\" title=\"Koreksi\" onclick=\"hapusjurnal('"+ctrx+"')\">Koreksi</a><a class=\"btn btn-lg btn-info\" onclick=\"godetail('"+ctrx+"')\">Detail</a>";
+               addt = "<a class=\"btn btn-lg btn-warning\" href=\"javascript:void(0)\" title=\"Koreksi\" onclick=\"hapusjurnal('"+ctrx+"')\">Koreksi</a><a class=\"btn btn-lg btn-info\" onclick=\"godetail('"+ctrx+"')\">Detail</a><a class=\"btn btn-lg btn-success\" onclick=\"gopost('"+ctrx+"')\">Posting</a>";
              }
              swal({
                title: "Transaksi " + ctrx,
 //               text: isidet[0][1],
-               text: "<div class=\"table-responsive\"><table id=\"filltambah\" class=\"table table-condensed table-striped table-hover table-full-width nowrap\" style=\"font-size:1em;margin:5px;width:100%;\"><thead><tr><th>Kode</th><th>Uraian</th><th>Debet</th><th>Kredit</th></tr></thead><tbody>"+dettbl+"</tbody></table></div><hr/>" + addt,
+               text: "<div class=\"table-responsive\"><table id=\"filltambah\" class=\"table table-condensed table-striped table-hover dt-responsive\" style=\"font-size:1em;margin:5px;width:100%;\"><thead><tr><th>Kode</th><th>Uraian</th><th>Debet</th><th>Kredit</th></tr></thead><tbody>"+dettbl+"</tbody></table></div><hr/>" + (cpost=='X'?addt:'Sudah Posting'),
                html: true,
                allowOutsideClick:true,
                showCancelButton: false,
@@ -341,6 +342,40 @@
     );
     catat("COR " + id);
   }
+
+  function gopost(id){
+    swal({
+        title: "Posting Jurnal?",
+        text: "Jurnal dan transaksinya sudah benar dan siap lapor.",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "Ya, lajutkan!",
+        closeOnConfirm: false
+    }, function (isConfirm) {
+        if (!isConfirm) return;
+        $.ajax({
+            url: "<?php echo base_url(); ?>markas/core1/posting1/",
+            type: "POST",
+            data:jQuery.param({
+              idjur:id
+            }),
+            success: function (data) {
+              swal({
+                title: "Sukses!",
+                text: "Jurnal BERHASIL diposting.",
+                type: "success"
+              });
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+              swal("Gangguan!", "Jurnal GAGAL posting!", "error");
+            }
+        });
+        reload_table();
+    }
+  );
+  catat("POST " + id);
+}
 
 //---------------------------- start --- info
     function fillinfo(){

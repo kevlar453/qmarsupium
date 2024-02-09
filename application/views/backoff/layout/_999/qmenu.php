@@ -41,9 +41,16 @@
                 <?php
                 }
                 ?>
+
                 <li><a><i class="fa fa-users"></i> Akun <span class="fa fa-chevron-down"></span></a>
                   <ul class="nav child_menu">
+                    <?php
+                  if((int)$this->dbcore1->routekey(get_cookie('kodesu'),'d')>0){
+                    ?>
                     <li><a href="<?php echo base_url()?>auth/create_user" title="">Baru</a></li>
+                    <?php
+                  }
+                    ?>
                     <li><a href="<?php echo base_url()?>auth/index" title="">Daftar</a></li>
                   </ul>
                 </li>

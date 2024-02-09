@@ -5,6 +5,45 @@ $(document).ajaxStop($.unblockUI);
         fillgrid();
     });
 
+    $('#fa_per').select2({
+      tags: true,
+      multiple: false,
+      tokenSeparators: [',', ' '],
+      minimumInputLength: -1,
+      minimumResultsForSearch: 10,
+    placeholder: "Kelompok Perkiraan/Akun",
+      ajax: {
+        url: '<?php echo base_url(); ?>markas/core1/list_ka5',
+        type: "post",
+        dataType: 'json',
+        delay: 250,
+        data: function (params) {
+          return {
+            searchTerm: params.term,
+            param1:1,
+            param2:decode_cookie(getCookie('jnsjur'))
+          };
+        },
+        processResults: function (data) {
+          return {
+            results: $.map(data, function(obj) {
+              return {
+                id: obj.ka_3,
+                text: obj.ka_nama
+              };
+            })
+          };
+        },
+        cache: true
+      }
+    }).on('select2:select', function(e) {
+/*      
+      var kj = $('#ft_nmr1').val();
+      var jns = setCookie('jnsperk',kj);
+      $('#ft_nmr2').val('').trigger('change');
+*/
+    });
+
     $("#perbaharui").submit(function (e){
         e.preventDefault();
         var url = $(this).attr('action');

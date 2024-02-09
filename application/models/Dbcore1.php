@@ -490,6 +490,20 @@ function get_desa($kecamatan = null){
  }
 }
 
+function cek_useraktif($cekidentity = FALSE){
+$this->dbmain->select('username');
+$this->dbmain->from('users');
+$this->dbmain->where('email',$cekidentity);
+$query = $this->dbmain->get();
+       if($query -> num_rows() >= 1){
+           return $query->row_array();
+       }
+       else {
+           return false;
+       }
+       exit;
+}
+
 function call_useraktif(){
 $this->dbmain->select('*');
 $this->dbmain->from('qmain_user');
