@@ -23,6 +23,7 @@ class Core1 extends CI_Controller {
         $rmoda = isset($_GET['rmod'])==TRUE?$_GET["rmod"]:'';
         $idpeg = $this->session->userdata('pgpid');
         $akpeg = $this->session->userdata('pgakses');
+        $cekkel = $this->dbcore1->routekey(get_cookie('simakses'),'d');
         $this->dbcore1->delcok('jnsperk');
         if(!isset($_GET['kodejob1'])){
           $akpeg1 = $akpeg;
@@ -52,7 +53,7 @@ $this->dbcore1->simcok('qtitle',$this->dbcore1->routekey($vtitle));
                 'hasil' => '',
                 'periksa' => '',
                 'operator' => $this->dbcore1->caripeg($idpeg),
-                'kodejob' => $akpeg,
+                'kodejob' => $cekkel != '00'?$akpeg:'444',
                 'kodejob1' => $akpeg1,
                 'kodesu' => $supeg,
                 'dafkodejur' => $akpeg=='222'||$akpeg1=='222'?$this->akuntansi->carikodejur():'',
@@ -390,9 +391,12 @@ public function data_absen(){
       }
 
   function fillgrid($ar = FALSE){
+    $cekkel = $this->dbcore1->routekey(get_cookie('simakses'),'d');
+    $cekkop = $this->dbcore1->routekey(get_cookie('simkop'),'d');
       $ling = substr($ar,0,5);
       $list = $this->akuntansi->fillgrid($ar);
       $data = array();
+      $lstval = array();
       $no = $_POST['start'];
       $l_hit = 0;
       $ar2 = substr($ar,0,17);
@@ -414,6 +418,7 @@ public function data_absen(){
         $row[] = $l_saldo;
         $data[] = $row;
       }
+      $rnwar = date('md').'fc';
       foreach ($list as $jurnal) {
           if($ling=='area2'){
               if(strlen($ar)==5){
@@ -421,7 +426,6 @@ public function data_absen(){
                 $nojur = $jurnal->akjur_nomor;
                 $urai = $jurnal->akjur_ket;
                 $htg = $this->akuntansi->jumhit($nojur);
-//                $hit = $htg>0?$htg:'<i class="glyphicon glyphicon-question-sign" style="color:#FF0000;"></i>';
                 $jml = $this->akuntansi->jumnil($nojur);
                 $jum1 =  number_format(floatval($jml));
                 $jum = $jum1!=0?'<span style="color:#FF0000;">'.$jum1.'</span>':$jum1;
@@ -439,22 +443,30 @@ public function data_absen(){
                   $ipost = $jurnal->aktrx_post;
               }
 
+              $cnmpar = $this->akuntansi->caribag($jurnal->akjur_kopar);
+
               $no++;
               $row = array();
               if(strlen($ar)==25){
                 $row[] = $tgl;
               }
+
               $row[] = strlen($ar)==5?$tgl:$trxno;
               $row[] = strlen($ar)==5?$nojur:$trxjur;
-              $row[] = strlen($ar)==5?strtoupper($urai):$trxnm;
+              $row[] = strlen($ar)==5?($cekkel == '00'?'<span style="color:#'.$rnwar.'">['.str_replace('Paroki ','',$cnmpar['varnama']).']</span> '.strtoupper($urai):strtoupper($urai)):($cekkel == '00'?'<span style="color:#'.$rnwar.'">['.str_replace('Paroki ','',$cnmpar['varnama']).']</span> '.$trxnm:$trxnm);
               $row[] = strlen($ar)==5?($jum):strtoupper($trxket);
               $row[] = strlen($ar)==5?($cor==1?'X':$htg):$trxdbt;
               if(strlen($ar)==25){
                 $row[] = $trxkre;
               } else {
-                $row[] = $ipost==0?'X':'<i class="fa fa-check blue"></i>';
+                $row[] = $ipost==0?'X':'+';
               }
               $data[] = $row;
+              if(strlen($ar) == 5){
+                if($jum == 0 && $cor != 1 && $ipost == 0){
+                  $lstval[] = $row;
+                }
+              }
           } elseif($ling=='area3') {
             $cort = substr($jurnal->aktrx_nomor,-1);
               $nourt = $jurnal->aktrx_urut;
@@ -522,6 +534,9 @@ public function data_absen(){
           "recordsFiltered" => $this->akuntansi->count_filtered($ar),
           "data" => $data
       );
+
+//      $this->dbcore1->simcok('lstval','lstval');
+
   echo json_encode($output);
       }
 
@@ -2616,19 +2631,23 @@ public function data_absen(){
 
 
     function variabel(){
+      $cekkel = $this->dbcore1->routekey(get_cookie('simakses'),'d');
         $list = $this->akuntansi->cvariabel();
         $data = array();
         $no = $_POST['start'];
         foreach ($list as $isika5) {
+          $idakses = $this->dbcore1->routekey(get_cookie('simakses'),'d');
+          $idkop = $this->dbcore1->routekey(get_cookie('simkop'),'d');
                 $ka5nmr = /*$isika5->ka_1.'.'.$isika5->ka_2.'.'.*/$isika5->ka_3.'.'.$isika5->ka_4.'.'.$isika5->ka_5;
                 $ka5nama = $isika5->ka_nama;
                 $ka5up = date('d/m/Y H:i',strtotime($isika5->ka_up));
+                $cnmpar = $this->akuntansi->caribag(substr($idkop,0,2).substr($isika5->ka_5,0,2));
 
                 $no++;
                 $row = array();
                 $row[] = $no;
                 $row[] = $ka5nmr;
-                $row[] = $ka5nama;
+                $row[] = $cekkel == '00'?'['.str_replace('Paroki ','',$cnmpar['varnama']).'] '.$ka5nama:$ka5nama;
                 $row[] = $ka5up;
                 $data[] = $row;
         }
@@ -2670,18 +2689,25 @@ public function data_absen(){
           echo json_encode($output);
         }
 
-        public function posting1($id = FALSE){
-          if(!$id){
-            $id = $this->input->post('idjur');
-          }
-          $this->akuntansi->trx_posting($id,$this->dbcore1->routekey(get_cookie('simkop'),'d'));
-          exit;
-        }
+  public function posting1($id = FALSE){
+    if(!$id){
+      $id = $this->input->post('idjur');
+      $prm = $this->input->post('param');
+    }
+
+    if($prm == ''){
+      $cekpst = $this->akuntansi->trx_posting($id,$this->dbcore1->routekey(get_cookie('simkop'),'d'));
+    } else {
+      $cekpst = $this->akuntansi->batch_posting($prm,$this->dbcore1->routekey(get_cookie('simkop'),'d'));
+    }
+    echo json_encode($cekpst);
+  }
 
 
   public function koreksi2($id = FALSE){
     if(!$id){
       $id = $this->input->post('idjur');
+      $add1 = $this->input->post('param');
     }
     $dptcor = 0;
     $dt = new DateTime();
@@ -2708,7 +2734,7 @@ public function data_absen(){
           'akjur_ket' => 'Koreksi Jurnal '.$nojur1,
           'akjur_sts' => '1',
           'akjur_akses' => $korj['akjur_akses'],
-          'akjur_kopar'=>$this->dbcore1->routekey(get_cookie('simkop'),'d')
+          'akjur_kopar'=>$add1 == ''?$this->dbcore1->routekey(get_cookie('simkop'),'d'):$add1,
         );
         $this->akuntansi->jur_koreksi($isikorj,$nojur1);
       }
@@ -2723,7 +2749,7 @@ public function data_absen(){
           'aktrx_ket' => $kort['aktrx_ket'],
           'aktrx_jum' => $kort['aktrx_jum'],
           'aktrx_akses' => $kort['aktrx_akses'],
-          'akjur_kopar'=>$this->dbcore1->routekey(get_cookie('simkop'),'d'),
+          'akjur_kopar'=>$add1 == ''?$this->dbcore1->routekey(get_cookie('simkop'),'d'):$add1,
           'aktrx_mark' => 1
         );
         $updkort = array(
@@ -2891,7 +2917,6 @@ exit;
             }
             $nama = $this->akuntansi->get_per($this->input->post($nmr2));
             $data = array(
-                'aktrx_urut' => $urut,
                 'aktrx_nomor' => $this->input->post($nmr2),
                 'aktrx_nojur' => $this->input->post($nojur),
                 'aktrx_nama' => $nama['ka_nama'],

@@ -2,41 +2,56 @@
 $(document).ajaxStop($.unblockUI);
   $(document).ready(function (){
     catat('Buka modul Isi Detail Transaksi');
+/*
     $('.close').click(function(){
       reload_table();
     });
+*/
     form_cok();
     fillgrid();
+    setTimeout(function(){
+      if(varopta == '00'){
+        $('.opta2').text('Valid');
+        $('.panatas').addClass('fadeOut animated delay-1s');
+        setTimeout(function(){
+          $('.panatas').addClass('hide');
+        },500);
+      } else {
+        $('.opta2').text('Post');
+        $('.panatas').removeClass('hide');
+      }
+        $("#myNav").css('height','0%');
+        $('.sidebar').css('opacity',1);
+    },1000);
 
 });
 
-$("#transaksi").submit(function (e){
-  e.preventDefault();
-  var url = $(this).attr('action');
-  var dataser = $(this).serialize();
+function gotransaksi(){
+//  e.preventDefault();
+  var url = $("#transaksi").attr('action');
+  var dataser = $("#transaksi").serialize();
   var detcat1 = $('#ft_ket').val();
   var detcat2 = $('#ft_jum').val();
-  if(detcat2>0){
+  if(parseInt(detcat2.replace(',',''))>0){
     $.ajax({
-      url : url,
-      type: "POST",
-      dataType: "JSON",
-      data: dataser,
-      success: function(data){
-        $('#ft_nmr1').val(''),trigger('change');
-        $('#ft_nmr2').val('').trigger('change');
-        $('#ft_nama').val('');
-        $('#ft_ket').val('');
-        $('#ft_jum').val('');
-        catat("Isi data " + detcat1 + " " + detcat2);
-        fillgrid();
-      },
-      error: function (jqXHR, textStatus, errorThrown)
-      {
-      }
+        url:url,
+        type:'POST',
+        data:dataser,
+        success: function(data){
+          $('#ft_nmr1').val('').trigger('change');
+          $('#ft_nmr2').val('').trigger('change');
+          $('#ft_nama').val('');
+          $('#ft_ket').val('');
+          $('#ft_jum').val('');
+        },
+    }).done(function (data){
+      table.ajax.reload();
+//            tbinfo.ajax.reload();
     });
+  } else {
+    console.log('Cek nilai: '+parseInt(detcat2.replace(',','')));
   }
-});
+};
 
 $('#ft_jns').select2({
     minimumResultsForSearch: -1,
@@ -191,7 +206,7 @@ function convertDate(inputFormat) {
         var njur = decode_cookie(getCookie('jur_nmr'));
         var url = "<?php echo base_url(); ?>markas/core1/fillgrid/area3"+njur;
         if ( $.fn.dataTable.isDataTable( '#tfillgrid' ) ) {
-            table = $('#tfillgrid').DataTable();
+//            table = $('#tfillgrid').DataTable();
             location.reload();
         }
         else {
@@ -237,7 +252,7 @@ function convertDate(inputFormat) {
                 $(api.column(5).footer()).html('');
             },
               "lengthMenu": [[24, 48, 72, -1], [24, 48, 72, "All"]],
-              "destroy": true,
+//              "destroy": true,
               "paging": true,
               "language":{
               "decimal":        ".",
@@ -258,67 +273,41 @@ function convertDate(inputFormat) {
               "order": [], //Initial no order.
 
               "dom": '<"top">rt<"bottom"><"clear">',
-              "buttons": [
-              {
-                  "extend": 'print',
-                  "message": 'Daftar Transaksi'
-              },
-              {
-                  "extend": 'excel',
-                  "message": 'Daftar Transaksi'
-              },
-              {
-                  "extend": 'copy',
-                  "message": 'Disalin dari HIS-2017 RSK St. Antonius Ampenan'
-              },
-              {
-                  "extend": 'pdf',
-                  "message": 'Daftar Transaksi',
-                  "exportOptions": {
-                      columns: ':visible'
-                  }
-              },
-                  "colvis"
-          ],
+              "buttons": [],
 
               // Load data for the table's content from an Ajax source
               "ajax":{
               "url": url,
-              "type": "POST",
-              error: function (jqXHR, textStatus, errorThrown)
-              {
-                  new PNotify({
-                      title: 'Kesalahan Sistim',
-                      type: 'danger',
-                      text: 'Gagal menyusun data',
-                      styling: 'bootstrap3'
-                  });
-              }
-            },
-
-              //Set column definition initialisation properties.
+              "type": "POST"
+              },
+              scrollY: 400,
+              scroller: {
+                  loadingIndicator: true
+              },
               "columnDefs": [
                 {
                   targets: [ 0,1,2,3,4,5 ],
                   orderable: false
-                  },
-                      {
-                          targets: [ 3,4 ],
-                          render: $.fn.dataTable.render.number( '.', ',', 0),
+                },
+                {
+                  targets: [ 3,4 ],
+                  render: $.fn.dataTable.render.number( '.', ',', 0),
 
-                          createdCell: function (td, cellData, rowData, row, col)
-                          {
-                            $(td).css('text-align', 'right');
-                              if ( cellData < 0 ) {
-                                  $(td).css('color', 'red');
-                                }
-                          }
-                      }
-                    ]
-
+                  createdCell: function (td, cellData, rowData, row, col)
+                  {
+                    $(td).css('text-align', 'right');
+                    if ( cellData < 0 ) {
+                      $(td).css('color', 'red');
+                    }
+                  }
+                }
+              ]
           });
+          $('.dt-button').addClass('btn btn-icon btn-success heartbeat animated delay-1s');
+          $('.btn').removeClass('dt-button');
+          reload_table();
         }
-        reload_table();
+//        reload_table();
       }
 
 /*
@@ -335,5 +324,25 @@ setInterval( function () {
     table.ajax.reload();
 }, 40000 );
 */
+$.listen('parsley:field:validate', function() {
+  validateFront();
+});
+$('#transaksi #submitTrx').on('click', function() {
+  $('#transaksi').parsley().validate();
+  validateFront();
+});
+var validateFront = function() {
+  if (true === $('#transaksi').parsley().isValid()) {
+    $('.bs-callout-info').removeClass('hidden');
+    $('.bs-callout-warning').addClass('hidden');
+  } else {
+    $('.bs-callout-info').addClass('hidden');
+    $('.bs-callout-warning').removeClass('hidden');
+  }
+};
+try {
+  hljs.initHighlightingOnLoad();
+} catch (err) {}
+
 
 </script>

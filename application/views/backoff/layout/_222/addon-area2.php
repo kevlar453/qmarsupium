@@ -1,13 +1,24 @@
 <script>
     $(document).ready(function (){
+      setCookie('seto','2');
       catat('Buka modul Isi Transaksi');
-        fillgrid();
-        fillinfo();
-        plus_excel();
-    });
-
-    $('#info_tgl').change(function(){
-      fillinfo();
+      fillgrid('');
+      plus_excel();
+      setTimeout(function(){
+        if(varopta == '00'){
+          $('.opta2').text('Valid');
+          $('.panatas').addClass('fadeOut animated delay-1s');
+          setTimeout(function(){
+            $('.panatas').addClass('hide');
+          },500);
+        } else {
+          cekreport();
+          $('.opta2').text('Post');
+          $('.panatas').removeClass('hide');
+        }
+          $("#myNav").css('height','0%');
+          $('.sidebar').css('opacity',1);
+      },1000);
     });
 
     $("#transaksi").submit(function (e){
@@ -40,14 +51,16 @@
 
       $('#tfillgrid').on('click', 'tbody tr', function() {
         var data = table.row(this).data();
+        var ctagl = data[0];
         var ctrx = data[1];
+        var cpar = data[2].split(']');
+        var cselisih = data[3];
         var ccor = data[4];
         var cpost = data[5];
 
         $.ajax({
          type: "post",
          url: "<?php echo base_url(); ?>markas/core1/caritrxdet/"+ctrx,
-//         data: {id:id},
          cache: false,
          async: false,
          success: function(data){
@@ -60,6 +73,7 @@
              var jdlmod = '';
              var addt = '';
              var nilai = 0;
+            var getkop = '';
              for (var i = 0; i <= jumdata; i++) {
                nilai = parseFloat(isidet[i].aktrx_jum);
                jdlmod = isidet[i].aktrx_nomor;
@@ -69,14 +83,36 @@
                  dettbl += '<td>'+(isidet[i].aktrx_jns=='D'?Intl.NumberFormat().format(nilai.toFixed(2)):0)+'</td>';
                  dettbl += '<td>'+(isidet[i].aktrx_jns=='K'?Intl.NumberFormat().format(nilai.toFixed(2)):0)+'</td>';
                dettbl += '</tr>';
+              getkop = isidet[i].aktrx_nomor;
              }
-             if(ccor != 'X'){
-               addt = "<a class=\"btn btn-lg btn-warning\" href=\"javascript:void(0)\" title=\"Koreksi\" onclick=\"hapusjurnal('"+ctrx+"')\">Koreksi</a><a class=\"btn btn-lg btn-info\" onclick=\"godetail('"+ctrx+"')\">Detail</a><a class=\"btn btn-lg btn-success\" onclick=\"gopost('"+ctrx+"')\">Posting</a>";
+            setCookie('precor','01'+getkop.substr(7,2));
+
+            if(varopta != '00'){
+              if(ccor != 'X' && cpost == 'X'){
+                addt = "<a class=\"btn btn-lg btn-warning\" href=\"javascript:void(0)\" title=\"Koreksi\" onclick=\"hapusjurnal('"+ctrx+"')\">Koreksi</a><a class=\"btn btn-lg btn-info\" onclick=\"godetail('"+ctrx+"')\">Detail</a>"+(cselisih == 0?"<a class=\"btn btn-lg btn-success\" onclick=\"gopost('"+ctrx+"')\">Posting</a>":"");
+              } else if (ccor == 'X' && cpost == 'X') {
+               addt = "Dikoreksi petugas paroki";
+              } else if (ccor == 'X' && cpost == '+') {
+               addt = "Dikoreksi petugas keuskupan.<br/><span class='purple'>Silahkan posting transaksi pengganti sebelum tanggal tutup buku jika diperlukan.</span>";
+              } else {
+               addt = "Sudah diposting.<br>Menunggu validasi.";
              }
+            } else {
+              if(ccor != 'X' && cpost == 'X'){
+                addt = "<a class=\"btn btn-lg btn-warning\" href=\"javascript:void(0)\" title=\"Koreksi\" onclick=\"hapusjurnal('"+ctrx+"')\">Koreksi</a><a class=\"btn btn-lg btn-success\" onclick=\"gopost('"+ctrx+"')\">Valid</a>";
+              } else if (ccor == 'X' && cpost == 'X') {
+                addt = "Mendapat koreksi.<br/><span class='blue'>Akan dikirim transaksi perbaikan jika ada.</span>";
+              } else {
+              addt = "Sudah divalidasi.";
+            }
+            }
+
+
+
              swal({
                title: "Transaksi " + ctrx,
 //               text: isidet[0][1],
-               text: "<div class=\"table-responsive\"><table id=\"filltambah\" class=\"table table-condensed table-striped table-hover dt-responsive\" style=\"font-size:1em;margin:5px;width:100%;\"><thead><tr><th>Kode</th><th>Uraian</th><th>Debet</th><th>Kredit</th></tr></thead><tbody>"+dettbl+"</tbody></table></div><hr/>" + (cpost=='X'?addt:'Sudah Posting'),
+               text: "<div class=\"table-responsive\"><table id=\"filltambah\" class=\"table table-condensed table-striped table-hover dt-responsive\" style=\"font-size:1em;margin:5px;width:100%;\"><thead><tr><th colspan=\"2\">"+(varopta == '00'?(cpar[0]+"]"):"")+"</th><th colspan=\"2\">"+ctagl+"</th></tr><tr><th>Kode</th><th>Uraian</th><th>Debet</th><th>Kredit</th></tr></thead><tbody>"+dettbl+"</tbody></table></div><hr/>" + addt,
                html: true,
                allowOutsideClick:true,
                showCancelButton: false,
@@ -89,7 +125,7 @@
          });
       });
 
-      $('#fj_tgl').change(function(){
+      $('#fj_tgl').on('change',function(){
         $('#fj_nomor').val('');
         $('#ft_jnsjur').val('X').trigger('change');
       });
@@ -133,6 +169,119 @@
 
 
       });
+
+      function cekreport(){
+        var gourl = '<?php echo base_url();?>markas/reports/get_keu';
+        $.ajax({
+            url: gourl,
+            type: 'POST',
+            data: jQuery.param({
+              katcari: 'thn',
+              valcari:''
+            }),
+            success: function(itahun) {
+              if(itahun != ''){
+                var isidata = JSON.parse(itahun);
+                var icel = '';
+                for (var i = 0; i <= isidata.length-1; i++) {
+                  icel += '<div><button class="btn btn-app red pull-right" onclick="cekdetreport(\''+isidata[i].waktu+'\')">'+isidata[i].waktu+'</btn></div>';
+                  icel += '<div id="list'+isidata[i].waktu+'"  class="tagsinput" style="width:100%;"></div>';
+                  icel += '<hr/>';
+                }
+                $('#buttable').append(icel);
+              } else {
+                $("#myNav").css('width','100%');
+                $('.sidebar').css('opacity',0);
+                swal({
+                  title: "Data Kosong",
+                  text: "Halaman dapat dibuka jika sudah ada data yang "+(varopta=='00'?'diperiksa':'diposting')+"!",
+                  type: "warning",
+                  timer: 5000,
+                  showCancelButton: false,
+                  showConfirmButton: true,
+                  closeOnConfirm: false,
+                  animation: "pop"
+                },
+                function(inputValue){
+                  setTimeout(function(){
+                    location.replace('/markas/core1');
+                  }, 1000);
+                });
+              }
+
+            },
+            error: function (jqXHR, textStatus, errorThrown)
+            {
+                new PNotify({
+                    title: 'Kesalahan Sistim',
+                    type: 'danger',
+                    text: 'Gagal menyusun data #ft_nmr2_1',
+                    styling: 'bootstrap3'
+                });
+            catat("Gagal menyusun data #ft_nmr2_1");
+            }
+        });
+      }
+
+      function cekdetreport(piltahun){
+        var gourl = '<?php echo base_url();?>markas/reports/get_keu';
+        $.ajax({
+            url: gourl,
+            type: 'POST',
+            data: jQuery.param({
+              katcari: 'bln',
+              valcari: piltahun
+            }),
+            success: function(itahun) {
+              var isidata = JSON.parse(itahun);
+              var icel = '';
+              $('.bulan').remove();
+              for (var i = 0; i <= isidata.length-1; i++) {
+                icel += '<div class="bulan"><button class="btn btn-app btn-sm" onclick="gopost(\''+piltahun+isidata[i].angka+'\')">'+isidata[i].huruf+'</btn></div>';
+              }
+              $('#list'+piltahun).append(icel);
+            },
+            error: function (jqXHR, textStatus, errorThrown)
+            {
+                new PNotify({
+                    title: 'Kesalahan Sistim',
+                    type: 'danger',
+                    text: 'Gagal menyusun data #ft_nmr2_1',
+                    styling: 'bootstrap3'
+                });
+            catat("Gagal menyusun data #ft_nmr2_1");
+            }
+        });
+      }
+
+      function saringdet(partgl){
+        table.destroy();
+        function pad(s) { return (s < 10) ? '0' + s : s; }
+        var gourl = '<?php echo base_url();?>markas/reports/hitbulan';
+        $.ajax({
+            url: gourl,
+            type: 'POST',
+            data: jQuery.param({
+              blnthn: partgl
+            }),
+            success: function(itahun) {
+              fillgrid(partgl.substr(0,4)+'-'+pad(partgl.substr(4,partgl.length-4))+'-01'+partgl.substr(0,4)+'-'+pad(partgl.substr(4,partgl.length-4))+'-'+pad(itahun));
+            },
+            error: function (jqXHR, textStatus, errorThrown)
+            {
+                new PNotify({
+                    title: 'Kesalahan Sistim',
+                    type: 'danger',
+                    text: 'Gagal menyusun data #ft_nmr2_1',
+                    styling: 'bootstrap3'
+                });
+            catat("Gagal menyusun data #ft_nmr2_1");
+            }
+        });
+
+      }
+
+
 
       function godetail(keycari) {
         $.blockUI();
@@ -209,13 +358,18 @@
         });
     }
 
-    function fillgrid(){
+    function fillgrid(rentang){
         table = $('#tfillgrid').DataTable({
           "createdRow": function(row, data, dataIndex){
-            if( data[4] ==  'X'){
+            if(data[4] ==  'X' && data[5] ==  'X'){
+              $(row).css('font-style','italic');
+//              $(row).css('font-weight','bold');
+              $(row).css('background-color','#febdbd');
+              $(row).css('color','#767676');
+            } else if(data[4] ==  'X' && data[5] ==  '+'){
               $(row).css('font-style','italic');
               $(row).css('font-weight','bold');
-              $(row).css('background-color','#f2a1a1');
+              $(row).css('background-color','#fbacac');
               $(row).css('color','#767676');
             }
           },
@@ -284,10 +438,10 @@
             }
             ],
             "ajax": {
-            "url": "<?php echo base_url(); ?>markas/core1/fillgrid/area2",
+            "url": "<?php echo base_url(); ?>markas/core1/fillgrid/area2"+(rentang != ''?rentang:''),
             "type": "POST"
             },
-            scrollY: 300,
+            scrollY: (varopta == '00'?500:400),
             scroller: {
                 loadingIndicator: true
             },
@@ -300,7 +454,7 @@
         });
         $('.dt-button').addClass('btn btn-icon btn-success heartbeat animated delay-1s');
         $('.btn').removeClass('dt-button');
-        table.ajax.reload();
+        reload_table();
 //        tbinfo.ajax.reload();
     }
 
@@ -310,43 +464,94 @@
 
 
     function hapusjurnal(id){
-      swal({
-          title: "Koreksi Jurnal?",
-          text: "Belum ada fitur UNDO untuk proses ini!",
-          type: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#DD6B55",
-          confirmButtonText: "Ya, lajutkan!",
-          closeOnConfirm: false
-      }, function (isConfirm) {
-          if (!isConfirm) return;
-          $.ajax({
-              url: "<?php echo base_url(); ?>markas/core1/koreksi2/",
-              type: "POST",
-              data:jQuery.param({
-                idjur:id
-              }),
-              success: function (data) {
-                swal({
-                  title: "Sukses!",
-                  text: "Jurnal BERHASIL dikoreksi.",
-                  type: "success"
-                });
-              },
-              error: function (xhr, ajaxOptions, thrownError) {
-                swal("Gangguan!", "Jurnal GAGAL koreksi gagal!", "error");
-              }
+      var loop1 = '';
+      var loop2 = decode_cookie(getCookie('simkop'));
+      var loop3 = decode_cookie(getCookie('simakses'));
+      console.log('p1: '+loop1+', '+loop2+', '+loop3);
+      $.ajax({
+       type: "post",
+       url: "<?php echo base_url(); ?>markas/core1/caritrxdet/"+id,
+       cache: false,
+       async: false,
+       success: function(data){
+        if(data){
+          var detdata = JSON.parse(data);
+          loop1 = detdata[0].akjur_kopar;
+          console.log('p2: '+loop1+', '+loop2+', '+loop3);
+          swal({
+              title: "Koreksi Jurnal?",
+              text: "Belum ada fitur UNDO untuk proses ini!",
+              type: "warning",
+              showCancelButton: true,
+              confirmButtonColor: "#DD6B55",
+              confirmButtonText: "Ya, lajutkan!",
+              closeOnConfirm: false
+          }, function (isConfirm) {
+              if (!isConfirm) return;
+              $.ajax({
+                  url: "<?php echo base_url(); ?>markas/core1/koreksi2/",
+                  type: "POST",
+                  delay: 500,
+                  cache: false,
+                  async: false,
+                  data:jQuery.param({
+                    idjur:id,
+                    param: loop1
+                  }),
+                  success: function (data) {
+                    console.log('p3: '+loop1+', '+loop2+', '+loop3);
+                    if(varopta == '00'){
+                      setCookie('simkop',loop1);
+                      setCookie('simakses',loop1.substr(-2));
+                      $.ajax({
+                          url: "<?php echo base_url(); ?>markas/core1/koreksi2/",
+                          type: "POST",
+                          delay: 500,
+                          cache: false,
+                          async: false,
+                          data:jQuery.param({
+                            idjur:id,
+                            param:''
+                          }),
+                          success: function (data2) {
+                            console.log('p4: '+loop1+', '+loop2+', '+loop3);
+                              setCookie('simkop',loop2);
+                              setCookie('simakses',loop3);
+                              swal({
+                                title: "Sukses!",
+                                text: "Jurnal BERHASIL dikoreksi.",
+                                type: "success",
+                                timer: 1000
+                              });
+                          },
+                          error: function (xhr, ajaxOptions, thrownError) {
+                            swal("Gangguan!", "Jurnal GAGAL koreksi gagal!", "error");
+                          }
+                      });
+                    } else {
+                      swal({
+                        title: "Sukses!",
+                        text: "Jurnal BERHASIL dikoreksi.",
+                        type: "success"
+                      });
+                    }
+                  },
+                  error: function (xhr, ajaxOptions, thrownError) {
+                    swal("Gangguan!", "Jurnal GAGAL koreksi gagal!", "error");
+                  }
+              });
+              reload_table();
           });
-          reload_table();
+        }
       }
-    );
+    });
     catat("COR " + id);
-  }
+    }
 
   function gopost(id){
     swal({
         title: "Posting Jurnal?",
-        text: "Jurnal dan transaksinya sudah benar dan siap lapor.",
+        text: varopta == '00'?"Jurnal dan tansaksinya sudah valid?":"Jurnal dan transaksinya sudah benar dan siap lapor.",
         type: "warning",
         showCancelButton: true,
         confirmButtonColor: "#DD6B55",
@@ -354,71 +559,43 @@
         closeOnConfirm: false
     }, function (isConfirm) {
         if (!isConfirm) return;
+
         $.ajax({
             url: "<?php echo base_url(); ?>markas/core1/posting1/",
             type: "POST",
             data:jQuery.param({
-              idjur:id
+              idjur:id.length == 10?id:'',
+              param: id.length == 10?'':id
             }),
             success: function (data) {
               swal({
                 title: "Sukses!",
-                text: "Jurnal BERHASIL diposting.",
+//                text: JSON.stringify(data),
+                text: JSON.parse(data) === null?(varopta == '00'?"Jurnal BERHASIL divalidasi.":"Jurnal BERHASIL diposting."):"",
+                timer:1000,
                 type: "success"
               });
+
+/*
+              swal({
+                title: "Sukses!",
+                text: JSON.parse(data) === null?(varopta == '00'?"Jurnal BERHASIL divalidasi.":"Jurnal BERHASIL diposting."):"",
+                timer:1000,
+                type: "success"
+              });
+*/
             },
             error: function (xhr, ajaxOptions, thrownError) {
               swal("Gangguan!", "Jurnal GAGAL posting!", "error");
             }
         });
+
         reload_table();
     }
   );
   catat("POST " + id);
 }
 
-//---------------------------- start --- info
-    function fillinfo(){
-        var ctgl = $('#info_tgl').val();
-        $.ajax({
-            url : "<?php echo site_url('markas/core1/info');?>/" + ctgl + "Daktrx_jum",
-            type: "GET",
-            dataType: "JSON",
-            success: function(data)
-            {
-                var jumjur1 = new Intl.NumberFormat().format(data.aktrx_jum);
-                $('[name="up_dbt"]').val(jumjur1);
-            }
-        });
-        $.ajax({
-            url : "<?php echo site_url('markas/core1/info');?>/" + ctgl + "Kaktrx_jum",
-            type: "GET",
-            dataType: "JSON",
-            success: function(data)
-            {
-                var jumjur2 = new Intl.NumberFormat().format(data.aktrx_jum);
-                $('[name="up_krd"]').val(jumjur2);
-            }
-        });
-        $.ajax({
-            url : "<?php echo site_url('markas/core1/info');?>/" + ctgl + "xaktrx_jum",
-            type: "GET",
-            dataType: "JSON",
-            success: function(data)
-            {
-                var jumjur3 = data.aktrx_jum;
-                $('[name="up_jml"]').val(jumjur3);
-            }
-        });
-    }
-
-//---------------------------- end ----- info
-/*
-    setInterval( function () {
-        table.ajax.reload();
-        tbinfo.ajax.reload();
-    }, 300000 );
-*/
     $.listen('parsley:field:validate', function() {
       validateFront();
     });

@@ -6,7 +6,17 @@ $(document).ajaxStop($.unblockUI);
         hidform();
         hidpesan();
         $('#hlak1').addClass('fadeOutUp hidden'); $('#hlak1').removeClass('fadeInDown');
-
+        setTimeout(function(){
+          if(varopta == '00'){
+            $('.opta2').text('Valid');
+            $('.panatas').addClass('hide');
+          } else {
+            $('.opta2').text('Posting');
+            $('.panatas').removeClass('hide');
+          }
+            $("#myNav").css('height','0%');
+            $('.sidebar').css('opacity',1);
+        },1000);
     });
 //    $jlak = array('00'=>'-Pilih Akun-','01'=>'Group GL-1','02'=>'Group GL-2','03'=>'Group GL-3','04'=>'Group GL-4');
 

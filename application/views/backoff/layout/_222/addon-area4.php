@@ -57,7 +57,17 @@ $(document).ready(function (){
   fillgrid(ca1,ca2,ca3);
   var ctx = document.getElementById("chart_buku").getContext("2d");
   window.myLine = new Chart(ctx, config);
-
+  setTimeout(function(){
+    if(varopta == '00'){
+      $('.opta2').text('Valid');
+      $('.panatas').addClass('hide');
+    } else {
+      $('.opta2').text('Posting');
+      $('.panatas').removeClass('hide');
+    }
+      $("#myNav").css('height','0%');
+      $('.sidebar').css('opacity',1);
+  },1000);
 });
 
 $("#saringbuku").click(function (e){
@@ -159,7 +169,7 @@ function cekreport(){
           $('.sidebar').css('opacity',0);
           swal({
             title: "Data Kosong",
-            text: "Halaman dapat dibuka jika sudah ada data yang diposting!",
+            text: "Halaman dapat dibuka jika sudah ada data yang "+(varopta=='00'?'diperiksa':'diposting')+"!",
             type: "warning",
             timer: 5000,
             showCancelButton: false,

@@ -4,6 +4,17 @@
     catat('Buka modul Rincian Billing HIS');
     setCookie('seto','83');
         fillgrid('0');
+        setTimeout(function(){
+          if(varopta == '00'){
+            $('.opta2').text('Valid');
+            $('.panatas').addClass('hide');
+          } else {
+            $('.opta2').text('Posting');
+            $('.panatas').removeClass('hide');
+          }
+            $("#myNav").css('height','0%');
+            $('.sidebar').css('opacity',1);
+        },1000);
   });
 
   $('.umum').click(function(e){

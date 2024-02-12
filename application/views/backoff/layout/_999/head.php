@@ -48,6 +48,9 @@
     <link href="<?php echo base_url();?>dapur0/vendors/pnotify/dist/pnotify.nonblock.css" rel="stylesheet">
     <link href="<?php echo base_url();?>dapur0/vendors/animate.css/animate.css" rel="stylesheet">
 
+    <!-- parsley -->
+    <link href="<?php echo base_url();?>dapur0/vendors/parsleyjs/src/parsley.css" rel="stylesheet">
+
     <!-- jstree -->
     <link href="<?php echo base_url();?>dapur0/vendors/jstree/dist/themes/default/style.css" rel="stylesheet">
 

@@ -14,11 +14,11 @@
                 <div class="col-md-4 col-sm-12 col-xs-12">
                     <div class="container cropper">
                       <?php
-                      echo form_open('markas/core1/akharian/area3',array('id'=>'transaksi','data-parsley-validate class'=>'form-horizontal form-label-left'));
+                      echo form_open('/markas/core1/akharian/area3',array('id'=>'transaksi','data-parsley-validate class'=>'form-horizontal form-label-left'));
                       ?>
                       <div class="col-md-6 col-sm-12 col-xs-12">
                         <?php
-                        echo form_label('No.Jurnal','ft_jurno',array('class'=>'input-group')); ?> <?php echo form_error('ft_jurno');
+                        echo form_label('No.Jurnal','ft_nojur',array('class'=>'input-group')); ?> <?php echo form_error('ft_jurno');
                         echo form_input(array('id' => 'ft_nojur', 'name' => 'ft_nojur','class'=>'form-control', 'value' => '','readonly' => 'readonly'));
                         ?>
                       </div>
@@ -65,13 +65,13 @@
                         <input id="ft_nama" name="ft_nama" type="hidden">
                         <input id="ft_akses" name="ft_akses" type="hidden" value="<?php echo $akses; ?>">
                       </div>
-                      <div class="col-md-12 col-sm-12 col-xs-12">
-                        <hr/>
-                        <input type="submit" class="btn btn-success" id="exampleInputPassword2" value="TAMBAH">
-                      </div>
                       <?php
                       echo form_close();
                       ?>
+                      <div class="col-md-12 col-sm-12 col-xs-12">
+                        <hr/>
+                        <button class="btn btn-success" id="submitTrx" onclick="gotransaksi()">TAMBAH"</button>
+                      </div>
                     </div>
                   </div>
                   <div class="col-md-8 col-sm-12 col-xs-12">

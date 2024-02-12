@@ -109,6 +109,9 @@ function cleancok(){
   deleteCookie('qtitle');
   deleteCookie('rmmod');
   deleteCookie('trx_jns');
+  deleteCookie('simakses');
+  deleteCookie('simkop');
+  deleteCookie('precor');
 }
 
 function setCookie(name, value, days) {

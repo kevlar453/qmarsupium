@@ -6,13 +6,15 @@
       <div class="x_title">
           <h2>Daftar Jurnal</i></h2>
           <ul class="nav navbar-right panel_toolbox">
+            <li><button type="button" class="btn btn-sm btn-success" onclick="table.destroy();fillgrid('');" title="Reset"><i class="glyphicon glyphicon-refresh"></i></button></li>
+              <li><button type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target=".impjurnal" title="Import Excel"><i class="glyphicon glyphicon-import"></i></button></li>
               <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
-              <li><a title="Data: <?php echo $operator['pgpnama']?>"><i class="fa fa-question"></i></a></li>
+              <li><a title="Bantuan"  data-toggle="modal" data-target=".mdisikode"><i class="fa fa-question"></i></a></li>
           </ul>
           <div class="clearfix"></div>
       </div>
       <div class="col-md-12 col-sm-12 col-xs-12">
-        <div class="x_content">
+        <div class="x_content panatas">
           <div class="col-md-6 col-sm-12 col-xs-12">
             <h2>Isi Jurnal</h2>
             <div class="clearfix"></div>
@@ -68,57 +70,15 @@
     </div>
 
     <div class="col-md-6 col-sm-12 col-xs-12">
-                <h2>Summary</h2>
                 <div class="container cropper">
-                    <?php
-                        echo form_open('',array('id'=>'tupdate','data-parsley-validate class'=>'form-horizontal form-label-left'));
-                        ?>
-                        <div class="col-md-12 col-sm-12 col-xs-12">
-                            <?php
-                                echo form_label('Transaksi per','inf_tgl',array('class'=>'input-group'));
-                                echo form_input(array('id' => 'info_tgl', 'name' => 'info_tgl','class'=>'form-control datepicker','value'=>date("d-m-Y",now())));
-                            ?>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    <hr/>
+                      <div class="lapdetail">
+                        <div id="buttable" style="width:100%;">
                         </div>
-                        <?php
-                        echo form_close();
-                        ?>
-
-                        <div class="col-md-12 col-sm-12 col-xs-12">
-                        <table id="terupdate" class="display table-compact table-striped table-hover table-responsive table-full-width" cellspacing="0" width="100%">
-                            <thead>
-                                <tr>
-                                    <th>Jml Jurnal</th>
-                                    <th>Debet</th>
-                                    <th>Kredit</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <?php
-                                        echo form_input(array('up_jml' => 'up_jml', 'name' => 'up_jml','class'=>'form-control', 'value' => '---','readonly' => 'readonly'));
-                                        ?>
-                                    </td>
-                                    <td>
-                                        <?php
-                                        echo form_input(array('id' => 'up_dbt', 'name' => 'up_dbt','class'=>'form-control', 'value' => '---','readonly' => 'readonly'));
-                                        ?>
-                                    </td>
-                                    <td>
-                                        <?php
-                                        echo form_input(array('id' => 'up_krd', 'name' => 'up_krd','class'=>'form-control', 'value' => '---','readonly' => 'readonly'));
-                                        ?>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
                       </div>
-                      <div class="col-md-12 col-sm-12 col-xs-12">
-                        <hr/>
-                            <button type="button" class="btn btn-sm btn-success pull-right" data-toggle="modal" data-target=".impjurnal" title="Import Excel"><i class="glyphicon glyphicon-import"></i></button>
-                            <button type="button" class="btn btn-sm btn-warning pull-right" data-toggle="modal" data-target=".mdisikode" title="Kode yang sudah dipakai"><i class="glyphicon glyphicon-question-sign"></i></button>
-                          </div>
-                        </div>
+                  </div>
+                </div>
               </div>
             </div>
         </div>
@@ -138,11 +98,10 @@
                                     <th>Keterangan</th>
                                     <th>Selisih</th>
                                     <th>Jml. Trx</th>
-                                    <th>Post</th>
+                                    <th><span class="opta2">Post</span></th>
                                 </tr>
                             </thead>
-                            <tbody>
-                            </tbody>
+                            <tbody></tbody>
                             <tfoot>
                                 <tr>
                                     <th>Tanggal</th>
@@ -150,7 +109,7 @@
                                     <th>Keterangan</th>
                                     <th>Selisih</th>
                                     <th>Jml. Trx</th>
-                                    <th>Post</th>
+                                    <th><span class="opta2">Post</span></th>
                                 </tr>
                             </tfoot>
                         </table>

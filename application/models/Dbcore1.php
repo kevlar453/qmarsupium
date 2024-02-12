@@ -294,6 +294,35 @@ public function get_paroki($filterData = FALSE,$param1 = FALSE,$param2 = FALSE,$
     }
   }
 
+  public function rdnum($length = false)
+  {
+      if (!$length) {
+          $length = 10;
+      }
+      $characters = '0123456789';
+      $charactersLength = strlen($characters);
+      $randomString = '';
+      for ($i = 0; $i < $length; $i++) {
+          $randomString .= $characters[rand(0, $charactersLength - 1)];
+      }
+      return $randomString;
+  }
+
+  public function rdchr($length = false)
+  {
+      if (!$length) {
+          $length = 10;
+      }
+      $characters = '12345abcdeABCDE';
+      $charactersLength = strlen($characters);
+      $randomString = '';
+      for ($i = 0; $i < $length; $i++) {
+          $randomString .= $characters[rand(0, $charactersLength - 1)];
+      }
+      return $randomString;
+  }
+
+
 function qmenu($kddok = FALSE) {
   $this->dbmain->select('qvault_docnum,qvault_docdesc');
   $this->dbmain->from('qmain_vault');

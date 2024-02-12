@@ -3,17 +3,24 @@
 <!--new1-----start----    -->
 <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="x_panel">
-          <div class="col-md-6 col-md-12 col-sm-12 col-xs-12">
-          <?php
-          echo form_open('',array('id'=>'bill1','data-parsley-validate class'=>'form-horizontal form-label-left'));
-          ?>
-            <div class="x_title">
-                <h2>Rentang Waktu</h2>
-                <div class="clearfix"></div>
-            </div>
+          <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="x_title">
+              <h2>Arus Kas</h2>
+              <ul class="nav navbar-right panel_toolbox">
+                  <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+              </ul>
+              <div class="clearfix"></div>
+          </div>
             <div class="x_content">
                 <div class="container cropper">
-                    <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="col-md-6 col-sm-12 col-xs-12">
+                      <div class="full-width">
+                        <h2>Rentang Waktu</h2>
+                        <div class="clearfix"></div>
+                      </div>
+                      <?php
+                      echo form_open('',array('id'=>'bill1','data-parsley-validate class'=>'form-horizontal form-label-left'));
+                      ?>
                       <div class="col-md-6 col-sm-12 col-xs-12">
                             <?php
                                 echo form_label('Tgl.Awal','fl_tgl1',array('class'=>'input-group')); ?> <?php echo form_error('fl_tgl1');
@@ -32,24 +39,15 @@
                           <hr/>
                             <input type="button" class="btn btn-success" id="saringbill1" value="SARING">
                         </div>
+                        <?php
+                        echo form_close();
+                        ?>
                     </div>
-                </div>
-            </div>
-            <?php
-            echo form_close();
-            ?>
-          </div>
-          <div class="col-md-6 col-md-12 col-sm-12 col-xs-12">
-            <div class="x_title">
-                <h2>Bulan</h2>
-                <ul class="nav navbar-right panel_toolbox">
-                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
-                </ul>
-                <div class="clearfix"></div>
-            </div>
-            <div class="x_content">
-                <div class="container cropper">
-                    <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="col-md-6 col-sm-12 col-xs-12">
+                      <div class="full-width">
+                        <h2>Bulan</h2>
+                        <div class="clearfix"></div>
+                      </div>
                         <div class="lapdetail">
                           <div id="buttable" style="width:100%;">
                           </div>
@@ -64,7 +62,7 @@
         <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="x_panel">
             <div class="x_title">
-                <h2>Arus Kas</h2>
+                <h2>Rincian</h2>
                 <ul class="nav navbar-right panel_toolbox">
                     <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
                 </ul>

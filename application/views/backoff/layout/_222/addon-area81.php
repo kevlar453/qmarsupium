@@ -2,6 +2,17 @@
 $(document).ajaxStop($.unblockUI);
 $(document).ready(function (){
   setCookie('seto','81');
+  setTimeout(function(){
+    if(varopta == '00'){
+      $('.opta2').text('Valid');
+      $('.panatas').addClass('hide');
+    } else {
+      $('.opta2').text('Posting');
+      $('.panatas').removeClass('hide');
+    }
+      $("#myNav").css('height','0%');
+      $('.sidebar').css('opacity',1);
+  },1000);
   fillgrid($('#fl_tgl1').val(),$('#fl_tgl2').val());
   cekreport();
 });

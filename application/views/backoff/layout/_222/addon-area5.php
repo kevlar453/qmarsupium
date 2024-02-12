@@ -3,6 +3,17 @@ $(document).ajaxStop($.unblockUI);
     $(document).ready(function (){
       catat('Buka modul Buku Besar');
         fillgrid();
+        setTimeout(function(){
+          if(varopta == '00'){
+            $('.opta2').text('Valid');
+            $('.panatas').addClass('hide');
+          } else {
+            $('.opta2').text('Posting');
+            $('.panatas').removeClass('hide');
+          }
+            $("#myNav").css('height','0%');
+            $('.sidebar').css('opacity',1);
+        },1000);
     });
 
     $('#fa_per').select2({
@@ -37,7 +48,7 @@ $(document).ajaxStop($.unblockUI);
         cache: true
       }
     }).on('select2:select', function(e) {
-/*      
+/*
       var kj = $('#ft_nmr1').val();
       var jns = setCookie('jnsperk',kj);
       $('#ft_nmr2').val('').trigger('change');

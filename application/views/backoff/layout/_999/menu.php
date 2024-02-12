@@ -4,10 +4,10 @@
   ?>
   <div class="container body">
     <div class="main_container">
-      <div id="myNav" class="overlay">
+      <div id="myNav" class="overlay  slideInDown animated" style="opacity:.8;">
 
         <center>
-        <div class="overlay-content center jello">
+        <div class="overlay-content center">
           <h1>Q-MARSUPIUM</h1>
           <h2>A beautiful support for your bussiness</h2>
           <blockquote>Sistem ini dibuat untuk mempermudah pekerjaan pemasukkan, pengolahan, dan analisa data keuangan yang akuntabel.</blockquote>
