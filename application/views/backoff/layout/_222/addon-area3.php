@@ -152,41 +152,48 @@ function reload_table(){
 }
 
 function hapustransaksi(id){
-  swal.fire({
+  Swal.fire({
     title: "Koreksi Transaksi!",
+    icon: "warning",
     showCancelButton: true,
-    closeOnConfirm: false,
-    animation: "pop"
-  },
-  function(inputValue){
-    setTimeout(function(){
-      $.ajax({
-          url : "<?php echo base_url(); ?>markas/core1/koreksi3/"+ id,
-          type: "POST",
-          dataType: "JSON",
-          success: function(data){
-            swal.fire({
-              title:"Sukses!",
-              type:"success",
-              timer: 2000,
-              showConfirmButton: false
-            });
-            fillgrid();
-          },
-          error: function (jqXHR, textStatus, errorThrown)
-          {
-            swal.fire({
-              title:"Gagal!",
-              text:"Proses Koreksi " + id  + " gagal. Mohon coba lagi!",
-              type:"warning",
-              timer: 1000,
-              showConfirmButton: false
-            });
-          }
-      })
-    }, 3000);
-
-//        swal.fire("Berhasil!", "NO. Jurnal Koreksi: " + inputValue, "success");
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, koreksi!"
+  }).then((result) => {
+    if (result.isConfirmed) {
+      $.blockUI();
+      setTimeout(function(){
+        $.ajax({
+            url : "<?php echo base_url(); ?>markas/core1/koreksi3/"+ id,
+            type: "POST",
+            dataType: "JSON",
+            success: function(data){
+              swal.fire({
+                title:"Sukses!",
+                icon:"success",
+                timer: 2000,
+                timerProgressBar: true,
+                showConfirmButton: false
+              });
+              setTimeout(function(){
+                $.unblockUI();
+                fillgrid();
+              },2000);
+            },
+            error: function (jqXHR, textStatus, errorThrown)
+            {
+              swal.fire({
+                title:"Gagal!",
+                text:"Proses Koreksi " + id  + " gagal. Mohon coba lagi!",
+                icon:"warning",
+                timer: 2000,
+                timerProgressBar: true,
+                showConfirmButton: false
+              });
+            }
+        })
+      }, 3000);
+    }
   });
   catat("COR " + id);
 }
