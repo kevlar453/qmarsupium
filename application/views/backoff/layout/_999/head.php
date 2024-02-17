@@ -31,8 +31,10 @@
     <link href="<?php echo base_url();?>dapur0/vendors/select2-develop/dist/css/select2.css" rel="stylesheet">
     <!-- starrr -->
     <link href="<?php echo base_url();?>dapur0/vendors/starrr/dist/starrr.css" rel="stylesheet">
-    <!-- sweet alert -->
-    <link href="<?php echo base_url();?>dapur0/vendors/sweetalert/dist/sweetalert.css" rel="stylesheet">
+    <!-- sweet alert 1
+    <link href="<?php echo base_url();?>dapur0/vendors/sweetalert/dist/sweetalert.css" rel="stylesheet">-->
+    <!-- sweet alert 2 -->
+    <link href="<?php echo base_url();?>dapur0/vendors/sweetalert2/sweetalert2.min.css" rel="stylesheet">
     <!--<link href="<?php echo base_url();?>dapur0/vendors/sweetalert2/sweetalert2.css" rel="stylesheet">-->
     <!-- normalize -->
     <link href="<?php echo base_url();?>dapur0/vendors/normalize-css/normalize.css" rel="stylesheet">

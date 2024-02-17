@@ -85,8 +85,10 @@
     <script src="<?php echo base_url();?>dapur0/vendors/jquery/dist/jquery.js"></script>
     <!-- Bootstrap -->
     <script src="<?php echo base_url();?>dapur0/vendors/bootstrap/dist/js/bootstrap.min.js"></script>
-    <!-- SweetAlert -->
-    <script src="<?php echo base_url();?>dapur0/vendors/sweetalert/dist/sweetalert.min.js"></script>
+    <!-- SweetAlert 1
+    <script src="<?php echo base_url();?>dapur0/vendors/sweetalert/dist/sweetalert.min.js"></script>-->
+    <!-- SweetAlert 2 -->
+    <script src="<?php echo base_url();?>dapur0/vendors/sweetalert2/sweetalert2.all.min.js"></script>
     <!-- FastClick -->
     <script src="<?php echo base_url();?>dapur0/vendors/fastclick/lib/fastclick.js"></script>
     <!-- NProgress -->
@@ -201,9 +203,9 @@
         });
         deleteCookie('jspil');
 
-      setup();
-      loadpesan();
-      cekuserak();
+//      setup();
+//      loadpesan();
+//      cekuserak();
       loadsalam(pegnik);
       $('#headjudul').text(decode_cookie(getCookie('qtitle')));
     });
@@ -252,7 +254,7 @@
             type: 'POST',
             data: data,
             success: function(data) {
-                swal({
+                swal.fire({
                     title: "Pesan Terkirim!",
                     type: "success",
                     timer: 2000,
@@ -261,7 +263,7 @@
                 loadpesan();
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                swal({
+                swal.fire({
                     title: "Gagal!",
                     text: "Terjadi kesalahan pengiriman pesan!",
                     type: "warning",
@@ -780,12 +782,14 @@
 
 
     setInterval(function() {
+/* stop smtr
         setup();
         loadpesan();
         $.get("<?php echo base_url(); ?>markas/core1/getuser", function(jduser) {
           $(".tambahan").remove();
           $("#mntool").append(jduser);
         });
+*/
 /*
         $.get("<?php echo base_url(); ?>markas/core1/getyanabsen", function(jdyanmed) {
             $("#yanaktif").html(jdyanmed);

@@ -40,7 +40,7 @@
 //            tbinfo.ajax.reload();
           });
         } else {
-          swal("Awas!", 'Data harus dilengkapi' , "error");
+          swal.fire("Awas!", 'Data harus dilengkapi' , "error");
         }
         catat("Isi data " + detcat1 + " " + detcat2);
     });
@@ -102,7 +102,7 @@
 
             if(varopta != '00'){
               if(ccor != 'X' && cpost == 'X'){
-                addt = "<a class=\"btn btn-lg btn-warning\" href=\"javascript:void(0)\" title=\"Koreksi\" onclick=\"hapusjurnal('"+ctrx+"')\">Koreksi</a><a class=\"btn btn-lg btn-info\" onclick=\"godetail('"+ctrx+"')\">Detail</a>"+(cselisih == 0?"<a class=\"btn btn-lg btn-success\" onclick=\"gopost('"+ctrx+"')\">Posting</a>":"");
+                addt = "<a class=\"btn btn-sm btn-warning\" href=\"javascript:void(0)\" title=\"Koreksi\" onclick=\"hapusjurnal('"+ctrx+"')\">Koreksi</a><a class=\"btn btn-sm btn-info\" onclick=\"godetail('"+ctrx+"')\">Detail</a>"+(cselisih == 0?"<a class=\"btn btn-sm btn-success\" onclick=\"gopost('"+ctrx+"')\">Posting</a>":"");
               } else if (ccor == 'X' && cpost == 'X') {
                 tswal = 'error';
                addt = '<span class="red">'+cpar1+'</span>';
@@ -118,7 +118,7 @@
              }
             } else {
               if(ccor != 'X' && cpost == 'X'){
-                addt = "<a class=\"btn btn-lg btn-warning\" href=\"javascript:void(0)\" title=\"Koreksi\" onclick=\"hapusjurnal('"+ctrx+"')\">Koreksi</a><a class=\"btn btn-lg btn-success\" onclick=\"gopost('"+ctrx+"')\">Valid</a>";
+                addt = "<a class=\"btn btn-sm btn-warning\" href=\"javascript:void(0)\" title=\"Koreksi\" onclick=\"hapusjurnal('"+ctrx+"')\">Koreksi</a><a class=\"btn btn-sm btn-success\" onclick=\"gopost('"+ctrx+"')\">Valid</a>";
               } else if (ccor == 'X' && cpost == 'X') {
                 tswal = 'error';
                 addt = "Mendapat koreksi.<br/><span class='blue'>Akan dikirim transaksi perbaikan jika ada.</span>";
@@ -130,12 +130,13 @@
 
 
 
-             swal({
+             swal.fire({
                title: "Transaksi " + ctrx,
-               type: tswal,
-               text: "<div class=\"table-responsive\"><table id=\"filltambah\" class=\"table table-condensed table-striped table-hover dt-responsive\" style=\"font-size:1em;margin:5px;width:100%;\"><thead><tr><th colspan=\"2\">"+(varopta == '00'?(cpar[0]+"]"):"")+"</th><th colspan=\"2\">"+ctagl+"</th></tr><tr><th>Kode</th><th>Uraian</th><th>Debet</th><th>Kredit</th></tr></thead><tbody>"+dettbl+"</tbody></table></div><hr/>" + addt,
-               html: true,
-               allowOutsideClick:true,
+               icon: tswal,
+               html: "<div class=\"table-responsive\" style=\"padding:2em;\"><table id=\"filltambah\" class=\"table table-condensed table-striped table-full-width nowrap\" cellspacing=\"0\" width=\"100%\"><thead><tr><th colspan=\"2\">"+(varopta == '00'?(cpar[0]+"]"):"")+"</th><th colspan=\"2\">"+ctagl+"</th></tr><tr><th>Kode</th><th>Uraian</th><th>Debet</th><th>Kredit</th></tr></thead><tbody>"+dettbl+"</tbody></table></div><hr/>" + addt + "<hr/>",
+              width: 600,
+              position: "top",
+              allowOutsideClick:true,
                showCancelButton: false,
                confirmButtonColor: "#DD6B55",
                confirmButtonText: "Tutup",
@@ -199,7 +200,7 @@
           success: function(data1){
             var idata = data1;
 
-            swal({
+            swal.fire({
               title: "Unduh berkas?",
               type: "info",
               showCancelButton: true,
@@ -213,11 +214,12 @@
                   type: 'POST',
                   url: '<?php echo base_url(); ?>markas/proeksternal/hpsback/'+idata,
                   success: function(data1){
-                    swal({
+                    swal.fire({
                         title: "Pencadangan berhasil!",
                         type: "success",
                         text: idata,
                         timer: 2000,
+                        timerProgressBar: true,
                         showConfirmButton: false
                     });
                     location.reload();
@@ -236,11 +238,12 @@
           url: url,
           success: function(data1){
             var idata = data1;
-            swal({
+            swal.fire({
                 title: "Data berhasil diekspor!",
                 type: "success",
                 text: idata,
                 timer: 5000,
+                timerProgressBar: true,
                 showConfirmButton: false
             });
           }
@@ -263,7 +266,7 @@
                 var icel = '';
                 for (var i = 0; i <= isidata.length-1; i++) {
                   icel += '<div><button class="btn btn-app red pull-right" onclick="cekdetreport(\''+isidata[i].waktu+'\')">'+isidata[i].waktu+'</btn></div>';
-                  icel += '<div id="list'+isidata[i].waktu+'"  class="tagsinput" style="width:100%;"></div>';
+                swal.fireel += '<div id="list'+isidata[i].waktu+'"  class="tagsinput" style="width:100%;"></div>';
                   icel += '<hr/>';
                 }
                 $('#buttable').append(icel);
@@ -395,7 +398,7 @@
           success: function(data){
             if(data){
               var awas = 'Nomor Jurnal ' + id + ' sudah terpakai, dengan uraian: ' +data;
-              swal("Awas!", awas , "error");
+              swal.fire("Awas!", awas , "error");
               $('#fj_nomor').val('');
           }
               }
@@ -411,7 +414,7 @@
             type: "POST",
             success: function (data) {
               if(data){
-                swal("Perhatian!", "Nomor Jurnal sudah terpakai", "error");
+                swal.fire("Perhatian!", "Nomor Jurnal sudah terpakai", "error");
                 $('#ft_nomor').val('');
               }
             }
@@ -551,16 +554,17 @@
           var detdata = JSON.parse(data);
           loop1 = detdata[0].akjur_kopar;
           console.log('p2: '+loop1+', '+loop2+', '+loop3);
-          swal({
-              title: "Koreksi Jurnal?",
-              text: "Belum ada fitur UNDO untuk proses ini!",
-              type: "warning",
-              showCancelButton: true,
-              confirmButtonColor: "#DD6B55",
-              confirmButtonText: "Ya, lajutkan!",
-              closeOnConfirm: false
-          }, function (isConfirm) {
-              if (!isConfirm) return;
+
+          Swal.fire({
+            title: "Koreksi Jurnal?",
+            text: "Belum ada fitur UNDO untuk proses ini!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Ya, lajutkan!",
+          }).then((result) => {
+            if (result.isConfirmed) {
               $.ajax({
                   url: "<?php echo base_url(); ?>markas/core1/koreksi2/",
                   type: "POST",
@@ -590,30 +594,34 @@
                             console.log('p4: '+loop1+', '+loop2+', '+loop3);
                               setCookie('simkop',loop2);
                               setCookie('simakses',loop3);
-                              swal({
+                              swal.fire({
                                 title: "Sukses!",
                                 text: "Jurnal BERHASIL dikoreksi.",
-                                type: "success",
-                                timer: 1000
+                                icon: "success",
+                                timer: 1000,
+                                timerProgressBar: true,
                               });
                           },
                           error: function (xhr, ajaxOptions, thrownError) {
-                            swal("Gangguan!", "Jurnal GAGAL koreksi gagal!", "error");
+                            swal.fire("Gangguan!", "Jurnal GAGAL koreksi gagal!", "error");
                           }
                       });
                     } else {
-                      swal({
+                      swal.fire({
                         title: "Sukses!",
                         text: "Jurnal BERHASIL dikoreksi.",
-                        type: "success"
+                        icon: "success",
+                        timer: 1000,
+                        timerProgressBar: true,
                       });
                     }
                   },
                   error: function (xhr, ajaxOptions, thrownError) {
-                    swal("Gangguan!", "Jurnal GAGAL koreksi gagal!", "error");
+                    swal.fire("Gangguan!", "Jurnal GAGAL koreksi gagal!", "error");
                   }
               });
               reload_table();
+            }
           });
         }
       }
@@ -622,19 +630,16 @@
     }
 
   function gopost(id){
-    swal({
-        title: "Posting Jurnal?",
-        text: varopta == '00'?"Jurnal dan tansaksinya sudah valid?":"Jurnal dan transaksinya sudah benar dan siap lapor.",
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#DD6B55",
-        confirmButtonText: "Ya, lajutkan!",
-        closeOnConfirm: false,
-        showCancelButton: true,
-        showLoaderOnConfirm: true,
-    }, function (isConfirm) {
-        if (!isConfirm) return;
-
+    Swal.fire({
+      title: "Posting Jurnal?",
+      text: varopta == '00'?"Jurnal dan tansaksinya sudah valid?":"Jurnal dan transaksinya sudah benar dan siap lapor.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Ya, lajutkan!",
+    }).then((result) => {
+      if (result.isConfirmed) {
         $.ajax({
             url: "<?php echo base_url(); ?>markas/core1/posting1/",
             type: "POST",
@@ -647,31 +652,23 @@
                 $('#buttable').empty();
                 cekreport();
               }
-              swal({
+              swal.fire({
                 title: "Sukses!",
-//                text: JSON.stringify(data),
+                icon: "success",
                 text: JSON.parse(data) === null?(varopta == '00'?"Jurnal BERHASIL divalidasi.":"Jurnal BERHASIL diposting."):"",
-                timer:1000,
+                timer: 1000,
+                timerProgressBar: true,
                 type: "success"
               });
-
-/*
-              swal({
-                title: "Sukses!",
-                text: JSON.parse(data) === null?(varopta == '00'?"Jurnal BERHASIL divalidasi.":"Jurnal BERHASIL diposting."):"",
-                timer:1000,
-                type: "success"
-              });
-*/
             },
             error: function (xhr, ajaxOptions, thrownError) {
-              swal("Gangguan!", "Jurnal GAGAL posting!", "error");
+              swal.fire("Gangguan!", "Jurnal GAGAL posting!", "error");
             }
         });
 
         reload_table();
-    }
-  );
+      }
+    });
   catat("POST " + id);
 }
 

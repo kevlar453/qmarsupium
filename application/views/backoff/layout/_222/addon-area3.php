@@ -152,7 +152,7 @@ function reload_table(){
 }
 
 function hapustransaksi(id){
-  swal({
+  swal.fire({
     title: "Koreksi Transaksi!",
     showCancelButton: true,
     closeOnConfirm: false,
@@ -165,7 +165,7 @@ function hapustransaksi(id){
           type: "POST",
           dataType: "JSON",
           success: function(data){
-            swal({
+            swal.fire({
               title:"Sukses!",
               type:"success",
               timer: 2000,
@@ -175,7 +175,7 @@ function hapustransaksi(id){
           },
           error: function (jqXHR, textStatus, errorThrown)
           {
-            swal({
+            swal.fire({
               title:"Gagal!",
               text:"Proses Koreksi " + id  + " gagal. Mohon coba lagi!",
               type:"warning",
@@ -186,7 +186,7 @@ function hapustransaksi(id){
       })
     }, 3000);
 
-//        swal("Berhasil!", "NO. Jurnal Koreksi: " + inputValue, "success");
+//        swal.fire("Berhasil!", "NO. Jurnal Koreksi: " + inputValue, "success");
   });
   catat("COR " + id);
 }

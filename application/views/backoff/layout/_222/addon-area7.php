@@ -457,7 +457,7 @@ $(document).ajaxStop($.unblockUI);
 
       var detcat1 = kodeper;
       var detcat2 = $('#fa_jlak option:selected').text();
-      swal({
+      swal.fire({
         title: 'Yakin???',
         showCancelButton: true,
         closeOnConfirm: false,
@@ -469,7 +469,7 @@ $(document).ajaxStop($.unblockUI);
               type: "POST",
               dataType: "JSON",
               success: function(data) {
-                swal({
+                swal.fire({
                   title:"Perkiraan Tersimpan!",
                   type:"success",
                   timer: 2000,
@@ -510,7 +510,7 @@ $(document).ajaxStop($.unblockUI);
 
               },
               error: function (jqXHR, textStatus, errorThrown) {
-                swal({
+                swal.fire({
                   title:"Gagal!",
                   text:"Proses penyimpanan gagal. Mohon coba lagi!",
                   type:"warning",

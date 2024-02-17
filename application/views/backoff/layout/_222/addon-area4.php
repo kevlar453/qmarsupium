@@ -167,21 +167,21 @@ function cekreport(){
         } else {
           $("#myNav").css('width','100%');
           $('.sidebar').css('opacity',0);
-          swal({
+          swal.fire({
             title: "Data Kosong",
             text: "Halaman dapat dibuka jika sudah ada data yang "+(varopta=='00'?'diperiksa':'diposting')+"!",
             type: "warning",
             timer: 5000,
+            timerProgressBar: true,
             showCancelButton: false,
-            showConfirmButton: true,
+            showConfirmButton: false,
             closeOnConfirm: false,
             animation: "pop"
-          },
-          function(inputValue){
-            setTimeout(function(){
-              location.replace('/markas/core1');
-            }, 1000);
           });
+          setTimeout(function(){
+            location.replace('/markas/core1');
+          }, 5000);
+
         }
 
       },
