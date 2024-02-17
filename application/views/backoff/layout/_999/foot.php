@@ -67,6 +67,9 @@
 <!-- footer content -->
 
         <footer>
+          <div class="pull-left">
+            <h2 class="small">Update Terakhir: <span id="cekupdate"></span></h2>
+          </div>
             <div class="pull-right">
                 Q-MARSUPIUM 2024, Created by AR Setontong. Use for presentation purpose only. <br />
                 <p class="footer">Page rendered in <strong>{elapsed_time}</strong> seconds.</p>
@@ -196,6 +199,7 @@
                 $('#doksign').addClass('animated');
             }
         });
+        deleteCookie('jspil');
 
       setup();
       loadpesan();
@@ -621,6 +625,15 @@
         $("#hours").text(parseHour(todayDate.getHours()));
         $("#minutes").text(parseSecond(todayDate.getMinutes()));
         $("#ampm").text(ampm);
+        $.ajax({
+        type: "post",
+        url: "<?php echo base_url(); ?>markas/core1/cek_update",
+        cache: false,
+        async: false,
+        success: function(data){
+          $('#cekupdate').text(data);
+        }
+        });
     }
 
     $(document).ajaxStart(function () {

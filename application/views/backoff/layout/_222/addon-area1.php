@@ -1,8 +1,10 @@
 
 <script>
+  var jumjur = '';
 $(document).ready(function() {
   hitdbakun();
   hitselisih();
+  hitdbpost();
   akungraf();
   setTimeout(function(){
     if(varopta == '00'){
@@ -23,6 +25,7 @@ function hitdbakun() {
     type: 'POST',
     url: url + 'J',
     success: function(data1){
+      jumjur = data1;
       $.ajax({
         type: 'POST',
         url: url + 'T',
@@ -31,6 +34,7 @@ function hitdbakun() {
           $('#jtrx').html(JSON.parse(data2));
         }
       });
+      return jumjur;
     }
   });
 }
@@ -53,6 +57,18 @@ function hitselisih() {
     }
   });
 }
+
+function hitdbpost() {
+  var url = '<?php echo base_url(); ?>markas/core1/hitpost';
+  $.ajax({
+    type: 'POST',
+    url: url,
+    success: function(data){
+      $('#jpost').html(JSON.parse(data)+'/<span class="red">'+jumjur+'</span>');
+    }
+  });
+}
+
 
 function dselisih() {
   var url = '<?php echo base_url(); ?>markas/core1/detsel';

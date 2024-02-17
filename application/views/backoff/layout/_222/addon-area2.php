@@ -6,12 +6,14 @@
       plus_excel();
       setTimeout(function(){
         if(varopta == '00'){
+          $('#tgexp').addClass('hidden');
           $('.opta2').text('Valid');
           $('.panatas').addClass('fadeOut animated delay-1s');
           setTimeout(function(){
             $('.panatas').addClass('hide');
           },500);
         } else {
+          $('#tgexp').removeClass('hidden');
           cekreport();
           $('.opta2').text('Post');
           $('.panatas').removeClass('hide');
@@ -48,11 +50,18 @@
       $('#isiexcel').addClass('hidden');
     });
 
+    $("#impqbk").submit(function (e){
+//        e.preventDefault();
+        $('#tutupmodal').click();
+        catat("Export data");
+        $.blockUI();
+    });
 
       $('#tfillgrid').on('click', 'tbody tr', function() {
         var data = table.row(this).data();
         var ctagl = data[0];
         var ctrx = data[1];
+        var cpar1 = data[2];
         var cpar = data[2].split(']');
         var cselisih = data[3];
         var ccor = data[4];
@@ -63,6 +72,9 @@
          url: "<?php echo base_url(); ?>markas/core1/caritrxdet/"+ctrx,
          cache: false,
          async: false,
+        data:jQuery.param({
+          param: (varopta == '00'?cpar[0].replace('[',''):'')
+        }),
          success: function(data){
            if(data){
              var isidet = JSON.parse(data);
@@ -74,6 +86,7 @@
              var addt = '';
              var nilai = 0;
             var getkop = '';
+            var tswal = '';
              for (var i = 0; i <= jumdata; i++) {
                nilai = parseFloat(isidet[i].aktrx_jum);
                jdlmod = isidet[i].aktrx_nomor;
@@ -85,24 +98,32 @@
                dettbl += '</tr>';
               getkop = isidet[i].aktrx_nomor;
              }
-            setCookie('precor','01'+getkop.substr(7,2));
+//            setCookie('precor','01'+getkop.substr(7,2));
 
             if(varopta != '00'){
               if(ccor != 'X' && cpost == 'X'){
                 addt = "<a class=\"btn btn-lg btn-warning\" href=\"javascript:void(0)\" title=\"Koreksi\" onclick=\"hapusjurnal('"+ctrx+"')\">Koreksi</a><a class=\"btn btn-lg btn-info\" onclick=\"godetail('"+ctrx+"')\">Detail</a>"+(cselisih == 0?"<a class=\"btn btn-lg btn-success\" onclick=\"gopost('"+ctrx+"')\">Posting</a>":"");
               } else if (ccor == 'X' && cpost == 'X') {
-               addt = "Dikoreksi petugas paroki";
+                tswal = 'error';
+               addt = '<span class="red">'+cpar1+'</span>';
               } else if (ccor == 'X' && cpost == '+') {
+                tswal = 'error';
                addt = "Dikoreksi petugas keuskupan.<br/><span class='purple'>Silahkan posting transaksi pengganti sebelum tanggal tutup buku jika diperlukan.</span>";
+              } else if (cselisih == '-' && cpost == '+') {
+                tswal = 'success';
+               addt = "Data valid";
               } else {
-               addt = "Sudah diposting.<br>Menunggu validasi.";
+                tswal = 'info';
+               addt = "Sudah diposting.<br><span class=\"purple\">Menunggu validasi.</span>";
              }
             } else {
               if(ccor != 'X' && cpost == 'X'){
                 addt = "<a class=\"btn btn-lg btn-warning\" href=\"javascript:void(0)\" title=\"Koreksi\" onclick=\"hapusjurnal('"+ctrx+"')\">Koreksi</a><a class=\"btn btn-lg btn-success\" onclick=\"gopost('"+ctrx+"')\">Valid</a>";
               } else if (ccor == 'X' && cpost == 'X') {
+                tswal = 'error';
                 addt = "Mendapat koreksi.<br/><span class='blue'>Akan dikirim transaksi perbaikan jika ada.</span>";
               } else {
+                tswal = 'success';
               addt = "Sudah divalidasi.";
             }
             }
@@ -111,7 +132,7 @@
 
              swal({
                title: "Transaksi " + ctrx,
-//               text: isidet[0][1],
+               type: tswal,
                text: "<div class=\"table-responsive\"><table id=\"filltambah\" class=\"table table-condensed table-striped table-hover dt-responsive\" style=\"font-size:1em;margin:5px;width:100%;\"><thead><tr><th colspan=\"2\">"+(varopta == '00'?(cpar[0]+"]"):"")+"</th><th colspan=\"2\">"+ctagl+"</th></tr><tr><th>Kode</th><th>Uraian</th><th>Debet</th><th>Kredit</th></tr></thead><tbody>"+dettbl+"</tbody></table></div><hr/>" + addt,
                html: true,
                allowOutsideClick:true,
@@ -170,6 +191,63 @@
 
       });
 
+      function exfile(){
+        var url = '<?php echo base_url(); ?>markas/proeksternal/exjson';
+        $.ajax({
+          type: 'POST',
+          url: url,
+          success: function(data1){
+            var idata = data1;
+
+            swal({
+              title: "Unduh berkas?",
+              type: "info",
+              showCancelButton: true,
+              closeOnConfirm: false,
+              showLoaderOnConfirm: true,
+            },
+            function(){
+              location.assign('<?php echo base_url(); ?>markas/proeksternal/download_plus_headers/'+idata);
+              setTimeout(function(){
+                $.ajax({
+                  type: 'POST',
+                  url: '<?php echo base_url(); ?>markas/proeksternal/hpsback/'+idata,
+                  success: function(data1){
+                    swal({
+                        title: "Pencadangan berhasil!",
+                        type: "success",
+                        text: idata,
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                    location.reload();
+                  }
+                });
+              },5000);
+            });
+          }
+        });
+      }
+
+      function imfile(){
+        var url = '<?php echo base_url(); ?>markas/proeksternal/imjson';
+        $.ajax({
+          type: 'POST',
+          url: url,
+          success: function(data1){
+            var idata = data1;
+            swal({
+                title: "Data berhasil diekspor!",
+                type: "success",
+                text: idata,
+                timer: 5000,
+                showConfirmButton: false
+            });
+          }
+        });
+      }
+
+
       function cekreport(){
         var gourl = '<?php echo base_url();?>markas/reports/get_keu';
         $.ajax({
@@ -189,24 +267,6 @@
                   icel += '<hr/>';
                 }
                 $('#buttable').append(icel);
-              } else {
-                $("#myNav").css('width','100%');
-                $('.sidebar').css('opacity',0);
-                swal({
-                  title: "Data Kosong",
-                  text: "Halaman dapat dibuka jika sudah ada data yang "+(varopta=='00'?'diperiksa':'diposting')+"!",
-                  type: "warning",
-                  timer: 5000,
-                  showCancelButton: false,
-                  showConfirmButton: true,
-                  closeOnConfirm: false,
-                  animation: "pop"
-                },
-                function(inputValue){
-                  setTimeout(function(){
-                    location.replace('/markas/core1');
-                  }, 1000);
-                });
               }
 
             },
@@ -371,6 +431,16 @@
               $(row).css('font-weight','bold');
               $(row).css('background-color','#fbacac');
               $(row).css('color','#767676');
+            } else if(data[3] !=  '-' && data[5] ==  '+'){
+              $(row).css('font-style','italic');
+              $(row).css('font-weight','bold');
+              $(row).css('background-color','#edeebd');
+              $(row).css('color','#767676');
+            } else if(data[3] ==  '-' && data[5] ==  '+'){
+              $(row).css('font-style','italic');
+              $(row).css('font-weight','bold');
+              $(row).css('background-color','#d7ffd7');
+              $(row).css('color','#767676');
             }
           },
 
@@ -473,6 +543,9 @@
        url: "<?php echo base_url(); ?>markas/core1/caritrxdet/"+id,
        cache: false,
        async: false,
+      data:jQuery.param({
+        param: ''
+      }),
        success: function(data){
         if(data){
           var detdata = JSON.parse(data);
@@ -556,7 +629,9 @@
         showCancelButton: true,
         confirmButtonColor: "#DD6B55",
         confirmButtonText: "Ya, lajutkan!",
-        closeOnConfirm: false
+        closeOnConfirm: false,
+        showCancelButton: true,
+        showLoaderOnConfirm: true,
     }, function (isConfirm) {
         if (!isConfirm) return;
 
@@ -568,6 +643,10 @@
               param: id.length == 10?'':id
             }),
             success: function (data) {
+              if(varopta != '00' && id.length != 10){
+                $('#buttable').empty();
+                cekreport();
+              }
               swal({
                 title: "Sukses!",
 //                text: JSON.stringify(data),

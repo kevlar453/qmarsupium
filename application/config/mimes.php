@@ -95,6 +95,7 @@ return array(
 	'txt'	=>	'text/plain',
 	'text'	=>	'text/plain',
 	'log'	=>	array('text/plain', 'text/x-log'),
+	'qbk'	=>	array('application/force-download', 'application/x-download', 'application/octet-stream'),
 	'rtx'	=>	'text/richtext',
 	'rtf'	=>	'text/rtf',
 	'xml'	=>	array('application/xml', 'text/xml', 'text/plain'),

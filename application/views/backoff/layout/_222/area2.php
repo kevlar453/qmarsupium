@@ -4,12 +4,13 @@
   <div class="col-md-12 col-sm-12 col-xs-12">
     <div class="x_panel">
       <div class="x_title">
-          <h2>Daftar Jurnal</i></h2>
+          <h2>Daftar Jurnal</h2>
           <ul class="nav navbar-right panel_toolbox">
+            <li id="tgexp" class="hidden"><button type="button" class="btn btn-sm btn-warning"  data-toggle="modal" data-target=".mdisikode" title="Ekspor/Impor"><i class="glyphicon glyphicon-globe"></i></button></li>
             <li><button type="button" class="btn btn-sm btn-success" onclick="table.destroy();fillgrid('');" title="Reset"><i class="glyphicon glyphicon-refresh"></i></button></li>
               <li><button type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target=".impjurnal" title="Import Excel"><i class="glyphicon glyphicon-import"></i></button></li>
               <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
-              <li><a title="Bantuan"  data-toggle="modal" data-target=".mdisikode"><i class="fa fa-question"></i></a></li>
+              <li><a title="Bantuan"><i class="fa fa-question"></i></a></li>
           </ul>
           <div class="clearfix"></div>
       </div>
@@ -70,12 +71,13 @@
     </div>
 
     <div class="col-md-6 col-sm-12 col-xs-12">
+      <h2>Post Masal</h2>
+      <div class="clearfix"></div>
                 <div class="container cropper">
                   <div class="col-md-12 col-sm-12 col-xs-12">
                     <hr/>
                       <div class="lapdetail">
-                        <div id="buttable" style="width:100%;">
-                        </div>
+                        <div id="buttable" style="width:100%;"></div>
                       </div>
                   </div>
                 </div>
@@ -127,25 +129,20 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+                <button type="button" id="tutupmodal" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
                 </button>
-                <h4 class="modal-title" id="modalInfo">Kode Yang Ada:</h4>
+                <h4 class="modal-title" id="modalInfo">Kirim/Terima Data</h4>
             </div>
             <div class="modal-body">
-                <?php
-                  foreach($dafkodejur as $dfjur){
-                      if(floatval($dfjur['jum'])<=25){
-                          $btn = '<button type="button" class="btn btn-xs btn-default">';
-                      } elseif(floatval($dfjur['jum'])>25 && floatval($dfjur['jum'])<=50){
-                          $btn = '<button type="button" class="btn btn-xs btn-info">';
-                      } elseif(floatval($dfjur['jum'])>50 && floatval($dfjur['jum'])<=200){
-                          $btn = '<button type="button" class="btn btn-xs btn-primary">';
-                      } else{
-                          $btn = '<button type="button" class="btn btn-xs btn-danger">';
-                      }
-                      echo $btn.$dfjur['kode'].' ('.$dfjur['jum'].')</button>';
-                  };
-                  ?>
+              <div class="col-md-6 col-sm-12 col-xs-12">
+                <button type="button" class="btn btn-info" name="button" onclick="exfile()">Backup</button>
+              </div>
+              <div class="col-md-6 col-sm-12 col-xs-12">
+                <form action="<?php echo base_url();?>markas/proeksternal/imjson/" id="impqbk" method="post" enctype="multipart/form-data">
+                  <input type="file" name="fileqbk" id="fileqbk" />
+                  <input type="submit" class="btn btn-warning" value="Restore" id="kirimqbk" />
+                </form>
+              </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>

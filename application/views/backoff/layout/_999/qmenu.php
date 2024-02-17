@@ -4,8 +4,8 @@
   ?>
   <div class="container body">
     <div class="main_container">
-      <div class="col-md-3 left_col">
-        <div class="left_col scroll-view">
+      <div class="col-md-3 left_col menu_fixed">
+  <div class="left_col scroll-view">
           <div class="navbar nav_title" style="border: 0;">
             <a href="<?php echo base_url();?>markas/core1" class="site_title" id="top"><i class="fa fa-universal-access animated pulse infinite"></i> <span>Q-MARSUPIUM 2024</span></a>
           </div>
@@ -45,7 +45,7 @@
                 <li><a><i class="fa fa-users"></i> Akun <span class="fa fa-chevron-down"></span></a>
                   <ul class="nav child_menu">
                     <?php
-                  if((int)$this->dbcore1->routekey(get_cookie('kodesu'),'d')>0){
+                  if((int)$this->dbcore1->routekey(get_cookie('simakses'),'d')=='00'){
                     ?>
                     <li><a href="<?php echo base_url()?>auth/create_user" title="">Baru</a></li>
                     <?php

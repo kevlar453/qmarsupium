@@ -17,8 +17,8 @@
       </div>
 
 
-      <div class="col-md-3 left_col" class="sidebar">
-        <div class="left_col scroll-view">
+      <div class="col-md-3 left_col menu_fixed">
+  <div class="left_col scroll-view">
           <div class="navbar nav_title" style="border: 0;">
             <a href="<?php echo base_url();?>" class="site_title" id="top"><i class="fa fa-universal-access animated pulse infinite"></i> <span>Q-MARSUPIUM</span></a>
           </div>
