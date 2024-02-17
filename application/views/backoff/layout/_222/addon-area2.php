@@ -199,33 +199,34 @@
           url: url,
           success: function(data1){
             var idata = data1;
-
-            swal.fire({
+            Swal.fire({
               title: "Unduh berkas?",
-              type: "info",
+              icon: "question",
               showCancelButton: true,
-              closeOnConfirm: false,
-              showLoaderOnConfirm: true,
-            },
-            function(){
-              location.assign('<?php echo base_url(); ?>markas/proeksternal/download_plus_headers/'+idata);
-              setTimeout(function(){
-                $.ajax({
-                  type: 'POST',
-                  url: '<?php echo base_url(); ?>markas/proeksternal/hpsback/'+idata,
-                  success: function(data1){
-                    swal.fire({
-                        title: "Pencadangan berhasil!",
-                        type: "success",
-                        text: idata,
-                        timer: 2000,
-                        timerProgressBar: true,
-                        showConfirmButton: false
-                    });
-                    location.reload();
-                  }
-                });
-              },5000);
+              confirmButtonColor: "#3085d6",
+              cancelButtonColor: "#d33",
+              confirmButtonText: "Ya!"
+            }).then((result) => {
+              if (result.isConfirmed) {
+                location.assign('<?php echo base_url(); ?>markas/proeksternal/download_plus_headers/'+idata);
+                setTimeout(function(){
+                  $.ajax({
+                    type: 'POST',
+                    url: '<?php echo base_url(); ?>markas/proeksternal/hpsback/'+idata,
+                    success: function(data1){
+                      swal.fire({
+                          title: "Pencadangan berhasil!",
+                          icon: "success",
+                          text: idata,
+                          timer: 5000,
+                          timerProgressBar: true,
+                          showConfirmButton: false
+                      });
+                      location.reload();
+                    }
+                  });
+                },5000);
+              }
             });
           }
         });
@@ -240,7 +241,7 @@
             var idata = data1;
             swal.fire({
                 title: "Data berhasil diekspor!",
-                type: "success",
+                icon: "success",
                 text: idata,
                 timer: 5000,
                 timerProgressBar: true,
