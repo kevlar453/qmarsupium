@@ -2,6 +2,7 @@
 <script>
   var jumjur = '';
 $(document).ready(function() {
+
   hitdbakun();
   hitselisih();
   hitdbpost();
@@ -13,6 +14,53 @@ $(document).ready(function() {
     } else {
       $('.opta2').text('Posting');
       $('.panatas').removeClass('hide');
+
+      $.ajax({
+        type: 'POST',
+        url: '<?php echo base_url(); ?>markas/core1/cekrekening',
+        success: function(data){
+          if(data === 'NONE'){
+            Swal.fire({
+              title: "Pengguna Baru",
+              icon: "question",
+              text: "Import COA default dari sistim?",
+              showCancelButton: true,
+              confirmButtonText: "Ya",
+              cancelButtonText: "Tidak",
+              showLoaderOnConfirm: true,
+              preConfirm: async (login) => {
+                try {
+                  const githubUrl = '<?php echo base_url(); ?>markas/core1/defrekening';
+                  const response = await fetch(githubUrl);
+                  if (!response.ok) {
+                    return Swal.showValidationMessage(`
+                      ${JSON.stringify(await response.json())}
+                      `);
+                  }
+                  return response.json();
+                } catch (error) {
+                  Swal.showValidationMessage(`
+                    Request failed: ${error}
+                    `);
+                }
+              },
+              allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+              if (result.isConfirmed) {
+                swal.fire({
+                  title: "Import COA Default",
+                  icon: "success",
+                  text: "Sistim siap dipergunakan. Selamat bekerja!!!",
+                  timer: 5000,
+                  timerProgressBar: true,
+                  showConfirmButton: false
+                });
+              }
+            });
+          }
+        }
+      });
+
     }
     $("#myNav").css('height','0%');
     $('.sidebar').css('opacity',1);

@@ -78,6 +78,7 @@
                     <hr/>
                       <div class="lapdetail">
                         <div id="buttable" style="width:100%;"></div>
+                        <button type="button" name="button" class="btn btn-success" onclick="fileInput()">CEK</button>
                       </div>
                   </div>
                 </div>
@@ -138,7 +139,7 @@
                 <button type="button" class="btn btn-info" name="button" onclick="exfile()">Backup</button>
               </div>
               <div class="col-md-6 col-sm-12 col-xs-12">
-                <form action="<?php echo base_url();?>markas/proeksternal/imjson/" id="impqbk" method="post" enctype="multipart/form-data">
+                <form action="<?php echo base_url();?>markas/proeksternal/prosesimj001" id="impqbk" method="post" enctype="multipart/form-data">
                   <input type="file" name="fileqbk" id="fileqbk" />
                   <input type="submit" class="btn btn-warning" value="Restore" id="kirimqbk" />
                 </form>

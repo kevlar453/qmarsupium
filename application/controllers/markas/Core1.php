@@ -19,7 +19,7 @@ class Core1 extends CI_Controller {
   }
 
     function index() {
-        $rmoda = isset($_GET['rmod'])==TRUE?$_GET["rmod"]:'';
+      $rmoda = isset($_GET['rmod'])==TRUE?$_GET["rmod"]:'';
         $idpeg = $this->session->userdata('pgpid');
         $akpeg = $this->session->userdata('pgakses');
         $cekkel = $this->dbcore1->routekey(get_cookie('simakses'),'d');
@@ -32,51 +32,65 @@ class Core1 extends CI_Controller {
         $supeg = $this->session->userdata('pgsu');
         switch ($akpeg) {
           case '111':
-          $vtitle = 'Kepegawaian';
-          break;
+            $vtitle = 'Kepegawaian';
+            break;
 
-          case '222':
-          $vtitle = 'Administrasi';
-          break;
+            case '222':
+              $vtitle = 'Administrasi';
+              break;
 
-          default:
-          $vtitle = 'QMARSUPIUM - 2024';
-          break;
-        }
-        if($idpeg!='') {
-$thn = date("Y");
-$hrni = date("Y-m-d");
-$this->dbcore1->simcok('qtitle',$this->dbcore1->routekey($vtitle));
-            $data = array(
-                'rmmod' => $rmoda,
-                'hasil' => '',
-                'periksa' => '',
-                'operator' => $this->dbcore1->caripeg($idpeg),
-                'kodejob' => $cekkel != '00'?$akpeg:'444',
-                'kodejob1' => $akpeg1,
-                'kodesu' => $supeg,
-                'dafkodejur' => $akpeg=='222'||$akpeg1=='222'?$this->akuntansi->carikodejur():'',
-//                'pjenis' => $akpeg=='222'||$akpeg1=='222'?$this->akuntansi->get_ka5('','',''):'',
-                'dkbangsal' => '',
-                'jjenis' => $akpeg=='222'||$akpeg1=='222'?$this->akuntansi->jur_jenis():'',
-//                'jjenis2' => $akpeg=='222'||$akpeg1=='222'?$this->akuntansi->jur_jenis2():'',
-                'jka1' => $akpeg=='222'||$akpeg1=='222'?$this->akuntansi->get_vka1():'',
-                'jka2' => $akpeg=='222'||$akpeg1=='222'?$this->akuntansi->get_vka2():'',
-                'jka3' => $akpeg=='222'||$akpeg1=='222'?$this->akuntansi->get_vka3():'',
-                'jka4' => $akpeg=='222'||$akpeg1=='222'?$this->akuntansi->get_vka4():'',
-                'akses' => $idpeg,
-                'cgroup' => $this->pecahcgroup($akpeg),
-                'idpeg' => $idpeg
-            );
-            $this->load->view('backoff/rm_infor',$data);
-        } else {
-            $this->load->view('frontoff/login');
-        }
-    }
+              default:
+                $vtitle = 'QMARSUPIUM - 2024';
+                break;
+              }
+              if($idpeg!='') {
+                $thn = date("Y");
+                $hrni = date("Y-m-d");
+                $this->dbcore1->simcok('qtitle',$this->dbcore1->routekey($vtitle));
+                $data = array(
+                  'rmmod' => $rmoda,
+                  'hasil' => '',
+                  'periksa' => '',
+                  'operator' => $this->dbcore1->caripeg($idpeg),
+                  'kodejob' => $cekkel != '00'?$akpeg:'444',
+                    'kodejob1' => $akpeg1,
+                    'kodesu' => $supeg,
+                    'dafkodejur' => $akpeg=='222'||$akpeg1=='222'?$this->akuntansi->carikodejur():'',
+                      'dkbangsal' => '',
+                      'jjenis' => $akpeg=='222'||$akpeg1=='222'?$this->akuntansi->jur_jenis():'',
+                        'jka1' => $akpeg=='222'||$akpeg1=='222'?$this->akuntansi->get_vka1():'',
+                          'jka2' => $akpeg=='222'||$akpeg1=='222'?$this->akuntansi->get_vka2():'',
+                            'jka3' => $akpeg=='222'||$akpeg1=='222'?$this->akuntansi->get_vka3():'',
+                              'jka4' => $akpeg=='222'||$akpeg1=='222'?$this->akuntansi->get_vka4():'',
+                                'akses' => $idpeg,
+                                'cgroup' => $this->pecahcgroup($akpeg),
+                                'idpeg' => $idpeg
+                              );
+                              $this->load->view('backoff/rm_infor',$data);
+                            } else {
+                              $this->load->view('frontoff/login');
+                            }
+                          }
 
     function list_jur(){
   		$transactionss = $this->akuntansi->jur_jenis_all();
   		echo (json_encode($transactionss));
+    }
+
+    function cekrekening(){
+      $cekrek = $this->akuntansi->jur_jenis3();
+      if(!$cekrek){
+//        return json_encode($cekrek);
+        echo 'NONE';
+      }
+    }
+
+    function defrekening(){
+//      $defrek = 'SIP';
+      $defrek = $this->akuntansi->susundef();
+      if($defrek){
+        echo json_encode($defrek);
+      }
     }
 
     function hitjur($vhit = FALSE){

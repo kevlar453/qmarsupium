@@ -11,7 +11,7 @@
                     <div class="col-md-12 col-sm-12 col-xs-12" style="word-wrap: break-word;">
                       <div id="dokwell" class="slideInDown animated" style="word-wrap: break-word;">
                         <?php
-                        $txtwell = '<blockquote class="red">Selamat Datang!<br />Dokumentasi Administrai hanya dapat diakses oleh pengguna yang masuk dalam kategori admin.Silahkan memilih dokumen dari menu yang ada disebelah kiri.</blockquote>';
+                        $txtwell = '<blockquote class="red">Selamat Datang!<br />Dokumentasi Administrasi hanya dapat diakses oleh pengguna yang masuk dalam kategori admin.Silahkan memilih dokumen dari menu yang ada disebelah kiri.</blockquote>';
                         $well = $this->session->userdata('pgsu')>0?$txtwell:$this->dbcore1->routekey($txtwell);
                         echo $well;
                         ?>

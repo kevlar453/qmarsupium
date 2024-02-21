@@ -326,7 +326,7 @@ public function get_paroki($filterData = FALSE,$param1 = FALSE,$param2 = FALSE,$
 function qmenu($kddok = FALSE) {
   $this->dbmain->select('qvault_docnum,qvault_docdesc');
   $this->dbmain->from('qmain_vault');
-  $this->dbmain->where('SUBSTRING(qvault_docnum,1,3)',$kddok);
+//  $this->dbmain->where('SUBSTRING(qvault_docnum,1,3)',$kddok);
   $query = $this->dbmain->get();
   $lagama = $query->result();
   if ($query -> result()) {

@@ -394,6 +394,22 @@ class Proreports extends CI_Model {
       }
     }
 
+    function get_user($cekidentity = FALSE){
+    $this->dbmain->select('*');
+    $this->dbmain->from('users');
+    $this->dbmain->where('username',$cekidentity);
+    $this->dbmain->join('users_groups','users_groups.user_id=users.username','left');
+    $this->dbmain->join('groups','groups.id=users_groups.group_id','left');
+    $this->dbmain->join('qmain_pgprofile_peg','qmain_pgprofile_peg.pgpid=users.username','left');
+    $query = $this->dbmain->get();
+           if($query -> num_rows() >= 1){
+               return $query->row_array();
+           }
+           else {
+               return false;
+           }
+           exit;
+    }
 
 
 }

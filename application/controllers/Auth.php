@@ -32,11 +32,11 @@ class Auth extends CI_Controller
 			// redirect them to the login page
 			redirect('auth/login', 'refresh');
 		}
-		else if (!$this->ion_auth->is_admin()) // remove this elseif if you want to enable this for non-admins
+/*		else if (!$this->ion_auth->is_admin()) // remove this elseif if you want to enable this for non-admins
 		{
 			// redirect them to the home page because they must be an administrator to view this
 			return show_error('You must be an administrator to view this page.');
-		}
+		} */
 		else
 		{
 			// set the flash data error message if there is one
@@ -51,6 +51,23 @@ class Auth extends CI_Controller
 			redirect('/markas/core1', 'refresh');
 //			$this->_render_page('auth/index', $this->data);
 		}
+	}
+
+	public function listuser()
+	{
+		$idpeg = $this->session->userdata('pgpid');
+		// set the flash data error message if there is one
+		$this->data['idpeg'] = $idpeg;
+		$this->data['mod'] = 'q';
+		$this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
+		//list the users
+		$this->data['users'] = $this->ion_auth->users()->result();
+		foreach ($this->data['users'] as $k => $user)
+		{
+			$this->data['users'][$k]->groups = $this->ion_auth->get_users_groups($user->username)->result();
+		}
+		$this->load->view('auth/daftar', $this->data);
+
 	}
 
 	/**
@@ -172,6 +189,10 @@ class Auth extends CI_Controller
 				'type' => 'hidden',
 				'value' => $user->id,
 			);
+			$idpeg = $this->session->userdata('pgpid');
+			// set the flash data error message if there is one
+			$this->data['idpeg'] = $idpeg;
+			$this->data['mod'] = 'q';
 
 			// render
 			$this->_render_page('auth/change_password', $this->data);
@@ -231,6 +252,10 @@ class Auth extends CI_Controller
 			{
 				$this->data['identity_label'] = $this->lang->line('forgot_password_email_identity_label');
 			}
+			$idpeg = $this->session->userdata('pgpid');
+			// set the flash data error message if there is one
+			$this->data['idpeg'] = $idpeg;
+			$this->data['mod'] = 'q';
 
 			// set any errors and display the form
 			$this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
@@ -323,6 +348,10 @@ class Auth extends CI_Controller
 				);
 				$this->data['csrf'] = $this->_get_csrf_nonce();
 				$this->data['code'] = $code;
+				$idpeg = $this->session->userdata('pgpid');
+				// set the flash data error message if there is one
+				$this->data['idpeg'] = $idpeg;
+				$this->data['mod'] = 'q';
 
 				// render
 				$this->_render_page('auth/reset_password', $this->data);
@@ -378,10 +407,10 @@ class Auth extends CI_Controller
 	{
 		if ($code !== FALSE)
 		{
-			$activation = $this->ion_auth->activate($id, $code);
+/*			$activation = $this->ion_auth->activate($id, $code);
 		}
 		else if ($this->ion_auth->is_admin())
-		{
+		{ */
 			$activation = $this->ion_auth->activate($id);
 		}
 
@@ -406,7 +435,7 @@ class Auth extends CI_Controller
 	 */
 	public function deactivate($id = NULL)
 	{
-		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin())
+		if (!$this->ion_auth->logged_in())
 		{
 			// redirect them to the home page because they must be an administrator to view this
 			return show_error('You must be an administrator to view this page.');
@@ -423,6 +452,10 @@ class Auth extends CI_Controller
 			// insert csrf check
 			$this->data['csrf'] = $this->_get_csrf_nonce();
 			$this->data['user'] = $this->ion_auth->user($id)->row();
+			$idpeg = $this->session->userdata('pgpid');
+			// set the flash data error message if there is one
+			$this->data['idpeg'] = $idpeg;
+			$this->data['mod'] = 'q';
 
 			$this->_render_page('auth/deactivate_user', $this->data);
 		}
@@ -438,7 +471,7 @@ class Auth extends CI_Controller
 				}
 
 				// do we have the right userlevel?
-				if ($this->ion_auth->logged_in() && $this->ion_auth->is_admin())
+				if ($this->ion_auth->logged_in())
 				{
 					$this->ion_auth->deactivate($id);
 				}
@@ -457,7 +490,7 @@ class Auth extends CI_Controller
 	{
 		$this->data['title'] = $this->lang->line('create_user_heading');
 
-		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin())
+		if (!$this->ion_auth->logged_in())
 		{
 			redirect('auth', 'refresh');
 		}
@@ -588,7 +621,7 @@ class Auth extends CI_Controller
 	{
 		$this->data['title'] = $this->lang->line('edit_user_heading');
 
-		if (!$this->ion_auth->logged_in() || (!$this->ion_auth->is_admin() && !($this->ion_auth->user()->row()->id == $id)))
+		if (!$this->ion_auth->logged_in() || (!($this->ion_auth->user()->row()->id == $id)))
 		{
 			redirect('auth', 'refresh');
 		}
@@ -634,8 +667,8 @@ class Auth extends CI_Controller
 				}
 
 				// Only allow updating groups if user is admin
-				if ($this->ion_auth->is_admin())
-				{
+//				if ($this->ion_auth->is_admin())
+//				{
 					// Update the groups user belongs to
 					$groupData = $this->input->post('groups');
 
@@ -650,7 +683,7 @@ class Auth extends CI_Controller
 						}
 
 					}
-				}
+//				}
 
 				// check to see if we are updating the user
 				if ($this->ion_auth->update($user->id, $data))
@@ -730,6 +763,10 @@ class Auth extends CI_Controller
 			'id'   => 'password_confirm',
 			'type' => 'password'
 		);
+		$idpeg = $this->session->userdata('pgpid');
+		// set the flash data error message if there is one
+		$this->data['idpeg'] = $idpeg;
+		$this->data['mod'] = 'q';
 
 		$this->_render_page('auth/edit_user', $this->data);
 	}
@@ -778,6 +815,10 @@ class Auth extends CI_Controller
 				'type'  => 'text',
 				'value' => $this->form_validation->set_value('description'),
 			);
+			$idpeg = $this->session->userdata('pgpid');
+			// set the flash data error message if there is one
+			$this->data['idpeg'] = $idpeg;
+			$this->data['mod'] = 'q';
 
 			$this->_render_page('auth/create_group', $this->data);
 		}
@@ -847,6 +888,10 @@ class Auth extends CI_Controller
 			'type'  => 'text',
 			'value' => $this->form_validation->set_value('group_description', $group->description),
 		);
+		$idpeg = $this->session->userdata('pgpid');
+		// set the flash data error message if there is one
+		$this->data['idpeg'] = $idpeg;
+		$this->data['mod'] = 'q';
 
 		$this->_render_page('auth/edit_group', $this->data);
 	}

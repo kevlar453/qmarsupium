@@ -40,18 +40,22 @@ class Akuntansi extends CI_Model {
     var $order6 = array('temp1_noper' => 'asc');
 
     function jur_jenis_all() {
-        $this->dbmain->select('*');
+      $cekkop = $this->dbcore1->routekey(get_cookie('simkop'),'d');
+      $this->dbmain->where(array('akjur_kopar'=>$this->dbcore1->routekey(get_cookie('simkop'),'d')));
         $query = $this->dbmain->get('qvar_akun_jur');
         $jjur = array();
         return $query->result();
     }
 
-    function c_post() {
-        $this->dbmain->select('akjur_nomor,akjur_kopar');
-        $this->dbmain->from('qmain_akun_jur_post');
-        $this->dbmain->where('akjur_post','0');
-        $query = $this->dbmain->get();
-        return $query->result();
+    function susundef(){
+      $cekkel = $this->dbcore1->routekey(get_cookie('simakses'),'d');
+      $qsusun = 'insert into qvar_akun_ka5(ka_1,ka_2,ka_3,ka_4,ka_5,ka_nama,ka_saldoawal) select ka_1,ka_2,ka_3,ka_4,concat("'.$cekkel.'",right(ka_5,3)),ka_nama,ka_saldoawal from qvar_akun_ka5;';
+      $prodef = $this->dbmain->query($qsusun);
+      if($prodef){
+        return json_encode($prodef);
+      } else {
+        return false;
+      }
     }
 
     function jur_jenis() {
@@ -116,13 +120,13 @@ class Akuntansi extends CI_Model {
         }
     }
 
-    function ext_post() {
+    function ext_part() {
       $cektar = $this->dbcore1->routekey(get_cookie('jspil'),'d');
       $cekkel = $this->dbcore1->routekey(get_cookie('simakses'),'d');
       $cekkop = $this->dbcore1->routekey(get_cookie('simkop'),'d');
-      $this->dbmain->select('*');
-      $this->dbmain->from('qmain_akun_trx'.($cekkel == '00'?'_post':''));
-        $this->dbmain->where(array('aktrx_mark'=>0,'aktrx_post'=>1,'akjur_kopar'=>$this->dbcore1->routekey(get_cookie('simkop'),'d')));
+      $this->dbmain->select('aktrx_nomor,aktrx_nojur,aktrx_nama,aktrx_jns,aktrx_ket,aktrx_jum,aktrx_akses,aktrx_mark,aktrx_post,akjur_kopar');
+      $this->dbmain->from('qmain_akun_trx');
+        $this->dbmain->where(array('akjur_kopar'=>$this->dbcore1->routekey(get_cookie('simkop'),'d')));
       $query = $this->dbmain->get();
       $jhit = $query->result();
 
@@ -130,19 +134,29 @@ class Akuntansi extends CI_Model {
         exit;
     }
 
-    function exj_post() {
+    function exj_part() {
       $cektar = $this->dbcore1->routekey(get_cookie('jspil'),'d');
       $cekkel = $this->dbcore1->routekey(get_cookie('simakses'),'d');
       $cekkop = $this->dbcore1->routekey(get_cookie('simkop'),'d');
-      $this->dbmain->select('*');
-      $this->dbmain->from('qmain_akun_jur'.($cekkel == '00'?'_post':''));
-        $this->dbmain->where(array('akjur_sts'=>0,'akjur_post'=>1,'akjur_kopar'=>$this->dbcore1->routekey(get_cookie('simkop'),'d')));
+      $this->dbmain->select('akjur_nomor,akjur_jns,akjur_tgl,akjur_ket,akjur_sts,akjur_post,akjur_akses,akjur_kopar');
+      $this->dbmain->from('qmain_akun_jur');
+        $this->dbmain->where(array('akjur_kopar'=>$this->dbcore1->routekey(get_cookie('simkop'),'d')));
       $query = $this->dbmain->get();
       $jhit = $query->result();
 
             return $jhit;
         exit;
     }
+
+    function c_post() {
+        $this->dbmain->select('akjur_nomor,akjur_kopar');
+        $this->dbmain->from('qmain_akun_jur_post');
+        $this->dbmain->where('akjur_post','0');
+        $query = $this->dbmain->get();
+        return $query->result();
+    }
+
+
 
     function clear_dataup($arrclear){
       $cekkop = $this->dbcore1->routekey(get_cookie('simkop'),'d');
@@ -150,43 +164,71 @@ class Akuntansi extends CI_Model {
       $this->dbmain->where('qmain_akun_jur.akjur_kopar',$cekkop);
       $this->dbmain->where_in('akjur_nomor',$arrclear);
       $this->dbmain->delete('qmain_akun_jur');
+      $this->dbmain->where('LEFT(ka_5,2)',$this->dbcore1->routekey(get_cookie('simakses'),'d'));
+      $this->dbmain->delete('qvar_akun_ka5');
 //      $this->dbmain->query('SET foreign_key_checks=1');
     }
 
-    function insjur_dataup($arrtest) {
-      $this->dbmain->insert('qmain_akun_jur',$arrtest);
+    function inska5_dataup($arrka5){
+      $cekkel = $this->dbcore1->routekey(get_cookie('simakses'),'d');
+      $cekkop = $this->dbcore1->routekey(get_cookie('simkop'),'d');
+      $strisi = str_replace('))',')',str_replace('((','(',str_replace('[','(',str_replace(']',')',str_replace('{','(',str_replace('}',')',json_encode($arrka5)))))));
+      $queries = 'insert into qvar_akun_ka5(ka_1,ka_2,ka_3,ka_4,ka_5,ka_nama,ka_saldoawal) VALUES '.$strisi.'';
+      $this->dbmain->query($queries);
+
+//      $this->dbmain->query('SET foreign_key_checks=0');
+//      foreach ($arrka5 as $arr5) {
+//        $this->dbmain->insert('qvar_akun_ka5',$arrka5);
+//      }
+//      $this->dbmain->query('SET foreign_key_checks=1');
     }
 
-    function instrx_dataup($arrtest) {
-      $this->dbmain->query('SET foreign_key_checks=0');
-      $this->dbmain->insert('qmain_akun_trx',$arrtest);
-      $this->dbmain->query('SET foreign_key_checks=1');
+
+
+    function insjur_dataup($arrjur) {
+      $cekkel = $this->dbcore1->routekey(get_cookie('simakses'),'d');
+      $cekkop = $this->dbcore1->routekey(get_cookie('simkop'),'d');
+      $strisi = str_replace('))',')',str_replace('((','(',str_replace('[','(',str_replace(']',')',str_replace('{','(',str_replace('}',')',json_encode($arrjur)))))));
+      $queries = 'insert into qmain_akun_jur(akjur_nomor,akjur_jns,akjur_tgl,akjur_ket,akjur_sts,akjur_post,akjur_akses,akjur_kopar) VALUES '.$strisi.'';
+      $this->dbmain->query($queries);
     }
 
-    function insjurpost_dataup($arrtest) {
-      $this->dbmain->insert('qmain_akun_jur_post',$arrtest);
+    function instrx_dataup($arrtrx) {
+      $cekkel = $this->dbcore1->routekey(get_cookie('simakses'),'d');
+      $cekkop = $this->dbcore1->routekey(get_cookie('simkop'),'d');
+      $strisi = str_replace('))',')',str_replace('((','(',str_replace('[','(',str_replace(']',')',str_replace('{','(',str_replace('}',')',json_encode($arrtrx)))))));
+      $queries = 'insert into qmain_akun_trx(aktrx_nomor,aktrx_nojur,aktrx_nama,aktrx_jns,aktrx_ket,aktrx_jum,aktrx_akses,aktrx_mark,aktrx_post,akjur_kopar) VALUES '.$strisi.'';
+      $this->dbmain->query($queries);
     }
 
-    function instrxpost_dataup($arrtest) {
-      $this->dbmain->query('SET foreign_key_checks=0');
-      $this->dbmain->insert('qmain_akun_trx_post',$arrtest);
-      $this->dbmain->query('SET foreign_key_checks=1');
+    function insjurpost_dataup($arrjurp) {
+      $cekkel = $this->dbcore1->routekey(get_cookie('simakses'),'d');
+      $cekkop = $this->dbcore1->routekey(get_cookie('simkop'),'d');
+      $strisi = str_replace('))',')',str_replace('((','(',str_replace('[','(',str_replace(']',')',str_replace('{','(',str_replace('}',')',json_encode($arrjurp)))))));
+      $queries = 'insert into qmain_akun_jur_post(akjur_nomor,akjur_jns,akjur_tgl,akjur_ket,akjur_sts,akjur_post,akjur_akses,akjur_kopar) VALUES '.$strisi.'';
+      $this->dbmain->query($queries);
+    }
+
+    function instrxpost_dataup($arrtrxp) {
+      $cekkel = $this->dbcore1->routekey(get_cookie('simakses'),'d');
+      $cekkop = $this->dbcore1->routekey(get_cookie('simkop'),'d');
+      $strisi = str_replace('))',')',str_replace('((','(',str_replace('[','(',str_replace(']',')',str_replace('{','(',str_replace('}',')',json_encode($arrtrxp)))))));
+      $queries = 'insert into qmain_akun_trx_post(aktrx_nomor,aktrx_nojur,aktrx_nama,aktrx_jns,aktrx_ket,aktrx_jum,aktrx_akses,aktrx_mark,aktrx_post,akjur_kopar) VALUES '.$strisi.'';
+      $this->dbmain->query($queries);
     }
 
     function post_dataup($arrtest) {
       $cektar = $this->dbcore1->routekey(get_cookie('jspil'),'d');
       $cekkel = $this->dbcore1->routekey(get_cookie('simakses'),'d');
       $cekkop = $this->dbcore1->routekey(get_cookie('simkop'),'d');
-
-$this->dbmain->query('SET foreign_key_checks=0');
-$this->dbmain->where('qmain_akun_jur.akjur_kopar',$cekkop);
-$this->dbmain->where_in('akjur_nomor',$arrtest);
-$this->dbmain->update('qmain_akun_jur',array('akjur_post'=>1));
-$this->dbmain->where('qmain_akun_trx.akjur_kopar',$cekkop);
-$this->dbmain->where_in('aktrx_nojur',$arrtest);
-$this->dbmain->update('qmain_akun_trx',array('aktrx_post'=>1));
-$this->dbmain->query('SET foreign_key_checks=1');
-
+      $this->dbmain->query('SET foreign_key_checks=0');
+      $this->dbmain->where('qmain_akun_jur.akjur_kopar',$cekkop);
+      $this->dbmain->where_in('akjur_nomor',$arrtest);
+      $this->dbmain->update('qmain_akun_jur',array('akjur_post'=>1));
+      $this->dbmain->where('qmain_akun_trx.akjur_kopar',$cekkop);
+      $this->dbmain->where_in('aktrx_nojur',$arrtest);
+      $this->dbmain->update('qmain_akun_trx',array('aktrx_post'=>1));
+      $this->dbmain->query('SET foreign_key_checks=1');
     }
 
     function tgupdate() {
@@ -196,8 +238,6 @@ $this->dbmain->query('SET foreign_key_checks=1');
       $this->dbmain->select('MAX(akjur_up) as isijam,varnama');
       $this->dbmain->from('qmain_akun_jur'.($cekkel == '00'?'_post':''));
         $this->dbmain->join('qvar_bagian','qvar_bagian.varid=qmain_akun_jur'.($cekkel == '00'?'_post':'').'.akjur_kopar','left');
-//        $this->dbmain->where(array('akjur_kopar'=>$cekkop));
-//        $this->dbmain->group_by('akjur_kopar');
       $query = $this->dbmain->get();
       $jhit = $query->row_array();
 

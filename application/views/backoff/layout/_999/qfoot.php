@@ -14,8 +14,8 @@
     <script src="<?php echo base_url();?>dapur0/vendors/jquery/dist/jquery.js"></script>
     <!-- Bootstrap -->
     <script src="<?php echo base_url();?>dapur0/vendors/bootstrap/dist/js/bootstrap.min.js"></script>
-    <!-- SweetAlert -->
-    <script src="<?php echo base_url();?>dapur0/vendors/sweetalert/dist/sweetalert.min.js"></script>
+    <!-- SweetAlert 2 -->
+    <script src="<?php echo base_url();?>dapur0/vendors/sweetalert2/sweetalert2.all.min.js"></script>
     <!-- FastClick -->
     <script src="<?php echo base_url();?>dapur0/vendors/fastclick/lib/fastclick.js"></script>
     <!-- NProgress -->
@@ -43,7 +43,7 @@
     <script src="<?php echo base_url();?>dapur0/vendors/pnotify/dist/pnotify.nonblock.js"></script>
 
     <!-- iCheck -->
-    <script src="<?php echo base_url();?>dapur0/vendors/iCheck/icheck.min.js"></script>
+    <script src="<?php echo base_url();?>dapur0/vendors/icheck/icheck.min.js"></script>
     <!-- Autosize -->
     <script src="<?php echo base_url();?>dapur0/vendors/autosize/dist/autosize.min.js"></script>
 
@@ -306,6 +306,7 @@
 
 <script>
     $("#btndoc").click(function(e) {
+      $.blockUI();
         e.preventDefault();
         tinyMCE.triggerSave();
         var url = $('#frmdoc').attr('action');

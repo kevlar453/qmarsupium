@@ -1,9 +1,75 @@
 <script>
+
+async function fileInput() {
+    const { value: file } = await Swal.fire({
+      title: "Select image",
+      input: "file",
+      inputAttributes: {
+        "accept": "*",
+        "aria-label": "Upload your profile picture"
+      }
+    });
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        var isifile = decode_cookie(e.target.result);
+        var arrisi = JSON.parse(isifile);
+        Swal.fire({
+          title: "Your uploaded picture",
+          text: JSON.stringify(arrisi.arrvar_ka5),
+        });
+      };
+      reader.readAsText(file);
+    }
+  }
     $(document).ready(function (){
       setCookie('seto','2');
       catat('Buka modul Isi Transaksi');
       fillgrid('');
       plus_excel();
+      var cekident = getCookie('nofile');
+      if(cekident == 'GAGAL'){
+        swal.fire({
+          title: "Pencadangan GAGAL",
+          icon: "error",
+          text: "Berkas yang dimasukkan tidak sesuai",
+          timer: 5000,
+          timerProgressBar: true,
+          allowOutsideClick:false,
+          showConfirmButton: false
+        });
+        setTimeout(function(){
+          deleteCookie('nofile');
+          location.reload();
+        },6000);
+      }
+      var cekfile = getCookie('cfile');
+      var verfile = getCookie('vfile');
+      console.log(cekfile +" "+ verfile);
+      if(cekfile && cekfile.substr(-3)=='qbk'){
+        $.blockUI();
+        swal.fire({
+          title: "Pencadangan diproses",
+          icon: "success",
+          text: "Mohon tunggu sampai proses selesai",
+          //                timerProgressBar: true,
+          showConfirmButton: false
+        });
+        $.ajax({
+          url: '<?php echo base_url(); ?>markas/proeksternal/prosesimj'+verfile,
+          type: 'POST',
+          delay: 1000,
+          cache: false,
+          async: false,
+          success: function(data){
+            if(verfile == '005'){
+              deleteCookie('cfile');
+              deleteCookie('vfile');
+            }
+            location.reload();
+          }
+        });
+      }
       setTimeout(function(){
         if(varopta == '00'){
           $('#tgexp').addClass('hidden');
@@ -18,8 +84,8 @@
           $('.opta2').text('Post');
           $('.panatas').removeClass('hide');
         }
-          $("#myNav").css('height','0%');
-          $('.sidebar').css('opacity',1);
+//          $("#myNav").css('height','0%');
+//          $('.sidebar').css('opacity',1);
       },1000);
     });
 
@@ -192,6 +258,7 @@
 
       });
 
+
       function exfile(){
         var url = '<?php echo base_url(); ?>markas/proeksternal/exjson';
         $.ajax({
@@ -202,6 +269,7 @@
             Swal.fire({
               title: "Unduh berkas?",
               icon: "question",
+              text: 'Nama berkas: '+data1,
               showCancelButton: true,
               confirmButtonColor: "#3085d6",
               cancelButtonColor: "#d33",
@@ -232,6 +300,74 @@
         });
       }
 
+      $("#impqbk").submit(function (e){
+        setCookie('cfile','proses');
+        setInterval(function() {
+          var cekfile = getCookie('cfile');
+          if(cekfile){
+            let timerInterval;
+            Swal.fire({
+              title: "Persiapan Sinkronisasi!",
+              html: "Cek data <b></b>",
+              timer: 10000,
+              timerProgressBar: true,
+              allowOutsideClick: false,
+              didOpen: () => {
+                Swal.showLoading();
+                const timer = Swal.getPopup().querySelector("b");
+                timerInterval = setInterval(() => {
+                  timer.textContent = `${Swal.getTimerLeft()}`;
+                }, 100);
+              },
+              willClose: () => {
+                clearInterval(timerInterval);
+              }
+            }).then((result) => {
+              /* Read more about handling dismissals below */
+              if (result.dismiss === Swal.DismissReason.timer) {
+                console.log("I was closed by the timer");
+              }
+            });
+          }
+        }, 10000);
+      });
+
+
+/*
+      function updata(){
+var jumhit = getCookie('hitjum');
+setTimeout(function(){
+  $("#impqbk").submit();
+  let timerInterval;
+  Swal.fire({
+    title: "Data berhasil diekspor! "+parseFloat(jumhit),
+    html: "I will close in <b></b> milliseconds.",
+    timer: parseFloat(jumhit),
+    timerProgressBar: true,
+    didOpen: () => {
+      Swal.showLoading();
+      const timer = Swal.getPopup().querySelector("b");
+      timerInterval = setInterval(() => {
+        timer.textContent = `${Swal.getTimerLeft()}`;
+      }, 100);
+    },
+    willClose: () => {
+      clearInterval(timerInterval);
+    }
+  }).then((result) => {
+    if (result.dismiss === Swal.DismissReason.timer) {
+      console.log("I was closed by the timer");
+    }
+  });
+},1000);
+setTimeout(function(){
+location.replace('/markas/core1/?rmod=area2');
+},parseFloat(jumhit))
+//          $.unblockUI();
+          //          catat("Isi data " + detcat1 + " " + detcat2);
+      }
+*/
+/*
       function imfile(){
         var url = '<?php echo base_url(); ?>markas/proeksternal/imjson';
         $.ajax({
@@ -250,7 +386,7 @@
           }
         });
       }
-
+*/
 
       function cekreport(){
         var gourl = '<?php echo base_url();?>markas/reports/get_keu';
@@ -267,7 +403,7 @@
                 var icel = '';
                 for (var i = 0; i <= isidata.length-1; i++) {
                   icel += '<div><button class="btn btn-app red pull-right" onclick="cekdetreport(\''+isidata[i].waktu+'\')">'+isidata[i].waktu+'</btn></div>';
-                swal.fireel += '<div id="list'+isidata[i].waktu+'"  class="tagsinput" style="width:100%;"></div>';
+                  icel += '<div id="list'+isidata[i].waktu+'"  class="tagsinput" style="width:100%;"></div>';
                   icel += '<hr/>';
                 }
                 $('#buttable').append(icel);

@@ -97,7 +97,7 @@
                   <li><a><i class="fa fa-users"></i> Akun <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
                       <li><a href="<?php echo base_url()?>auth/create_user" title="">Baru</a></li>
-                      <li><a href="<?php echo base_url()?>auth/index" title="">Daftar</a></li>
+                      <li><a href="<?php echo base_url()?>auth/listuser" title="">Daftar</a></li>
                     </ul>
                   </li>
                   <li><a><i class="fa fa-cogs"></i> Sistim <span class="fa fa-chevron-down"></span></a>

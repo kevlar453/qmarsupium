@@ -190,8 +190,9 @@
 
 
     $(document).ready(function() {
-      $("#myNav").css('height','100%');
-      $('.sidebar').css('opacity',0);
+      $.unblockUI();
+//      $("#myNav").css('height','100%');
+//      $('.sidebar').css('opacity',0);
       var pegnik = "<?php echo $idpeg;?>";
         $.ajax({
             url: "<?php echo base_url().'markas/corex/cek_doknew'?>",

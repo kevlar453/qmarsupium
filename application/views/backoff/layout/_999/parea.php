@@ -5,19 +5,19 @@
             <div class="x_title">
                 <h2>Dokumentasi:</h2>
                 <div class="clearfix"></div>
-                <?php echo '<blockquote class="red slideInRight animated">'.strtoupper($jdok).'</blockquote>';$parm1 = (int)$this->session->userdata('pgsu')>=1?'O':'C';?>
+                <?php echo '<blockquote class="red slideInRight animated">'.strtoupper($jdok).'</blockquote>';$parm1 = 'O';?>
             </div>
             <div class="x_content">
             <div class="table-responsive">
 
-              <table id="tfillgrid" class="table table-condensed table-condensed" cellspacing="0" style="table-layout: <?php echo $parm1=='O'?'auto':'fixed';?>; width: 100%;word-wrap: break-word;">
+              <table id="tfillgrid" class="table table-condensed table-condensed" cellspacing="0" style="table-layout: <?php echo 'auto';?>; width: 100%;word-wrap: break-word;">
                 <thead>
                   <tr>
                     <th>Identifikasi</th>
                     <th>Paparan</th>
                   </tr>
                 </thead>
-                <tbody> 
+                <tbody>
                 </tbody>
                 <tfoot>
                     <th></th>

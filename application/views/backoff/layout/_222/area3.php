@@ -70,7 +70,7 @@
                       ?>
                       <div class="col-md-12 col-sm-12 col-xs-12">
                         <hr/>
-                        <button class="btn btn-success" id="submitTrx" onclick="gotransaksi()">TAMBAH"</button>
+                        <button class="btn btn-success" id="submitTrx" onclick="gotransaksi()">TAMBAH</button>
                       </div>
                     </div>
                   </div>

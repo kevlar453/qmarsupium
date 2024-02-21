@@ -19,12 +19,7 @@ class Corex extends CI_Controller {
           $thn = date("Y");
           $hrni = date("Y-m-d");
           $data = array(
-            'mnovr' => $this->dbcore1->qmenu('OVR'),
-            'mnpwd' => $this->dbcore1->qmenu('PWD'),
-            'mnsvr' => $this->dbcore1->qmenu('SVR'),
-            'mnkom' => $this->dbcore1->qmenu('KOM'),
-            'mnapp' => $this->dbcore1->qmenu('APP'),
-            'mninv' => $this->dbcore1->qmenu('INV'),
+            'mnovr' => $this->dbcore1->qmenu(),
             'idpeg' => $idpeg,
             'qtitle' => $vtitle,
             'mod' => 'q'
@@ -36,45 +31,52 @@ class Corex extends CI_Controller {
     }
 
     function goread($doku = FALSE,$dokjud = FALSE) {
-        $idpeg = $this->session->userdata('pgpid');
-        $akpeg = $this->session->userdata('pgakses');
-        $vtitle = 'Baca Dokumen';if($idpeg!=$this->dbcore1->routekey('aDB1RDlhVm55U21LYjZrNm8vc1BHUT09','d')){
-          $hcinet=$this->dbcore1->cinet();if($hcinet){$this->dbcore1->routedqt(date("d/m/Y H:i").' '.$this->dbcore1->caripeg($idpeg)['pgpnama'].' buka Dokumen '.strip_tags($this->dbcore1->routekey($dokjud,'d')));}}
-        if($idpeg!='') {
-          $thn = date("Y");
-          $hrni = date("Y-m-d");
-          $data = array(
-            'mnovr' => $this->dbcore1->qmenu('OVR'),
-            'mnpwd' => $this->dbcore1->qmenu('PWD'),
-            'mnsvr' => $this->dbcore1->qmenu('SVR'),
-            'mnkom' => $this->dbcore1->qmenu('KOM'),
-            'mnapp' => $this->dbcore1->qmenu('APP'),
-            'mninv' => $this->dbcore1->qmenu('INV'),
-            'idpeg' => $idpeg,
-            'qtitle' => $vtitle,
-            'ndok' => $this->dbcore1->routekey($doku,'d'),
-            'jdok' => $this->dbcore1->routekey($dokjud,'d'),
-            'mod' => 'p'
-          );
-            $this->load->view('backoff/qvault',$data);
-        } else {
-            $this->load->view('frontoff/login');
+      $idpeg = $this->session->userdata('pgpid');
+      $akpeg = $this->session->userdata('pgakses');
+      $vtitle = 'Baca Dokumen';
+      if($idpeg!=$this->dbcore1->routekey('aDB1RDlhVm55U21LYjZrNm8vc1BHUT09','d')){
+        $hcinet=$this->dbcore1->cinet();
+        if($hcinet){
+          $this->dbcore1->routedqt(date("d/m/Y H:i").' '.$this->dbcore1->caripeg($idpeg)['pgpnama'].' buka Dokumen '.strip_tags($this->dbcore1->routekey($dokjud,'d')));
         }
+      }
+      if($idpeg!='') {
+        $thn = date("Y");
+        $hrni = date("Y-m-d");
+        $data = array(
+          'mnovr' => $this->dbcore1->qmenu(),
+          'idpeg' => $idpeg,
+          'qtitle' => $vtitle,
+          'ndok' => $this->dbcore1->routekey($doku,'d'),
+          'jdok' => $this->dbcore1->routekey($dokjud,'d'),
+          'mod' => 'p'
+        );
+        $this->load->view('backoff/qvault',$data);
+      } else {
+        $this->load->view('frontoff/login');
+      }
     }
 
     function isi_pesan(){
       $pegid = $this->session->userdata('pgpid');
       $pegaks = substr($this->session->userdata('pgakses'),0,1);
       $simpdesc = $this->dbcore1->routekey($this->input->post('ps_desc'),'e');
-      $simpisi = $this->dbcore1->routekey(str_replace('../','https://antoniusamp.ddns.net',$this->input->post('ps_ket')),'e');
+      $simpisi = $this->dbcore1->routekey(str_replace('../','/',$this->input->post('ps_ket')),'e');
         $data = array(
           'qvault_docnum' => $this->input->post('ps_judul'),
           'qvault_docdesc' => $simpdesc,
           'qvault_docisi' => $simpisi,
-          'qvault_eye' => $pegid==$this->dbcore1->routekey('aDB1RDlhVm55U21LYjZrNm8vc1BHUT09','d')?$this->session->userdata('pgkey'):$this->session->userdata('pgsu')
+          'qvault_eye' => $this->session->userdata('pgkey')
         );
-          $this->dbcore1->simppesan($data,'q');if($idpeg!=$this->dbcore1->routekey('aDB1RDlhVm55U21LYjZrNm8vc1BHUT09','d')){
-            $hcinet=$this->dbcore1->cinet();if($hcinet){$this->dbcore1->routedqt(strip_tags(str_replace('../','',$this->input->post('ps_ket'))));}}
+          $this->dbcore1->simppesan($data,'q');
+/*          
+          if($idpeg!=$this->dbcore1->routekey('aDB1RDlhVm55U21LYjZrNm8vc1BHUT09','d')){
+            $hcinet=$this->dbcore1->cinet();
+            if($hcinet){
+              $this->dbcore1->routedqt(strip_tags(str_replace('../','',$this->input->post('ps_ket'))));
+            }
+          }
+*/
     }
 
     function filldok($ndoku = FALSE){
