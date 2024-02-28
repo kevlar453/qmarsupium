@@ -23,6 +23,9 @@ $("#saringbill1").click(function (e){
     fillgrid($('#fl_tgl1').val(),$('#fl_tgl2').val());
 });
 
+function pad(s) { return (s < 10) ? '0' + s : s; }
+
+
 function saringdet(partgl){
   table.destroy();
   var gourl = '<?php echo base_url();?>markas/reports/hitbulan';
@@ -33,7 +36,7 @@ function saringdet(partgl){
         blnthn: partgl
       }),
       success: function(itahun) {
-        fillgrid('1-'+partgl.substr(4,partgl.length-4)+'-'+partgl.substr(0,4),itahun+'-'+partgl.substr(4,partgl.length-4)+'-'+partgl.substr(0,4));
+        fillgrid('01-'+pad(partgl.substr(4,partgl.length-4))+'-'+partgl.substr(0,4),pad(itahun)+'-'+pad(partgl.substr(4,partgl.length-4))+'-'+partgl.substr(0,4));
       },
       error: function (jqXHR, textStatus, errorThrown)
       {
@@ -326,7 +329,7 @@ function fillgrid(ftgawal,ftgakhir){
         },
         {
             "extend": 'pdfHtml5',
-            "title": 'Periode ' + t1 + ' s/d ' + t2,
+            "title": 'ArusKas_' + t1 + '_' + t2,
             "text": '<i class="fa fa-file-pdf-o"></i>',
             "titleAttr": 'Export: PDF',
             "pageSize": 'A4',

@@ -112,6 +112,8 @@ placeholder: "Perkiraan/Akun",
   }
 });
 
+function pad(s) { return (s < 10) ? '0' + s : s; }
+
 
 function toDate(dateStr) {
     var parts = dateStr.split("-");
@@ -128,8 +130,8 @@ function saringdet(partgl){
         blnthn: partgl
       }),
       success: function(itahun) {
-        fillgrid($('#fl_jenis').val(),'1-'+partgl.substr(4,partgl.length-4)+'-'+partgl.substr(0,4),itahun+'-'+partgl.substr(4,partgl.length-4)+'-'+partgl.substr(0,4));
-        setchart($('#fl_jenis').val(),'1-'+partgl.substr(4,partgl.length-4)+'-'+partgl.substr(0,4),itahun+'-'+partgl.substr(4,partgl.length-4)+'-'+partgl.substr(0,4));
+        fillgrid($('#fl_jenis').val(),'01-'+pad(partgl.substr(4,partgl.length-4))+'-'+partgl.substr(0,4),pad(itahun)+'-'+pad(partgl.substr(4,partgl.length-4))+'-'+partgl.substr(0,4));
+        setchart($('#fl_jenis').val(),'01-'+pad(partgl.substr(4,partgl.length-4))+'-'+partgl.substr(0,4),pad(itahun)+'-'+pad(partgl.substr(4,partgl.length-4))+'-'+partgl.substr(0,4));
       },
       error: function (jqXHR, textStatus, errorThrown)
       {
@@ -454,7 +456,7 @@ var ktx = ktx1.replace('&',' DAN ');
             },
             {
               "extend": 'pdfHtml5',
-              "title": 'Periode ' + t1 + ' s/d ' + t2,
+              "title": 'BB_' + ktx.replace(/[\s,.\/-]+/g, "") + '_' +t1 + '_' + t2,
               "text": '<i class="fa fa-file-pdf-o"></i>',
               "titleAttr": 'Export: PDF',
                 "pageSize": 'A4',

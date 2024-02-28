@@ -1,20 +1,20 @@
 require.config({
     paths: {
         'geoJson': '../geoData/geoJson',
-        'theme': '../theme',
-        'data': './data',
-        'map': '../map',
-        'extension': '../extension'
+        'theme': '/dapur0/vendors/echarts/theme',
+        'data': '/dapur0/vendors/echarts/test/data',
+        'map': '/dapur0/vendors/echarts/map',
+        'extension': '/dapur0/vendors/echarts/extension'
     },
     packages: [
         {
-            main: 'echarts',
+            main: '/dapur0/vendors/echarts',
             location: '../src',
             name: 'echarts'
         },
         {
-            main: 'zrender',
-            location: '../../zrender/src',
+            main: '/zrender',
+            location: '/dapur0/vendors/zrender/src',
             name: 'zrender'
         }
     ]

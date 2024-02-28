@@ -25,18 +25,23 @@ $this->load->view('backoff/layout/_999/qmenu');
                   <div id="infoMessage"><?php echo $message;?></div>
 
                   <?php echo form_open(current_url());?>
+                  <div class="col-md-5 col-sm-12 col-xs-12">
+                    <p>
+                      <?php echo lang('edit_group_name_label', 'group_name');?> <br />
+                      <?php echo form_input($group_name);?>
+                    </p>
+                  </div>
 
-                        <p>
-                              <?php echo lang('edit_group_name_label', 'group_name');?> <br />
-                              <?php echo form_input($group_name);?>
-                        </p>
+                  <div class="col-md-5 col-sm-12 col-xs-12">
+                    <p>
+                      <?php echo lang('edit_group_desc_label', 'description');?> <br />
+                      <?php echo form_input($group_description);?>
+                    </p>
+                  </div>
 
-                        <p>
-                              <?php echo lang('edit_group_desc_label', 'description');?> <br />
-                              <?php echo form_input($group_description);?>
-                        </p>
-
-                        <p><?php echo form_submit('submit', lang('edit_group_submit_btn'));?></p>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    <p><?php echo form_submit('submit', lang('edit_group_submit_btn'),'class="btn btn-success pull-right"');?></p>
+                  </div>
 
                   <?php echo form_close();?>
 

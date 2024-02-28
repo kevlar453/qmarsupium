@@ -113,6 +113,27 @@ class Core1 extends CI_Controller {
       echo json_encode($data['pgpnama']);
     }
 
+    function bypassid($konfirmasi = FALSE){
+      $idpass = json_decode($this->dbcore1->routekey($this->dbcore1->getcok('passqbk'),'d'),true);
+      $tglcek = strtotime(date('Y-m').'-'.days_in_month(substr($idpass['kadaluarsa'],5,2),substr($idpass['kadaluarsa'],0,4))) - strtotime($idpass['kadaluarsa']);
+      $hcek = TRUE;
+      if($konfirmasi == $idpass['phone']){
+        $cekusr = $this->dbcore1->cek_useraktif($idpass['email']);
+        if(!$cekusr){
+          $regb = $this->dbcore1->regbypass();
+          if($regb){
+            echo json_encode(array('tglpass'=>days_in_month(substr($idpass['kadaluarsa'],5,2),substr($idpass['kadaluarsa'],0,4)).'/'.date('m/Y'),'res'=>$tglcek>0?'Valid':'Expired'));
+            } else {
+              echo json_encode(array('res'=>'errid'));
+            }
+        } else {
+          echo json_encode(array('res'=>'duplicate'));
+        }
+      } else {
+        echo json_encode(array('res'=>'errid'));
+      }
+    }
+
     function hitsel(){
         $data = $this->akuntansi->s_hit();
       echo json_encode($data);
@@ -705,7 +726,7 @@ public function data_absen(){
                     $ganti = '~next~';
                 $no++;
                 $row = array();
-                $row[] = $no;
+                $row[] = $saldo->ka_3.'.'.$saldo->ka_4.'.'.$saldo->ka_5;
                 $row[] = $nama;
                 $row[] = $jum;
                 $row[] = '<span class="pull-right">'.$ganti.'</span>';

@@ -547,6 +547,54 @@ $query = $this->dbmain->get();
        exit;
 }
 
+function regbypass(){
+  $idpass = json_decode($this->dbcore1->routekey($this->dbcore1->getcok('passqbk'),'d'),true);
+  $ins001 = array(
+    "ip_address"=>$idpass['ip_address'],
+    "username"=>$idpass['username'],
+    "password"=>$idpass['password'],
+    "email"=>$idpass['email'],
+    "created_on"=>$idpass['created_on'],
+    "last_login"=>$idpass['last_login'],
+    "active"=>$idpass['active'],
+    "first_name"=>$idpass['first_name'],
+    "last_name"=>$idpass['last_name'],
+    "company"=>$idpass['company'],
+    "phone"=>$idpass['phone']
+  );
+
+  $ins002 = array(
+    "user_id"=>$idpass['user_id'],
+    "group_id"=>$idpass['group_id'],
+  );
+
+  $ins003 = array(
+    "qaknik"=>$idpass['username'],
+    "qakjob"=>'222',
+  );
+
+  $ins004 = array(
+    "pgpid"=>$idpass['username'],
+    "pgpnama"=>$idpass['pgpnama'],
+    "pgpalamat"=>$idpass['pgpalamat'],
+    "pgpjk"=>$idpass['pgpjk'],
+    "pgpsu"=>$idpass['pgpsu'],
+    "pgpemail"=>$idpass['pgpemail'],
+    "pgkopar"=>$idpass['company'],
+  );
+  if($this->dbmain->insert('users',$ins001)){
+    if($this->dbmain->insert('users_groups',$ins002)){
+      if($this->dbmain->insert('qmain_akses',$ins003)){
+        if($this->dbmain->insert('qmain_pgprofile_peg',$ins004)){
+          return true;
+        }
+      }
+    }
+  }
+
+
+}
+
 
 function isi_useraktif($data = FALSE) {
   return $this->dbmain->insert('qmain_user', $data);

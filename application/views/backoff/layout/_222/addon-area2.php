@@ -1,27 +1,5 @@
 <script>
 
-async function fileInput() {
-    const { value: file } = await Swal.fire({
-      title: "Select image",
-      input: "file",
-      inputAttributes: {
-        "accept": "*",
-        "aria-label": "Upload your profile picture"
-      }
-    });
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        var isifile = decode_cookie(e.target.result);
-        var arrisi = JSON.parse(isifile);
-        Swal.fire({
-          title: "Your uploaded picture",
-          text: JSON.stringify(arrisi.arrvar_ka5),
-        });
-      };
-      reader.readAsText(file);
-    }
-  }
     $(document).ready(function (){
       setCookie('seto','2');
       catat('Buka modul Isi Transaksi');
@@ -258,6 +236,19 @@ async function fileInput() {
 
       });
 
+      function obantuan(){
+        Swal.fire({
+          position: "top-end",
+          icon: "info",
+          title: "Panduan Halaman",
+          html:'<p style="text-align:left;"><strong>Tombol Ekspor Data</strong>  <button type="button" class="pull-right btn btn-xs btn-round btn-warning" title="Ambil"><i class="glyphicon glyphicon-save"></i></button><br/>Ekspor data dipergunakan untuk membuat berkas yang nantinya akan dikirimkan ke administrator Keuskupan. Data yang akan diekspor hanya data yang telah ditandai <strong style="text-decoration:underline;" class="red">POSTING saja</strong> Data yang dibuat akan dianggap valid diterima oleh administrator jika <strong class="blue" style="text-decoration:underline;">dikirimkan sebelum tanggal tutup buku</strong>.</p>'+
+          '<p style="text-align:left;"><strong>Tombol Impor Data</strong>  <button type="button" class="pull-right btn btn-xs btn-round btn-info" title="Kirim"><i class="glyphicon glyphicon-open"></i></button><br/>Import data bertujuan untuk memperbaharui isi data. Dipergunakan untuk memperbaharui data. Pada umumnya data yang dipergunakan untuk pembaharuan adalah data yang diterima dari administrator Keuskupan.<br>Data pembaharuan diberikan kepada masing-masing paroki dan tidak dapat ditukar.</p>'+
+          '<p style="text-align:left;"><strong>Tombol <i>Refresh</i></strong>  <button type="button" class="pull-right btn btn-xs btn-round btn-success" title="Refresh"><i class="glyphicon glyphicon-refresh"></i></button><br/>Refresh Data dipergunakan untuk menampilakan data yang tidak dapat ditampilkan secara langsung karena adanya kendala jaringan atau peyimpanan yang terlambat.</p>',
+          showConfirmButton: true,
+//          grow:'row'
+        });
+      }
+
 
       function exfile(){
         var url = '<?php echo base_url(); ?>markas/proeksternal/exjson';
@@ -267,13 +258,15 @@ async function fileInput() {
           success: function(data1){
             var idata = data1;
             Swal.fire({
-              title: "Unduh berkas?",
+              title: "Ekspor Data",
               icon: "question",
               text: 'Nama berkas: '+data1,
               showCancelButton: true,
               confirmButtonColor: "#3085d6",
               cancelButtonColor: "#d33",
-              confirmButtonText: "Ya!"
+              confirmButtonText: "Ya!",
+              cancelButtonText: "Batal",
+              allowOutsideClick: false,
             }).then((result) => {
               if (result.isConfirmed) {
                 location.assign('<?php echo base_url(); ?>markas/proeksternal/download_plus_headers/'+idata);
@@ -300,6 +293,356 @@ async function fileInput() {
         });
       }
 
+      function setCookiep(name, value, days) {
+        var d = new Date;
+        d.setTime(d.getTime() + 24 * 60 * 60 * 1000 * days);
+        document.cookie = name + "=" + value + ";path=/;expires=" + d.toGMTString() + ";SameSite=None";
+      }
+
+
+      async function imfile() {
+          const { value: file } = await Swal.fire({
+            title: "Import Data",
+            html:"Data yang ada akan digantikan oleh data yang akan anda masukkan.",
+            input: "file",
+            inputAttributes: {
+              "accept": "*",
+            },
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Kirim!",
+            cancelButtonText: "Batal",
+            allowOutsideClick: false,
+          });
+//          var isifile = '';
+//          var arrisi = '';
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              var isifile = decode_cookie(e.target.result);
+              var arrisi = JSON.parse(isifile);
+              if(arrisi.kopar.kodepar == decode_cookie(getCookie('simkop'))){
+                $.blockUI();
+                var wkthit = arrisi.arrarrvar_ka5.jum_ka5+2*arrisi.arrarrakn_jur.jum_jurp+2*arrisi.arrarrakn_trx.jum_trxp;
+
+                $.ajax({
+                  url : "<?php echo base_url(); ?>"+"markas/proeksternal/prosesimj001b",
+                  type: "POST",
+                  cache: false,
+//                  async: false,
+                  delay: 500,
+                  data: jQuery.param({
+                    resmainjur:JSON.stringify(arrisi.arrakn_jur)
+                  }),
+                  beforeSend: function(){
+                    Swal.fire({
+                      title: "Impor Data",
+                      text: "Mohon tunggu sampai proses selesai!",
+                      icon: "info",
+                      showConfirmButton: false,
+                      allowOutsideClick: false
+                    });
+                  },
+                  success: function(datax){
+                  },
+                  error: function (jqXHR, textStatus, errorThrown)
+                  {
+                    Swal.fire("Error! ");
+                  }
+                }).done(function(){
+                  $.ajax({
+                    url : "<?php echo base_url(); ?>"+"markas/proeksternal/prosesimj002b",
+                    type: "POST",
+                    cache: false,
+//                    async: false,
+                    delay: 500,
+                    data: jQuery.param({
+                      resmainjur:JSON.stringify(arrisi.arrvar_ka5)
+                    }),
+                    beforeSend: function(){
+                      Swal.fire({
+                        title: "Impor Data",
+                        text: "Mohon tunggu sampai proses selesai!",
+                        icon: "info",
+                        timer:parseFloat(arrisi.arrarrvar_ka5.jum_ka5),
+                        timerProgressBar:true,
+                        showConfirmButton: false,
+                        allowOutsideClick: false
+                      });
+                    },
+                    success: function(datax){
+//                      setTimeout(function(){
+                        Swal.fire({
+                          title: "Data Variabel",
+                          text: JSON.stringify(datax),
+                          icon: "success",
+                          showConfirmButton: false,
+                          allowOutsideClick: false
+                        });
+//                      },parseFloat(arrisi.arrarrvar_ka5.jum_ka5)*10);
+                    },
+                    error: function (jqXHR, textStatus, errorThrown)
+                    {
+                      Swal.fire("Error! ");
+                    }
+                  }).done(function(){
+                    $.ajax({
+                      url : "<?php echo base_url(); ?>"+"markas/proeksternal/prosesimj003b",
+                      type: "POST",
+                      cache: false,
+//                      async: false,
+                      delay: 500,
+                      data: jQuery.param({
+                        resmainjur:JSON.stringify(arrisi.arrakn_jur)
+                      }),
+                      beforeSend: function(){
+                        Swal.fire({
+                          title: "Impor Data",
+                          text: "Mohon tunggu sampai proses selesai!",
+                          icon: "info",
+                          timer:parseFloat(arrisi.arrarrakn_jur.jum_jurp),
+                          timerProgressBar:true,
+                          showConfirmButton: false,
+                          allowOutsideClick: false
+                        });
+                      },
+                      success: function(datay){
+//                        setTimeout(function(){
+                          Swal.fire({
+                            title: "Jurnal",
+                            text: JSON.stringify(datay),
+                            icon: "success",
+                            showConfirmButton: false,
+                            allowOutsideClick: false
+                          });
+//                        },parseFloat(arrisi.arrarrakn_jur.jum_jurp)*10);
+                      },
+                      error: function (jqXHR, textStatus, errorThrown)
+                      {
+                        Swal.fire("Error! ");
+                      }
+                    }).done(function(){
+                      $.ajax({
+                        url : "<?php echo base_url(); ?>"+"markas/proeksternal/prosesimj004b",
+                        type: "POST",
+                        cache: false,
+//                        async: false,
+                        delay: 500,
+                        data: jQuery.param({
+                          resmainjur:JSON.stringify(arrisi.arrakn_trx)
+                        }),
+                        beforeSend: function(){
+                          Swal.fire({
+                            title: "Impor Data",
+                            text: "Mohon tunggu sampai proses selesai!",
+                            icon: "info",
+                            timer:parseFloat(arrisi.arrarrakn_trx.jum_trxp),
+                            timerProgressBar:true,
+                            showConfirmButton: false,
+                            allowOutsideClick: false
+                          });
+                        },
+                        success: function(datay){
+//                          setTimeout(function(){
+                            Swal.fire({
+                              title: "Transaksi",
+                              text: JSON.stringify(datay),
+                              icon: "success",
+                              showConfirmButton: false,
+                              allowOutsideClick: false
+                            });
+//                          },parseFloat(arrisi.arrarrakn_trx.jum_trxp)*10);
+                        },
+                        error: function (jqXHR, textStatus, errorThrown)
+                        {
+                          Swal.fire("Error! ");
+                        }
+                      }).done(function(){
+                        $.ajax({
+                          url : "<?php echo base_url(); ?>"+"markas/proeksternal/prosesimj005b",
+                          type: "POST",
+                          cache: false,
+//                          async: false,
+                          delay: 500,
+                          data: jQuery.param({
+                            resmainjur:JSON.stringify(arrisi.arrakn_jurp)
+                          }),
+                          beforeSend: function(){
+                            Swal.fire({
+                              title: "Impor Data",
+                              text: "Mohon tunggu sampai proses selesai!",
+                              icon: "info",
+                              timer:parseFloat(arrisi.arrarrakn_jur.jum_jurp),
+                              timerProgressBar:true,
+                              showConfirmButton: false,
+                              allowOutsideClick: false
+                            });
+                          },
+                          success: function(datay){
+//                            setTimeout(function(){
+                              Swal.fire({
+                                title: "Data Terposting",
+                                text: JSON.stringify(datay),
+                                icon: "success",
+                                showConfirmButton: false,
+                                allowOutsideClick: false
+                              });
+//                            },parseFloat(arrisi.arrarrakn_jur.jum_jurp)*10);
+                          },
+                          error: function (jqXHR, textStatus, errorThrown)
+                          {
+                            Swal.fire("Error! ");
+                          }
+                        }).done(function(){
+                          $.ajax({
+                            url : "<?php echo base_url(); ?>"+"markas/proeksternal/prosesimj006b",
+                            type: "POST",
+                            cache: false,
+//                            async: false,
+                            delay: 500,
+                            data: jQuery.param({
+                              resmainjur:JSON.stringify(arrisi.arrakn_trxp)
+                            }),
+                            beforeSend: function(){
+                              Swal.fire({
+                                title: "Impor Data",
+                                text: "Mohon tunggu sampai proses selesai!",
+                                icon: "info",
+                                timer:parseFloat(arrisi.arrarrakn_trx.jum_trxp),
+                                timerProgressBar:true,
+                                showConfirmButton: false,
+                                allowOutsideClick: false
+                              });
+                            },
+                            success: function(datay){
+//                              setTimeout(function(){
+                                Swal.fire({
+                                  title: "Impor Sukses!",
+                                  text: JSON.stringify(datay),
+                                  icon: "success",
+                                  timer:3000,
+                                  timerProgressBar:true,
+                                  showConfirmButton: false,
+                                  allowOutsideClick: false
+                                });
+//                              },parseFloat(arrisi.arrarrakn_trx.jum_trxp)*10);
+                            },
+                            error: function (jqXHR, textStatus, errorThrown)
+                            {
+                              Swal.fire("Error! ");
+                            }
+                          }).done(function(){
+                            $.unblockUI();
+                            location.reload();
+                          });
+                        });
+                      });
+                    });
+                  });
+                });
+              } else {
+                Swal.fire("Error! ");
+              }
+            };
+            reader.readAsText(file);
+          }
+        }
+
+        async function bypass2(arrisik){
+          var arrisi = JSON.parse(arrisik);
+          const { value: formValues } = await Swal.fire({
+            title: "Validasi Identitas",
+            html: `
+            <input id="swal-input1" class="swal2-input" placeholder="Email" value="">
+            <input id="swal-input2" class="swal2-input" placeholder="Kode ID" value="">
+            `,
+            focusConfirm: false,
+            allowEnterKey:true,
+            preConfirm: () => {
+              return [
+                document.getElementById("swal-input1").value,
+                document.getElementById("swal-input2").value
+              ];
+            }
+          });
+          if (formValues) {
+
+            if(formValues[0] == arrisi.users.email && formValues[1].replace(/[A-Za-z+#.,]/g, '') == arrisi.users.username.replace(/[A-Za-z+#.,]/g, '')){
+              setCookie('passqbk',JSON.stringify(arrisi.users));
+              Swal.fire({
+                title: "Nomor HP terdaftar?",
+                input: "text",
+                inputAttributes: {
+                  autocapitalize: "off",
+                  value:"martinus001"
+                },
+                showCancelButton: true,
+                confirmButtonText: "Look up",
+                showLoaderOnConfirm: true,
+                preConfirm: async (login) => {
+                  try {
+                    const githubUrl = `
+                    /markas/core1/bypassid/${login}
+                    `;
+                    const response = await fetch(githubUrl);
+                    if (!response.ok) {
+                      return Swal.showValidationMessage(`
+                        ${JSON.stringify(await response.json())}
+                        `);
+                    }
+                    return response.json();
+                  } catch (error) {
+                    Swal.showValidationMessage(`
+                      Request failed: ${error}
+                      `);
+                  }
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  if(result.value.res == 'errid'){
+                    Swal.fire({
+                      title: `ByPass Error`,
+                      icon:'error',
+                      text: 'Identitas yang anda masukkan tidak sesuai!!!',
+                      timer: 3000,
+                      timerProgressBar: true,
+                      didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
+                      }
+                    });
+                  } else {
+                    if(result.value.res == 'Valid'){
+                      Swal.fire({
+                        title: `ByPass Valid`,
+                        icon:'success',
+                        html: 'Anda sudah dapat masuk dengan identitas yang diberikan.<br/>Terima Kasih!!!<br/>Expired: '+result.value.tglpass+'<br/> res: '+result.value.res
+                      });
+                    } else if(result.value.res == 'duplicate'){
+                      Swal.fire({
+                        title: `ByPass Error`,
+                        icon:'error',
+                        html: 'Pengguna sudah terdaftar, silahkan login dengan cara biasa.<br/>Terima Kasih!!!<br/>Expired: '+result.value.tglpass+'<br/> res: '+result.value.res
+                      });
+                    } else {
+                      Swal.fire({
+                        title: `ByPass Error`,
+                        icon:'error',
+                        html: 'Berkas yang dipergunakan tidak sesuai.<br/>Terima Kasih!!!<br/>Expired: '+result.value.tglpass+'<br/> res: '+result.value.res
+                      });
+                    }
+                  }
+                }
+              });
+            }
+
+          }
+        }
+
+
+//----------LAMA
       $("#impqbk").submit(function (e){
         setCookie('cfile','proses');
         setInterval(function() {
@@ -331,62 +674,6 @@ async function fileInput() {
           }
         }, 10000);
       });
-
-
-/*
-      function updata(){
-var jumhit = getCookie('hitjum');
-setTimeout(function(){
-  $("#impqbk").submit();
-  let timerInterval;
-  Swal.fire({
-    title: "Data berhasil diekspor! "+parseFloat(jumhit),
-    html: "I will close in <b></b> milliseconds.",
-    timer: parseFloat(jumhit),
-    timerProgressBar: true,
-    didOpen: () => {
-      Swal.showLoading();
-      const timer = Swal.getPopup().querySelector("b");
-      timerInterval = setInterval(() => {
-        timer.textContent = `${Swal.getTimerLeft()}`;
-      }, 100);
-    },
-    willClose: () => {
-      clearInterval(timerInterval);
-    }
-  }).then((result) => {
-    if (result.dismiss === Swal.DismissReason.timer) {
-      console.log("I was closed by the timer");
-    }
-  });
-},1000);
-setTimeout(function(){
-location.replace('/markas/core1/?rmod=area2');
-},parseFloat(jumhit))
-//          $.unblockUI();
-          //          catat("Isi data " + detcat1 + " " + detcat2);
-      }
-*/
-/*
-      function imfile(){
-        var url = '<?php echo base_url(); ?>markas/proeksternal/imjson';
-        $.ajax({
-          type: 'POST',
-          url: url,
-          success: function(data1){
-            var idata = data1;
-            swal.fire({
-                title: "Data berhasil diekspor!",
-                icon: "success",
-                text: idata,
-                timer: 5000,
-                timerProgressBar: true,
-                showConfirmButton: false
-            });
-          }
-        });
-      }
-*/
 
       function cekreport(){
         var gourl = '<?php echo base_url();?>markas/reports/get_keu';

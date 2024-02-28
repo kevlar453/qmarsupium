@@ -56,7 +56,7 @@
                         <table id="tsaldo" class="display table-compact table-striped table-hover table-responsive table-full-width" cellspacing="0" width="100%">
                             <thead>
                                 <tr>
-				            		<th>No</th>
+				            		<th>No Akun</th>
 				            		<th>Nama Perkiraan</th>
 				            		<th>Saldo Awal</th>
 				            		<th>Pilihan</th>

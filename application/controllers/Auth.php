@@ -163,6 +163,8 @@ class Auth extends CI_Controller
 		{
 			// display the form
 			// set the flash data error message if there is one
+			$this->data['idpeg'] = $idpeg;
+			$this->data['mod'] = 'q';
 			$this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
 
 			$this->data['min_password_length'] = $this->config->item('min_password_length', 'ion_auth');
@@ -607,6 +609,9 @@ class Auth extends CI_Controller
 				'class'=>'form-control',
 				'style'=>'text-align:center',
 			);
+			$idpeg = $this->session->userdata('pgpid');
+			$this->data['idpeg'] = $idpeg;
+			$this->data['mod'] = 'q';
 
 			$this->_render_page('auth/create_user', $this->data);
 		}
@@ -733,34 +738,46 @@ class Auth extends CI_Controller
 			'name'  => 'first_name',
 			'id'    => 'first_name',
 			'type'  => 'text',
+			'class'=>'form-control',
+			'style'=>'text-align:center',
 			'value' => $this->form_validation->set_value('first_name', $user->first_name),
 		);
 		$this->data['last_name'] = array(
 			'name'  => 'last_name',
 			'id'    => 'last_name',
 			'type'  => 'text',
+			'class'=>'form-control',
+			'style'=>'text-align:center',
 			'value' => $this->form_validation->set_value('last_name', $user->last_name),
 		);
 		$this->data['company'] = array(
 			'name'  => 'company',
 			'id'    => 'company',
 			'type'  => 'text',
+			'class'=>'form-control',
+			'style'=>'text-align:center',
 			'value' => $this->form_validation->set_value('company', $user->company),
 		);
 		$this->data['phone'] = array(
 			'name'  => 'phone',
 			'id'    => 'phone',
 			'type'  => 'text',
+			'class'=>'form-control',
+			'style'=>'text-align:center',
 			'value' => $this->form_validation->set_value('phone', $user->phone),
 		);
 		$this->data['password'] = array(
 			'name' => 'password',
 			'id'   => 'password',
+			'class'=>'form-control',
+			'style'=>'text-align:center',
 			'type' => 'password'
 		);
 		$this->data['password_confirm'] = array(
 			'name' => 'password_confirm',
 			'id'   => 'password_confirm',
+			'class'=>'form-control',
+			'style'=>'text-align:center',
 			'type' => 'password'
 		);
 		$idpeg = $this->session->userdata('pgpid');
@@ -839,7 +856,7 @@ class Auth extends CI_Controller
 
 		$this->data['title'] = $this->lang->line('edit_group_title');
 
-		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin())
+		if (!$this->ion_auth->logged_in())
 		{
 			redirect('auth', 'refresh');
 		}
@@ -879,6 +896,7 @@ class Auth extends CI_Controller
 			'name'    => 'group_name',
 			'id'      => 'group_name',
 			'type'    => 'text',
+			'class' => 'form-control',
 			'value'   => $this->form_validation->set_value('group_name', $group->name),
 			$readonly => $readonly,
 		);
@@ -886,6 +904,7 @@ class Auth extends CI_Controller
 			'name'  => 'group_description',
 			'id'    => 'group_description',
 			'type'  => 'text',
+			'class' => 'form-control',
 			'value' => $this->form_validation->set_value('group_description', $group->description),
 		);
 		$idpeg = $this->session->userdata('pgpid');

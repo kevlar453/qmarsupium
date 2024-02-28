@@ -6,11 +6,12 @@
       <div class="x_title">
           <h2>Daftar Jurnal</h2>
           <ul class="nav navbar-right panel_toolbox">
-            <li id="tgexp" class="hidden"><button type="button" class="btn btn-sm btn-warning"  data-toggle="modal" data-target=".mdisikode" title="Ekspor/Impor"><i class="glyphicon glyphicon-globe"></i></button></li>
+            <li id="tgexp"><button type="button" class="btn btn-sm btn-warning" onclick="exfile()" title="Ambil"><i class="glyphicon glyphicon-save"></i></button></li>
+            <li id="tgimp"><button type="button" class="btn btn-sm btn-info" onclick="imfile()" title="Kirim"><i class="glyphicon glyphicon-open"></i></button></li>
             <li><button type="button" class="btn btn-sm btn-success" onclick="table.destroy();fillgrid('');" title="Reset"><i class="glyphicon glyphicon-refresh"></i></button></li>
-              <li><button type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target=".impjurnal" title="Import Excel"><i class="glyphicon glyphicon-import"></i></button></li>
+              <li><button type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target=".impjurnal" title="Import Excel"><i class="glyphicon glyphicon-open-file"></i></button></li>
               <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
-              <li><a title="Bantuan"><i class="fa fa-question"></i></a></li>
+              <li><a title="Bantuan" onclick="obantuan();"><i class="fa fa-question"></i></a></li>
           </ul>
           <div class="clearfix"></div>
       </div>
@@ -27,7 +28,7 @@
                             <?php
                                 echo form_error('fj_jns');
                                 echo form_label('NO.JURNAL','fj_jns',array('class'=>'input-group'));
-                                echo form_input(array('id' => 'fj_nomor', 'name' => 'fj_nomor','class'=>'form-control','onblur'=>'prosescari(this.value);','onkeyup'=>'this.value = this.value.toUpperCase();', 'data-inputmask'=>'\'mask\': \'***.**.***\'','required'=>'required','readonly'=>'readonly'));
+                                echo form_input(array('id' => 'fj_nomor', 'name' => 'fj_nomor','class'=>'form-control','onblur'=>'prosescari(this.value);','onkeyup'=>'this.value = this.value.toUpperCase();', 'data-inputmask'=>'\'mask\': \'***.**.***\'','required'=>'required','readonly'=>'readonly','data-toggle'=>'tooltip','data-placement'=>'top','title'=>'Otomatis terisi'));
                                 ?>
                               </div>
                                 <div class="col-md-6 col-sm-12 col-xs-12">
@@ -35,7 +36,7 @@
                                 echo form_label('TGL','fj_tgl',array('class'=>'input-group'));
 
                             ?>
-                                <input id="fj_tgl" name="fj_tgl" placeholder="HH/BB/TTTT" class="form-control datepicker" type="text" value="<?php echo date(" d-m-Y ",now());?>">
+                                <input id="fj_tgl" name="fj_tgl" placeholder="HH/BB/TTTT" class="form-control datepicker" type="text" data-toggle="tooltip" data-placement="top" title="Tgl transaksi terjadi/Tgl NOTA" value="<?php echo date(" d-m-Y ",now());?>">
                                 <input id="fj_sts" name="fj_sts" type="hidden" value="0">
                                 <input id="fj_akses" name="fj_akses" type="hidden" value="<?php echo $akses; ?>">
                               </div>
@@ -43,20 +44,20 @@
                             <?php
                                 echo form_label('JURNAL','fj_noacc',array('class'=>'input-group')); ?>
                                 <?php echo form_error('fj_noacc');
-                                echo form_dropdown('fj_jenis', $jjenis, '#', 'id="fj_jenis" class="form-control" style="float: left;"');
+                                echo form_dropdown('fj_jenis', $jjenis, '#', 'id="fj_jenis" class="form-control" style="float: left;"  data-toggle="tooltip" data-placement="top" title="Pilih Jns Buku/Jns Jurnal"');
                                 ?>
                               </div>
                         <div class="col-md-6 col-sm-12 col-xs-12">
                                 <?php
                                 echo form_label('TRANSAKSI','fj_jnsjur',array('class'=>'input-group'));
-                                echo form_dropdown('ft_jnsjur', array('X' => 'Pilih','M' => 'Masuk','K' => 'Keluar'), 'X', 'id="ft_jnsjur" class="form-control"');
+                                echo form_dropdown('ft_jnsjur', array('X' => 'Pilih','M' => 'Masuk','K' => 'Keluar'), 'X', 'id="ft_jnsjur" class="form-control" data-toggle="tooltip" data-placement="top" title="Transaksi Keluar/Masuk"');
                             ?>
                         </div>
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <?php
                                 echo form_label('KETERANGAN','fj_ket',array('class'=>'input-group')); ?>
                                 <?php echo form_error('fj_ket');
-                                echo form_input(array('id' => 'fj_ket', 'name' => 'fj_ket','class'=>'form-control' ,'placeholder' => 'Keterangan (harus diisi)', 'data-parsley-length' =>'[2, 50]','required'=>'required'));
+                                echo form_input(array('id' => 'fj_ket', 'name' => 'fj_ket','class'=>'form-control' ,'placeholder' => 'Keterangan (harus diisi)', 'data-parsley-length' =>'[2, 50]','required'=>'required','data-toggle'=>'tooltip','data-placement'=>'bottom','title'=>'Keterangan transaksi'));
                             ?>
                         </div>
                         <div class="col-md-12 col-sm-12 col-xs-12">
@@ -78,7 +79,6 @@
                     <hr/>
                       <div class="lapdetail">
                         <div id="buttable" style="width:100%;"></div>
-                        <button type="button" name="button" class="btn btn-success" onclick="fileInput()">CEK</button>
                       </div>
                   </div>
                 </div>
@@ -168,20 +168,6 @@
                         <li>Buat file excel dengan format yang telah ditentukan atau unduh dari sini (<a href="<?php echo base_url().'dapur0/semstorage/blankqhmsjurnal.xls'?>" class="animated infinite pulse green" title="Contoh Format Jurnal">berkas kosong</a>)</li>
                         <li>JenJurnal adalah jenis jurnal. Diisi dengan kode saja
                           <div id="cekisijur"></div>
-<!--
-                            <ul>
-                              <li>01 - KAS UMUM</li>
-                              <li>02 - KAS DEVOSIONALIA</li>
-                              <li>03 - BUKU BANK/CU ABTT-1</li>
-                              <li>04 - BUKU BANK/CU ABTT-2</li>
-                              <li>05 - BUKU BANK/CU ABTS-1</li>
-                              <li>06 - BUKU BANK/CU ABTS-2</li>
-                              <li>07 - BUKU BANK/CU ABTK-1</li>
-                              <li>08 - BUKU BANK/CU ABTK-2</li>
-                              <li>09 - BUKU MEMORIAL</li>
-                              <li>10 - UMUM</li>
-                            </ul>
--->
                         </li>
                         <li>TglJurnal diisi dengan format TTTT-BB-HH (mis: 2018-04-24)</li>
                         <li>Pastikan file excel tetap menggunakan bentuk <strong>xls</strong> atau Excel-2003, jangan dirubah menjadi <strong>xlsx</strong> atau Excel-2007</li>

@@ -56,6 +56,8 @@ $('#piljurnal').select2({
     setCookie('piljur',$('#piljurnal').val());
   });
 
+  function pad(s) { return (s < 10) ? '0' + s : s; }
+
 
 function cekreport(){
   var gourl = '<?php echo base_url();?>markas/reports/get_keu';
@@ -130,7 +132,7 @@ function saringdet(partgl){
         blnthn: partgl
       }),
       success: function(itahun) {
-        fillgrid('1-'+partgl.substr(4,partgl.length-4)+'-'+partgl.substr(0,4),itahun+'-'+partgl.substr(4,partgl.length-4)+'-'+partgl.substr(0,4));
+        fillgrid('01-'+pad(partgl.substr(4,partgl.length-4))+'-'+partgl.substr(0,4),pad(itahun)+'-'+pad(partgl.substr(4,partgl.length-4))+'-'+partgl.substr(0,4));
       },
       error: function (jqXHR, textStatus, errorThrown)
       {
@@ -225,7 +227,7 @@ function fillgrid(ftgawal,ftgakhir){
       {
         "extend": 'pdfHtml5',
         "messageBottom": 'Daftar Transaksi',
-        "title": 'Periode ' + t1 + ' s/d ' + t2,
+        "title": 'TransaksiNonPost_' + t1 + '_' + t2,
         "text": '<i class="fa fa-file-pdf-o"></i>',
         "titleAttr": 'Export: PDF',
         "pageSize": 'A4',

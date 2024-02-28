@@ -47,7 +47,7 @@
                     <li><a href="<?php echo base_url().'markas/core1/?rmod=area81'.$swakses; ?>">Transaksi</a></li>
                     <li><a href="<?php echo base_url().'markas/core1/?rmod=area4'.$swakses; ?>" >Buku Besar</a></li>
                     <?php
-                    if((int)$kodesu>=1){
+                    if((int)$kodesu>=0){
                       ?>
                       <li><a href="<?php echo base_url().'markas/core1/?rmod=area82'.$swakses; ?>" >Neraca</a></li>
                       <li><a href="#" class="dark">[L1] Posisi Keuangan</a></li>

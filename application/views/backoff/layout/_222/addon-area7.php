@@ -24,6 +24,7 @@ $(document).ajaxStop($.unblockUI);
       minimumResultsForSearch: -1,
   	placeholder: "-Pilih Akun-",
     data: [
+      {id:'00',text:'Pilih Group'},
       {id:'01',text:'Group GL-1'},
       {id:'02',text:'Group GL-2'},
       {id:'03',text:'Group GL-3'},

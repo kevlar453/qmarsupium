@@ -187,6 +187,7 @@ class Proreports extends CI_Model {
       }
       $this->dbmain->where('aktrx_jns','D');
       $this->dbmain->where('aktrx_mark','0');
+      $this->dbmain->where('aktrx_post','1');
       $this->dbmain->where('qmain_akun_jur.akjur_tgl <',$partg);
       $this->dbmain->group_by('left(aktrx_nomor,6)');
       $query = $this->dbmain->get();
@@ -212,6 +213,7 @@ class Proreports extends CI_Model {
       }
       $this->dbmain->where('aktrx_jns','K');
       $this->dbmain->where('aktrx_mark','0');
+      $this->dbmain->where('aktrx_post','1');
       $this->dbmain->where('qmain_akun_jur.akjur_tgl <',$partg);
       $this->dbmain->group_by('left(aktrx_nomor,6)');
       $query = $this->dbmain->get();
@@ -326,9 +328,9 @@ class Proreports extends CI_Model {
       $this->dbmain->from('qmain_akun_trx'.($cekkel == '00'?'_post':''));
       $this->dbmain->join('qmain_akun_jur'.($cekkel == '00'?'_post':''),'qmain_akun_jur'.($cekkel == '00'?'_post':'').'.akjur_nomor=qmain_akun_trx'.($cekkel == '00'?'_post':'').'.aktrx_nojur','left');
         if($cekkel != '00'){
-          $this->dbmain->where('qmain_akun_trx'.($cekkel == '00'?'_post':'').'.akjur_kopar',$this->dbcore1->routekey(get_cookie('simkop'),'d'));
+          $this->dbmain->where(array('qmain_akun_trx'.($cekkel == '00'?'_post':'').'.akjur_kopar'=>$this->dbcore1->routekey(get_cookie('simkop'),'d'),'qmain_akun_trx'.($cekkel == '00'?'_post':'').'.aktrx_mark'=>0,'qmain_akun_trx'.($cekkel == '00'?'_post':'').'.aktrx_post'=>1));
         } else {
-          $this->dbmain->where('qmain_akun_trx'.($cekkel == '00'?'_post':'').'.aktrx_post',1);
+          $this->dbmain->where(array('qmain_akun_trx'.($cekkel == '00'?'_post':'').'.aktrx_mark'=>0,'qmain_akun_trx'.($cekkel == '00'?'_post':'').'.aktrx_post'=>1));
         }
       $this->dbmain->group_by('LEFT(qmain_akun_jur'.($cekkel == '00'?'_post':'').'.akjur_tgl,7)');
       $kelperi = $this->dbmain->get();
@@ -345,10 +347,10 @@ class Proreports extends CI_Model {
       $this->dbmain->join('qmain_akun_jur'.($cekkel == '00'?'_post':''),'qmain_akun_jur'.($cekkel == '00'?'_post':'').'.akjur_nomor=qmain_akun_trx'.($cekkel == '00'?'_post':'').'.aktrx_nojur','left');
       $this->dbmain->where(array('aktrx_jns'=>'D','LEFT(aktrx_nomor,1)'=>'1','aktrx_mark'=>'0'));
       if($cekkel != '00'){
-        $this->dbmain->where('qmain_akun_trx'.($cekkel == '00'?'_post':'').'.akjur_kopar',$this->dbcore1->routekey(get_cookie('simkop'),'d'));
-        } else {
-          $this->dbmain->where('qmain_akun_trx'.($cekkel == '00'?'_post':'').'.aktrx_post',1);
-        }
+        $this->dbmain->where(array('qmain_akun_trx'.($cekkel == '00'?'_post':'').'.akjur_kopar'=>$this->dbcore1->routekey(get_cookie('simkop'),'d'),'qmain_akun_trx'.($cekkel == '00'?'_post':'').'.aktrx_mark'=>0,'qmain_akun_trx'.($cekkel == '00'?'_post':'').'.aktrx_post'=>1));
+      } else {
+        $this->dbmain->where(array('qmain_akun_trx'.($cekkel == '00'?'_post':'').'.aktrx_mark'=>0,'qmain_akun_trx'.($cekkel == '00'?'_post':'').'.aktrx_post'=>1));
+      }
       $this->dbmain->group_by('LEFT(qmain_akun_jur'.($cekkel == '00'?'_post':'').'.akjur_tgl,7)');
       $kelkm = $this->dbmain->get();
       if($kelkm){
@@ -364,10 +366,10 @@ class Proreports extends CI_Model {
       $this->dbmain->join('qmain_akun_jur'.($cekkel == '00'?'_post':''),'qmain_akun_jur'.($cekkel == '00'?'_post':'').'.akjur_nomor=qmain_akun_trx'.($cekkel == '00'?'_post':'').'.aktrx_nojur','left');
       $this->dbmain->where(array('aktrx_jns'=>'K','LEFT(aktrx_nomor,1)'=>'1','aktrx_mark'=>'0'));
       if($cekkel != '00'){
-        $this->dbmain->where('qmain_akun_trx'.($cekkel == '00'?'_post':'').'.akjur_kopar',$this->dbcore1->routekey(get_cookie('simkop'),'d'));
-        } else {
-          $this->dbmain->where('qmain_akun_trx'.($cekkel == '00'?'_post':'').'.aktrx_post',1);
-        }
+        $this->dbmain->where(array('qmain_akun_trx'.($cekkel == '00'?'_post':'').'.akjur_kopar'=>$this->dbcore1->routekey(get_cookie('simkop'),'d'),'qmain_akun_trx'.($cekkel == '00'?'_post':'').'.aktrx_mark'=>0,'qmain_akun_trx'.($cekkel == '00'?'_post':'').'.aktrx_post'=>1));
+      } else {
+        $this->dbmain->where(array('qmain_akun_trx'.($cekkel == '00'?'_post':'').'.aktrx_mark'=>0,'qmain_akun_trx'.($cekkel == '00'?'_post':'').'.aktrx_post'=>1));
+      }
       $this->dbmain->group_by('LEFT(qmain_akun_jur'.($cekkel == '00'?'_post':'').'.akjur_tgl,7)');
       $kelkk = $this->dbmain->get();
       if($kelkk){
@@ -383,10 +385,10 @@ class Proreports extends CI_Model {
       $this->dbmain->join('qmain_akun_jur'.($cekkel == '00'?'_post':''),'qmain_akun_jur'.($cekkel == '00'?'_post':'').'.akjur_nomor=qmain_akun_trx'.($cekkel == '00'?'_post':'').'.aktrx_nojur','left');
       $this->dbmain->where(array('aktrx_jns'=>'D','LEFT(aktrx_nomor,1)'=>'6','aktrx_mark'=>'0'));
       if($cekkel != '00'){
-        $this->dbmain->where('qmain_akun_trx'.($cekkel == '00'?'_post':'').'.akjur_kopar',$this->dbcore1->routekey(get_cookie('simkop'),'d'));
-        } else {
-          $this->dbmain->where('qmain_akun_trx'.($cekkel == '00'?'_post':'').'.aktrx_post',1);
-        }
+        $this->dbmain->where(array('qmain_akun_trx'.($cekkel == '00'?'_post':'').'.akjur_kopar'=>$this->dbcore1->routekey(get_cookie('simkop'),'d'),'qmain_akun_trx'.($cekkel == '00'?'_post':'').'.aktrx_mark'=>0,'qmain_akun_trx'.($cekkel == '00'?'_post':'').'.aktrx_post'=>1));
+      } else {
+        $this->dbmain->where(array('qmain_akun_trx'.($cekkel == '00'?'_post':'').'.aktrx_mark'=>0,'qmain_akun_trx'.($cekkel == '00'?'_post':'').'.aktrx_post'=>1));
+      }
       $this->dbmain->group_by('LEFT(qmain_akun_jur'.($cekkel == '00'?'_post':'').'.akjur_tgl,7)');
       $kelkk = $this->dbmain->get();
       if($kelkk){
@@ -395,7 +397,7 @@ class Proreports extends CI_Model {
     }
 
     function get_user($cekidentity = FALSE){
-    $this->dbmain->select('*');
+    $this->dbmain->select('*,NOW() as kadaluarsa');
     $this->dbmain->from('users');
     $this->dbmain->where('username',$cekidentity);
     $this->dbmain->join('users_groups','users_groups.user_id=users.username','left');

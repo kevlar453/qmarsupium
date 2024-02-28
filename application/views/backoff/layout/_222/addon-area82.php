@@ -24,6 +24,8 @@ $("#saringbill1").click(function (e){
     fillgrid($('#fl_tgl1').val(),$('#fl_tgl2').val());
 });
 
+function pad(s) { return (s < 10) ? '0' + s : s; }
+
 function saringdet(partgl){
   table.destroy();
   var gourl = '<?php echo base_url();?>markas/reports/hitbulan';
@@ -34,7 +36,7 @@ function saringdet(partgl){
         blnthn: partgl
       }),
       success: function(itahun) {
-        fillgrid('1-'+partgl.substr(4,partgl.length-4)+'-'+partgl.substr(0,4),itahun+'-'+partgl.substr(4,partgl.length-4)+'-'+partgl.substr(0,4));
+        fillgrid('01-'+pad(partgl.substr(4,partgl.length-4))+'-'+partgl.substr(0,4),pad(itahun)+'-'+pad(partgl.substr(4,partgl.length-4))+'-'+partgl.substr(0,4));
       },
       error: function (jqXHR, textStatus, errorThrown)
       {
@@ -149,6 +151,7 @@ function fillgrid(ftgawal,ftgakhir){
       var td2 = f2.toISOString().split('T')[0];
       var url = "<?php echo base_url(); ?>markas/core1/filltemp1/"+td1+td2;
       var implogo = "<?php echo base64_encode(file_get_contents(base_url().'/dapur0/images/logokop.png'))?>";
+      var ketakhir = '-------';
 //      var data = $(this).serialize();
 
   table = $('#tfillgrid').DataTable({
@@ -232,6 +235,12 @@ function fillgrid(ftgawal,ftgakhir){
         $(api.column(5).footer()).html($.fn.dataTable.render.number('.', ',', 0, '').display(+total5));
         $(api.column(6).footer()).html($.fn.dataTable.render.number('.', ',', 0, '').display(+total6));
         $(api.column(7).footer()).html($.fn.dataTable.render.number('.', ',', 0, '').display(+total7));
+        if(total4 == total5){
+          ketakhir = 'Transaksi sudah sesuai (BALANCE)\n';
+        } else {
+          ketakhir = 'Transaksi belum sesuai (Tidak BALANCE)\n';
+        }
+        ketakhir += 'Saldo akhir yang ada: Rp. '+$.fn.dataTable.render.number('.', ',', 0, '').display(total6-total7)+',00 \n# '+ inWords(total6-total7) + ' rupiah\n'+ (total6-total7<0?'[Pada sisi KREDIT]':'[Pada sisi DEBET]');
     },
     "lengthMenu": [[50, 100, -1], [50, 100, "All"]],
     "language":{
@@ -350,7 +359,7 @@ function fillgrid(ftgawal,ftgakhir){
         },
         {
             "extend": 'pdfHtml5',
-            "title": 'Periode ' + t1 + ' s/d ' + t2,
+            "title": 'Neraca_' + t1 + '_' + t2,
             "text": '<i class="fa fa-file-pdf-o"></i>',
             "titleAttr": 'Export: PDF',
             "pageSize": 'A4',
@@ -451,7 +460,7 @@ function fillgrid(ftgawal,ftgakhir){
                       bold: true,
                       style: 'defaultStyle1'
                     }, {
-                      text: '---.',
+                      text: ketakhir,
                       rowSpan: 5,
                       colSpan: 6,
                       bold: true,
@@ -539,207 +548,207 @@ function fillgrid(ftgawal,ftgakhir){
 
               doc.content.splice(0, 1, {
                 columns: [{
-                    width: '52%',
-                    fontSize: 9,
-                    bold: true,
-                    alignment: 'left',
-                    image: logo,
-                    //                  text: '<!!----------!!>',
-                    width: 120
-                  },
-                  {
-                    width: '38%',
-                    alignment: 'right',
-                    bold: true,
-                    fontSize: 8,
-                    text: ''
-                  },
-                  {
-                    width: '2%',
-                    fontSize: 8,
-                    text: ''
-                  },
-                  {
-                    width: '5%',
-                    alignment: 'right',
-                    fontSize: 8,
-                    text: ''
-                  }
-                ],
-                columnGap: 2
-              }, {
-                columns: [{
-                    width: '10%',
-                    alignment: 'left',
-                    fontSize: 8,
-                    bold: true,
-                    text: 'Periode'
-                  },
-                  {
-                    width: '5%',
-                    alignment: 'left',
-                    fontSize: 8,
-                    bold: true,
-                    text: ':\n'
-                  },
-                  {
-                    width: '20%',
-                    alignment: 'right',
-                    fontSize: 8,
-                    text: t1 + ' s/d ' + t2
-                  },
-                  {
-                    width: 'auto',
-                    alignment: 'right',
-                    fontSize: 8,
-                    text: ''
-                  },
-                  {
-                    width: 'auto',
-                    alignment: 'left',
-                    fontSize: 8,
-                    bold: true,
-                    text: ''
-                  },
-                  {
-                    width: 'auto',
-                    alignment: 'left',
-                    fontSize: 8,
-                    bold: true,
-                    text: ''
-                  },
-                  {
-                    width: 'auto',
-                    alignment: 'right',
-                    fontSize: 8,
-                    text: ''
-                  }
-                ],
-                columnGap: 2
-              });
-
-              doc.content.splice(1, 0, {
-                columns: [{
-                    width: '10%',
-                    alignment: 'left',
-                    fontSize: 8,
-                    bold: true,
-                    text: 'Jns Laporan\nKode\n\n'
-                  },
-                  {
-                    width: '2%',
-                    alignment: 'left',
-                    fontSize: 8,
-                    bold: true,
-                    text: ':\n:\n\n'
-                  },
-                  {
-                    width: '53%',
-                    alignment: 'left',
-                    fontSize: 8,
-                    text: 'Neraca Rugi Laba' + '\n' + '_____________________' + '\n\n'
-                  },
-                  {
-                    width: '10%',
-                    alignment: 'left',
-                    fontSize: 8,
-                    bold: true,
-                    text: ''
-                  },
-                  {
-                    width: '2%',
-                    alignment: 'left',
-                    fontSize: 8,
-                    bold: true,
-                    text: ''
-                  },
-                  {
-                    width: '25%',
-                    alignment: 'left',
-                    fontSize: 8,
-                    text: ''
-                  }
-                ]
-              }, {
-                columns: [{
-                  width: '100%',
-                  alignment: 'center',
-                  fontSize: 14,
+                  width: '52%',
+                  fontSize: 9,
                   bold: true,
-                  text: 'Laporan Neraca Rugi Laba' + '\n\n'
-                }],
-                columnGap: 2
-              });
+                  alignment: 'left',
+                  image: logo,
+                  //                  text: '<!!----------!!>',
+                  width: 120
+                },
+                {
+                  width: '38%',
+                  alignment: 'right',
+                  bold: true,
+                  fontSize: 8,
+                  text: ''
+                },
+                {
+                  width: '2%',
+                  fontSize: 8,
+                  text: ''
+                },
+                {
+                  width: '5%',
+                  alignment: 'right',
+                  fontSize: 8,
+                  text: ''
+                }
+              ],
+              columnGap: 2
+            }, {
+              columns: [{
+                width: '10%',
+                alignment: 'left',
+                fontSize: 8,
+                bold: true,
+                text: 'Periode'
+              },
+              {
+                width: '5%',
+                alignment: 'left',
+                fontSize: 8,
+                bold: true,
+                text: ':\n'
+              },
+              {
+                width: '20%',
+                alignment: 'right',
+                fontSize: 8,
+                text: t1 + ' s/d ' + t2
+              },
+              {
+                width: 'auto',
+                alignment: 'right',
+                fontSize: 8,
+                text: ''
+              },
+              {
+                width: 'auto',
+                alignment: 'left',
+                fontSize: 8,
+                bold: true,
+                text: ''
+              },
+              {
+                width: 'auto',
+                alignment: 'left',
+                fontSize: 8,
+                bold: true,
+                text: ''
+              },
+              {
+                width: 'auto',
+                alignment: 'right',
+                fontSize: 8,
+                text: ''
+              }
+            ],
+            columnGap: 2
+          });
+
+          doc.content.splice(1, 0, {
+            columns: [{
+              width: '10%',
+              alignment: 'left',
+              fontSize: 8,
+              bold: true,
+              text: 'Jns Laporan\nKode\n\n'
+            },
+            {
+              width: '2%',
+              alignment: 'left',
+              fontSize: 8,
+              bold: true,
+              text: ':\n:\n\n'
+            },
+            {
+              width: '53%',
+              alignment: 'left',
+              fontSize: 8,
+              text: 'Neraca' + '\n' + '_____________________' + '\n\n'
+            },
+            {
+              width: '10%',
+              alignment: 'left',
+              fontSize: 8,
+              bold: true,
+              text: ''
+            },
+            {
+              width: '2%',
+              alignment: 'left',
+              fontSize: 8,
+              bold: true,
+              text: ''
+            },
+            {
+              width: '25%',
+              alignment: 'left',
+              fontSize: 8,
+              text: ''
+            }
+          ]
+        }, {
+          columns: [{
+            width: '100%',
+            alignment: 'center',
+            fontSize: 14,
+            bold: true,
+            text: 'Neraca' + '\n\n'
+          }],
+          columnGap: 2
+        });
 
 
-                              doc.styles = {
-                                subtotal1a: {
-                                  bold: true,
-                                  italics:true,
-                                  color: '#454545',
-                                  fontSize: '7',
-                                  alignment: 'center',
-                                  fontweight: 'bold',
-                                  fillColor: '#dadada'
-                                },
-                                subtotal1b: {
-                                  bold: true,
-                                  italics:true,
-                                  color: '#454545',
-                                  fontSize: '7',
-                                  alignment: 'right',
-                                  fontweight: 'bold',
-                                  fillColor: '#dadada'
-                                },
-                                subtotal2: {
-                                  bold: true,
-                                  color: '#000',
-                                  fontSize: '7',
-                                  alignment: 'right',
-                                  fontweight: 'bold',
-                                  fillColor: '#a7a7a7'
-                                },
-                                subheader: {
-                                  bold: true,
-                                  rows: 2,
-                                  color: '#ffffff',
-                                  fontSize: '9',
-                                  alignment: 'center',
-                                  fontweight: 'bolder',
-                                  fillColor: '#006600'
-                                },
-                                  tableHeader: {
-                                      bold: true,
-              //                        fontSize: 10.5,
-              //                        color: 'black'
-                                      rows: 2,
-                                      color: '#ffffff',
-                                      fontSize: '9',
-                                      alignment: 'center',
-                                      fontweight: 'bolder',
-                                      fillColor: '#006600'
-                                  },
-                                  lastLine: {
-                                      bold: true,
-                                      fontSize: 8,
-                                      alignment: 'right',
-                                      color: '#ffffff',
-                                      fontweight: 'bold',
-                                      fillColor: '#006600'
-                                  },
-                                  defaultStyle1: {
-                                  fontSize: 7,
-                                  alignment: 'left'
-              //                    color: 'blue'
-                                  },
-                                  defaultStyle2: {
-                                  fontSize: 7,
-                                  alignment: 'right'
+        doc.styles = {
+          subtotal1a: {
+            bold: true,
+            italics:true,
+            color: '#454545',
+            fontSize: '7',
+            alignment: 'center',
+            fontweight: 'bold',
+            fillColor: '#dadada'
+          },
+          subtotal1b: {
+            bold: true,
+            italics:true,
+            color: '#454545',
+            fontSize: '7',
+            alignment: 'right',
+            fontweight: 'bold',
+            fillColor: '#dadada'
+          },
+          subtotal2: {
+            bold: true,
+            color: '#000',
+            fontSize: '7',
+            alignment: 'right',
+            fontweight: 'bold',
+            fillColor: '#a7a7a7'
+          },
+          subheader: {
+            bold: true,
+            rows: 2,
+            color: '#ffffff',
+            fontSize: '9',
+            alignment: 'center',
+            fontweight: 'bolder',
+            fillColor: '#006600'
+          },
+          tableHeader: {
+            bold: true,
+            //                        fontSize: 10.5,
+            //                        color: 'black'
+            rows: 2,
+            color: '#ffffff',
+            fontSize: '9',
+            alignment: 'center',
+            fontweight: 'bolder',
+            fillColor: '#006600'
+          },
+          lastLine: {
+            bold: true,
+            fontSize: 8,
+            alignment: 'right',
+            color: '#ffffff',
+            fontweight: 'bold',
+            fillColor: '#006600'
+          },
+          defaultStyle1: {
+            fontSize: 7,
+            alignment: 'left'
+            //                    color: 'blue'
+          },
+          defaultStyle2: {
+            fontSize: 7,
+            alignment: 'right'
 
 
-              //                    color: 'blue'
-                                  }
-                              }
+            //                    color: 'blue'
+          }
+        }
 
                           }
                       }
@@ -777,129 +786,9 @@ function fillgrid(ftgawal,ftgakhir){
 //---------------------------------------///
 //---------------------------------------///
 
-
-
 function reload_table(){
     table.ajax.reload(null,false); //reload datatable ajax
 }
 
-//---------------------------------#
-
-
-function fillgrid2(){
-  var f1 = toDate($('#fl_tgl1').val());
-  var f2 = toDate($('#fl_tgl2').val());
-      var t1 = $('#fl_tgl1').val();
-      var t2 = $('#fl_tgl2').val();
-      var td1 = f1.toISOString().split('T')[0];
-      var td2 = f2.toISOString().split('T')[0];
-      var url = "<?php echo base_url(); ?>markas/core1/fillgrid/area2"+td1+td2;
-
-
-    table = $('#tfillgrid').DataTable({
-      "lengthMenu": [[50,100, 200, -1], [50,100, 200, "All"]],
-      "paging": true,
-      "destroy": true,
-      "responsive": true,
-      "ajax": {
-          "url": url,
-          "type": "POST"
-      },
-        "language":{
-          "sLoadingRecords" : '<span style="width:100%;"><img src="http://www.snacklocal.com/images/ajaxload.gif"></span>',
-            "decimal":        ",",
-            "emptyTable":     "Belum ada data",
-            "info":           "Data ke _START_ s/d _END_ dari _TOTAL_ data",
-            "infoEmpty":      "Data ke 0 s/d 0 dari 0 data",
-            "infoFiltered":   "(Disaring dari _MAX_ data)",
-            "infoPostFix":    "",
-            "thousands":      ".",
-            "lengthMenu":     "Tampilkan _MENU_ data",
-            "loadingRecords": "Memuat...",
-            "processing":     "<span class='glyphicon glyphicon-refresh' aria-hidden='true'></span>",
-            "search":         "Cari:",
-            "zeroRecords":    "Tidak ada data yang cocok",
-            "paginate": {
-                "first":      "Awal",
-                "last":       "Akhir",
-                "next":       ">",
-                "previous":   "<"
-            },
-            "aria": {
-                "sortAscending":  ": activate to sort column ascending",
-                "sortDescending": ": activate to sort column descending"
-            }
-        },
-        "processing": true,
-        "serverSide": true,
-        "order": [],
-        "dom": 'Bfrtip',
-        "buttons": [
-            {
-                "extend": 'colvis',
-                    "text": 'Kolom',
-                    "collectionLayout": 'two-column'
-            },
-        {
-            "extend": 'print',
-            "message": 'Laporan Buku Besar',
-            "customize": function (win) {
-                $(win.document.body).find('table').addClass('display').css('font-size', '10px');
-                $(win.document.body).find('tr:nth-child(odd) td').each(function(index){
-                    $(this).css('background-color','#e2e2e2');
-                });
-                $(win.document.body).find('h1').css('text-align','center');
-            },
-            "exportOptions": {
-                columns: ':visible'
-            }
-        },
-        {
-            "extend": 'excel',
-            "message": 'Daftar Transaksi'
-        },
-        {
-            "extend": 'copy',
-            "message": 'Disalin dari HIS-2017 RSK St. Antonius Ampenan'
-        },
-        {
-            "extend": 'pdfHtml5',
-            "title": 'Transaksi Tgl ' + t1 + ' s/d ' + t2,
-            "text": 'PDF',
-            "pageSize": 'A4',
-            "footer": true,
-            "exportOptions": {
-              columns: [ 0, 1, 2, 3, 4, 5],
-                stripNewlines: false,
-            },
-            "customize": function ( doc ) {
-                var cols = [];
-                cols[0] = {text: 'QHMS 2017', fontSize: 6, alignment: 'left', margin:[20] };
-                cols[1] = {text: 'RSK St. Antonius Ampenan', fontSize: 6, alignment: 'right', margin:[0,0,20] };
-                var objFooter = {};
-                objFooter['columns'] = cols;
-                doc['footer']=objFooter;
-
-                doc.defaultStyle.fontSize = 8;
-                doc.styles.tableHeader.fontSize = 8;
-                doc.styles.tableFooter.fontSize = 8;
-                doc.content[1].table.widths = ['10%','10%','25%','25%','15%','15%'];
-                doc.content.splice( 1, 0, {
-                    margin: [ 0, 0, 0, 12 ],
-                    fontSize: 14,
-                    bold: true,
-                    alignment: 'center',
-                    text: '-- XXX --'
-                } );
-            }
-
-        }
-    ]
-    });
-//        table.destroy();
-    reload_table();
-}
-
-//=========================================================
 
 </script>

@@ -5,7 +5,7 @@
         <div class="x_panel">
           <div class="col-md-12 col-md-12 col-sm-12 col-xs-12">
               <div class="x_title">
-                    <h2>Neraca Rugi Laba</h2>
+                    <h2>Neraca</h2>
                     <ul class="nav navbar-right panel_toolbox">
                         <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
                     </ul>
@@ -81,7 +81,7 @@
                       <table id="tfillgrid" class="display table table-striped nowrap" cellspacing="0" width="100%">
                           <thead>
                               <tr>
-                                <th rowspan="2">NO</th>
+                                <th rowspan="2">Akun</th>
                                 <th rowspan="2">Nama Perkiraan</th>
                                 <th colspan="2">Saldo Awal</th>
                                 <th colspan="2">Mutasi</th>

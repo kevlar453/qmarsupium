@@ -1,6 +1,6 @@
 <body class="nav-md">
   <?php
-  $swakses = '';
+  $swakses = $this->dbcore1->routekey(get_cookie('simakses'),'d');
   ?>
   <div class="container body">
     <div class="main_container">
@@ -42,24 +42,26 @@
                 }
                 ?>
 
-                <li><a><i class="fa fa-users"></i> Akun <span class="fa fa-chevron-down"></span></a>
-                  <ul class="nav child_menu">
-                    <?php
-                  if((int)$this->dbcore1->routekey(get_cookie('simakses'),'d')=='00'){
-                    ?>
-                    <li><a href="<?php echo base_url()?>auth/create_user" title="">Baru</a></li>
-                    <?php
-                  }
-                    ?>
-                    <li><a href="<?php echo base_url()?>auth/listuser" title="">Daftar</a></li>
-                  </ul>
-                </li>
-                <li><a><i class="fa fa-cogs"></i> Sistim <span class="fa fa-chevron-down"></span></a>
-                  <ul class="nav child_menu">
-                    <li><a href="#" title="">Baru</a></li>
-                    <li><a href="#" title="">Daftar</a></li>
-                  </ul>
-                </li>
+                <?php
+                if($swakses =='00'){
+                  ?>
+                  <li><a><i class="fa fa-users"></i> Akun <span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                      <li><a href="<?php echo base_url()?>auth/create_user" title="">Baru</a></li>
+                      <li><a href="<?php echo base_url()?>auth/listuser" title="">Daftar</a></li>
+                    </ul>
+                  </li>
+                  <li><a><i class="fa fa-cogs"></i> Sistim <span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                      <li><a href="#" title="">Baru</a></li>
+                      <li><a href="#" title="">Daftar</a></li>
+                    </ul>
+                  </li>
+                  <?php
+                }
+                ?>
+
+
                 <?php
                 if(!empty($mnpwd)){
                 ?>

@@ -1,7 +1,7 @@
 <script>
 $(document).ajaxStop($.unblockUI);
     $(document).ready(function (){
-      catat('Buka modul Buku Besar');
+      catat('Pengaturan Saldo Awal');
         fillgrid();
         setTimeout(function(){
           if(varopta == '00'){
@@ -295,12 +295,16 @@ $(document).ajaxStop($.unblockUI);
               "targets": [ 0,-1 ],
               "orderable": false
           },
+          {
+              "targets": [ -1 ],
+              "visible": false
+          },
             {
                 targets: [ 2 ],
                 createdCell: function (td, cellData, rowData, row, col)
                 {
                   $(td).css('text-align', 'right');
-                    if ( cellData < 0 ) {
+                    if ( parseFloat(cellData) < 0 ) {
                         $(td).css('color', 'red');
                       }
                 }

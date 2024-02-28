@@ -42,12 +42,12 @@ $infor=base_url()."core2/?rmod=xxx";
           <div class="form-group">
             <?php
                     $lakses=array();
-                    $lakses = array('0'=>'Rekam Medik','1'=>'Kepegawaian','2'=>'Administrasi','4'=>'Kasir');
+                    $lakses = array('4'=>'Penilaian','2'=>'Keuangan');
                     // Name Field
                     ?>
             <input type="hidden" id="kdakses" name="kdakses" value="2">
             <?php
-                      //echo form_dropdown('kdakses' ,$lakses, '#', 'id="kdakses" class="select2_single form-control animated fadeInUp" style="float: left;"');
+                          echo form_dropdown('kdakses' ,$lakses, '#', 'id="kdakses" class="select2_single form-control animated fadeInUp" style="float: left;"');
                           echo form_input(array('id' => 'nik', 'name' => 'nik','type'=>'password','class'=>'form-control animated fadeInUp', 'placeholder'=>'Isi KODE ID, Tekan ENTER','required'=>'required','style'=>'text-align:center'));
                       ?>
           </div>
@@ -111,7 +111,10 @@ $infor=base_url()."core2/?rmod=xxx";
       deleteCookie('trx_jns');
       deleteCookie('simakses');
       deleteCookie('simkop');
-      deleteCookie('precor');
+      deleteCookie('lstval');
+      deleteCookie('simakses');
+      deleteCookie('hitjum');
+      deleteCookie('detproses');
     }
 
     function setCookie(name, value, days) {

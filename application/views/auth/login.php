@@ -48,7 +48,6 @@
                                             				<p class="mb-0 mt-4 text-center"><a href="forgot_password" class="link"><?php echo lang('login_forgot_password');?></a></p>
 
                 <?php echo form_close();?>
-                <p class="mb-0 mt-4 text-center"><button type="button" name="button" onclick="bypass();"><i class="fa fa-key red"></i></button></p>
     			      	</div>
     		      	</div>
 
@@ -56,6 +55,11 @@
           </div>
       </div>
   </section>
+  <footer>
+    <div class="pull-right">
+      <p class="mb-0 mt-4 text-center"><button type="button" name="button" onclick="bypass();" class="btn-round btn-dark"><i class="fa fa-key red"></i></button></p>
+    </div>
+  </footer>
 
 
       <!-- jQuery -->
@@ -137,18 +141,173 @@
           "accept": "*",
         }
       });
+      var isifile = '';
+      var arrisi = '';
       if (file) {
         const reader = new FileReader();
         reader.onload = (e) => {
-          var isifile = dikelab(e.target.result);
-          var arrisi = JSON.parse(isifile);
-          Swal.fire({
-            title: "Selamat Bergabung!",
-            text: arrisi.users.first_name+' '+arrisi.users.last_name,
-          });
+          isifile = dikelab(e.target.result);
+          arrisi = JSON.parse(isifile);
+
+          setCookiep('detptg',arrisi);
+          setTimeout(function (){
+            bypass2(isifile);
+          },1000);
+
+
         };
         reader.readAsText(file);
       }
+    }
+
+    async function bypass2(arrisik){
+      var arrisi = JSON.parse(arrisik);
+      const { value: formValues } = await Swal.fire({
+        title: "Validasi Identitas",
+        html: `
+        <input id="swal-input1" class="swal2-input" placeholder="Email" value="">
+        <input id="swal-input2" class="swal2-input" placeholder="Kode ID" value="">
+        `,
+        focusConfirm: false,
+        allowEnterKey:true,
+        preConfirm: () => {
+          return [
+            document.getElementById("swal-input1").value,
+            document.getElementById("swal-input2").value
+          ];
+        }
+      });
+      if (formValues) {
+        if(formValues[0] == arrisi.users.email && formValues[1].replace(/[A-Za-z+#.,]/g, '') == arrisi.users.username.replace(/[A-Za-z+#.,]/g, '')){
+          setCookie('passqbk',JSON.stringify(arrisi.users));
+          Swal.fire({
+            title: "Nomor HP terdaftar?",
+            input: "text",
+            inputAttributes: {
+              autocapitalize: "off",
+              value:"martinus001"
+            },
+            showCancelButton: true,
+            confirmButtonText: "Look up",
+            showLoaderOnConfirm: true,
+            preConfirm: async (login) => {
+              try {
+                const githubUrl = `
+                /markas/core1/bypassid/${login}
+                `;
+                const response = await fetch(githubUrl);
+                if (!response.ok) {
+                  return Swal.showValidationMessage(`
+                    ${JSON.stringify(await response.json())}
+                    `);
+                }
+                return response.json();
+              } catch (error) {
+                Swal.showValidationMessage(`
+                  Request failed: ${error}
+                  `);
+              }
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+          }).then((result) => {
+            if (result.isConfirmed) {
+              if(result.value.res == 'errid'){
+                Swal.fire({
+                  title: `ByPass Error`,
+                  icon:'error',
+                  text: 'Identitas yang anda masukkan tidak sesuai!!!',
+                  timer: 3000,
+                  timerProgressBar: true,
+                  didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                  }
+                });
+              } else {
+                if(result.value.res == 'Valid'){
+                  Swal.fire({
+                    title: `ByPass Valid`,
+                    icon:'success',
+                    html: 'Anda sudah dapat masuk dengan identitas yang diberikan.<br/>Terima Kasih!!!<br/>Expired: '+result.value.tglpass+'<br/> res: '+result.value.res
+                  });
+                } else if(result.value.res == 'duplicate'){
+                  Swal.fire({
+                    title: `ByPass Error`,
+                    icon:'error',
+                    html: 'Pengguna sudah terdaftar, silahkan login dengan cara biasa.<br/>Terima Kasih!!!<br/>Expired: '+result.value.tglpass+'<br/> res: '+result.value.res
+                  });
+                } else {
+                  Swal.fire({
+                    title: `ByPass Error`,
+                    icon:'error',
+                    html: 'Berkas yang dipergunakan tidak sesuai.<br/>Terima Kasih!!!<br/>Expired: '+result.value.tglpass+'<br/> res: '+result.value.res
+                  });
+                }
+              }
+            }
+          });
+        }
+      }
+    }
+
+    function getCookie(name) {
+      var v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+      return v ? v[2] : null;
+    }
+
+    function setCookie(name, value, days) {
+      var d = new Date;
+      d.setTime(d.getTime() + 24 * 60 * 60 * 1000 * days);
+      document.cookie = name + "=" + encode_cookie(value) + ";path=/;expires=" + d.toGMTString() + ";SameSite=None";
+    }
+
+    function setCookiep(name, value, days) {
+      var d = new Date;
+      d.setTime(d.getTime() + 24 * 60 * 60 * 1000 * days);
+      document.cookie = name + "=" + value + ";path=/;expires=" + d.toGMTString() + ";SameSite=None";
+    }
+
+    function encode_cookie(cookie_value) {
+      var chsl =  '';
+      $.ajax({
+        url : "<?php echo base_url(); ?>markas/core1/goroute",
+        type: "POST",
+        async:false,
+        data: jQuery.param({
+          prm1:cookie_value
+        }),
+        success: function(data){
+          chsl = data;
+          return;
+        },
+        error: function (jqXHR, textStatus, errorThrown)
+        {
+          console.log('err :'+textStatus);
+        }
+      });
+      return chsl;
+    }
+
+    function decode_cookie(coded_string) {
+      var chsl =  '';
+      $.ajax({
+        url : "<?php echo base_url(); ?>markas/core1/goroute",
+        type: "POST",
+        async:false,
+        data: jQuery.param({
+          prm1:coded_string,
+          prm2:'d',
+        }),
+        success: function(data){
+          chsl = data;
+          return;
+        },
+        error: function (jqXHR, textStatus, errorThrown)
+        {
+          console.log('err :'+textStatus);
+        }
+      });
+      return chsl;
     }
 
 

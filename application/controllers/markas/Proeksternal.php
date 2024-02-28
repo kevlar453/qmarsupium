@@ -169,8 +169,11 @@ $hrni = date("Y-m-d");
     $isidata['arrakn_jur'] = $this->akuntansi->exj_part();
     //array akun_trx
     $isidata['arrakn_trx'] = $this->akuntansi->ext_part();
-    //array jur_posting
-    //    $isidata['arrakn_post'] = $this->akuntansi->c_post();
+    //array akun_jur_post
+    $isidata['arrakn_jurp'] = $this->akuntansi->exjp_part();
+    //array akun_trx_post
+    $isidata['arrakn_trxp'] = $this->akuntansi->extp_part();
+
     $cvdataisi = json_encode($isidata, JSON_PRETTY_PRINT);
     //     write_file($path,$this->dbcore1->routekey($cvdataisi),'wb');
     write_file($pathA,$cvdataisi,'wb');
@@ -290,208 +293,169 @@ $hrni = date("Y-m-d");
     }
   }
 
-  function prosesimj001(){
-    $cekusr = $this->dbcore1->routekey(get_cookie('simcek1'),'d');
+  function prosesimj001b(){
+//    $arrpost = json_decode(json_encode($this->input->post('resmainjur')));
+    $arrpost = json_decode(json_decode(str_replace('resmainjur=','',str_replace('++','+',str_replace('+',' ',json_encode($this->security->xss_clean($this->input->raw_input_stream)))))));
+    $carrpost = array();
+    for ($i = 0; $i <= count($arrpost)-1 ; $i++) {
+      $carrpost[] = $arrpost[$i]->akjur_nomor;
+    }
+    $this->akuntansi->clear_dataup($carrpost);
+    echo json_encode($arrpost);
+  }
+
+  function prosesimj002b(){
     $cekkel = $this->dbcore1->routekey(get_cookie('simakses'),'d');
-    $cekkop = $this->dbcore1->routekey(get_cookie('simkop'),'d');
-    $this->dbcore1->simcok('jspil',$this->dbcore1->routekey($cekkop));
-    $config['upload_path'] = './dapur0/semstorage/';
-    $config['allowed_types'] = '*';
-    $config['max_size'] = 0;
-    $this->load->library('upload', $config);
-
-    if ( $this->upload->do_upload('fileqbk')) {
-      $upload_data = $this->upload->data();
-      $path2 = './dapur0/semstorage/post/filerestore.bak';
-
-      $file = $upload_data['file_name'];
-      $path = './dapur0/semstorage/' . $file;
-      $defile = $this->dbcore1->routekey(read_file($path),'d');
-      $arrcek = json_decode($defile)->kopar;
-      if($arrcek->kodepar != $cekkop){
-        $this->dbcore1->simcok('nofile','GAGAL');
-        redirect('markas/core1/?rmod=area2','refresh');
-      }
-
-      write_file($path2,$defile,'wb');
-      $this->dbcore1->simcok('cfile',$file);
-      $this->dbcore1->simcok('vfile','002');
-//      $this->dbcore1->simcok('cfile',$file);
-//      $arrpost = str_replace('[', '', str_replace(']', '', json_encode(json_decode($defile)->arrakn_jur)));
-//$hitwkt = (int)json_decode($defile)['arrarrvar_ka5']+(int)json_decode($defile)['arrarrakn_jur']+(int)json_decode($defile)['arrarrakn_trx'];
-$this->dbcore1->simcok('hitjum',15000);
-$this->dbcore1->simcok('detproses','pre-sync');
-      $arrpost = json_decode($defile)->arrakn_jur;
+    $mainjur = $this->input->post('resmainjur');
+    $arrpost = json_decode($mainjur);
+    $setka5 = array();
+    $hitjum = 0;
+    for ($i = 0; $i <= count($arrpost)-1 ; $i++) {
       $carrpost = array();
-      foreach ($arrpost as $ap) {
-        $carrpost[] = $ap->akjur_nomor;
+      if(substr($arrpost[$i]->ka_5,0,2) == $cekkel){
+        $carrpost[] = $arrpost[$i]->ka_1;
+        $carrpost[] = $arrpost[$i]->ka_2;
+        $carrpost[] = $arrpost[$i]->ka_3;
+        $carrpost[] = $arrpost[$i]->ka_4;
+        $carrpost[] = $arrpost[$i]->ka_5;
+        $carrpost[] = $arrpost[$i]->ka_nama;
+        $carrpost[] = (int)$arrpost[$i]->ka_saldoawal;
+
+        $setka5[] = $carrpost;
+        $hitjum++;
       }
-      $this->akuntansi->clear_dataup($carrpost);
+    }
+    if($hitjum >0){
+      $this->akuntansi->inska5_dataup($setka5);
+    }
+    echo 'OK';
+  }
 
-      $arrpost = json_decode($defile)->arrvar_ka5;
-      $setka5 = array();
-      $this->dbcore1->simcok('detproses','variabel');
-      $hitjum = 0;
-      foreach ($arrpost as $ap) {
-        $carrpost = array();
-        if(substr($ap->ka_5,0,2) == $cekkel){
-            $carrpost[] = $ap->ka_1;
-            $carrpost[] = $ap->ka_2;
-            $carrpost[] = $ap->ka_3;
-            $carrpost[] = $ap->ka_4;
-            $carrpost[] = $ap->ka_5;
-            $carrpost[] = $ap->ka_nama;
-            $carrpost[] = (int)$ap->ka_saldoawal;
+  function prosesimj003b(){
+    $cekkop = $this->dbcore1->routekey(get_cookie('simkop'),'d');
+    $mainjur = $this->input->post('resmainjur');
+    $arrpost1 = json_decode(str_replace('resmainjur=','',str_replace('++','+',str_replace('+',' ',json_encode($this->security->xss_clean($this->input->raw_input_stream))))));
+    $arrpost2 = json_decode($arrpost1);
 
-          $setka5[] = $carrpost;
+    $setjur = array();
+    $hitjum = 0;
+    for ($i = 0; $i <= count($arrpost2)-1 ; $i++) {
+      $jcarr = array();
+      if($arrpost2[$i]->akjur_kopar == $cekkop){
+          $jcarr[] = $arrpost2[$i]->akjur_nomor;
+          $jcarr[] = $arrpost2[$i]->akjur_jns;
+          $jcarr[] = $arrpost2[$i]->akjur_tgl;
+          $jcarr[] = $arrpost2[$i]->akjur_ket;
+          $jcarr[] = $arrpost2[$i]->akjur_sts;
+          $jcarr[] = $arrpost2[$i]->akjur_post;
+          $jcarr[] = $arrpost2[$i]->akjur_akses;
+          $jcarr[] = $arrpost2[$i]->akjur_kopar;
+
+          $setjur[] = $jcarr;
           $hitjum++;
-        }
       }
-      if($hitjum >0){
-        $this->akuntansi->inska5_dataup($setka5);
-      }
-
-
-      redirect('markas/core1/?rmod=area2','refresh');
-    } else {
-      redirect('markas/core1/?rmod=area1','refresh');
     }
+    if($hitjum>0){
+    $this->akuntansi->insjur_dataup($setjur);
+    }
+    echo 'OK';
   }
 
-  function prosesimj002(){
+  function prosesimj004b(){
     $cekkop = $this->dbcore1->routekey(get_cookie('simkop'),'d');
-    $this->dbcore1->simcok('vfile','003');
-    $file = $this->dbcore1->getcok('cfile');
-    $path = './dapur0/semstorage/' . $file;
-    $defile = $this->dbcore1->routekey(read_file($path),'d');
-          $tarrpost = json_decode($defile)->arrakn_jur;
-          $setjur = array();
-          $this->dbcore1->simcok('detproses','jurnal');
-          $jumhit = 0;
-          foreach ($tarrpost as $apt) {
-            $jcarr = array();
-            if($apt->akjur_kopar == $cekkop){
-                $jcarr[] = $apt->akjur_nomor;
-                $jcarr[] = $apt->akjur_jns;
-                $jcarr[] = $apt->akjur_tgl;
-                $jcarr[] = $apt->akjur_ket;
-                $jcarr[] = $apt->akjur_sts;
-                $jcarr[] = $apt->akjur_post;
-                $jcarr[] = $apt->akjur_akses;
-                $jcarr[] = $apt->akjur_kopar;
+    $mainjur = $this->input->post('resmainjur');
+    $arrpost1 = json_decode(str_replace('resmainjur=','',str_replace('++','+',str_replace('+',' ',json_encode($this->security->xss_clean($this->input->raw_input_stream))))));
+    $arrpost2 = json_decode($arrpost1);
 
-              $setjur[] = $jcarr;
-              $jumhit++;
-            }
-          }
-          if($jumhit>0){
-            $this->akuntansi->insjur_dataup($setjur);
-          }
-//            redirect('markas/core1/?rmod=area2','refresh');
-  }
-
-  function prosesimj003(){
-    $cekkop = $this->dbcore1->routekey(get_cookie('simkop'),'d');
-    $this->dbcore1->simcok('vfile','004');
-    $file = $this->dbcore1->getcok('cfile');
-    $path = './dapur0/semstorage/' . $file;
-    $defile = $this->dbcore1->routekey(read_file($path),'d');
-    $tarrpost = json_decode($defile)->arrakn_trx;
     $settrx = array();
-    $this->dbcore1->simcok('detproses','transaksi');
-    $jumhit = 0;
-    foreach ($tarrpost as $apt) {
+    $hitjum = 0;
+    for ($i = 0; $i <= count($arrpost2)-1 ; $i++) {
       $tcarr = array();
-      if($apt->akjur_kopar == $cekkop){
-          $tcarr[] = $apt->aktrx_nomor;
-          $tcarr[] = $apt->aktrx_nojur;
-          $tcarr[] = $apt->aktrx_nama;
-          $tcarr[] = $apt->aktrx_jns;
-          $tcarr[] = $apt->aktrx_ket;
-          $tcarr[] = (int)$apt->aktrx_jum;
-          $tcarr[] = $apt->aktrx_akses;
-          $tcarr[] = $apt->aktrx_mark;
-          $tcarr[] = $apt->aktrx_post;
-          $tcarr[] = $apt->akjur_kopar;
+      if($arrpost2[$i]->akjur_kopar == $cekkop){
+        $tcarr[] = $arrpost2[$i]->aktrx_nomor;
+        $tcarr[] = $arrpost2[$i]->aktrx_nojur;
+        $tcarr[] = $arrpost2[$i]->aktrx_nama;
+        $tcarr[] = $arrpost2[$i]->aktrx_jns;
+        $tcarr[] = $arrpost2[$i]->aktrx_ket;
+        $tcarr[] = (int)$arrpost2[$i]->aktrx_jum;
+        $tcarr[] = $arrpost2[$i]->aktrx_akses;
+        $tcarr[] = $arrpost2[$i]->aktrx_mark;
+        $tcarr[] = $arrpost2[$i]->aktrx_post;
+        $tcarr[] = $arrpost2[$i]->akjur_kopar;
 
-        $settrx[] = $tcarr;
-        $jumhit++;
+          $settrx[] = $tcarr;
+          $hitjum++;
       }
     }
-    if($jumhit>0){
-      $this->akuntansi->instrx_dataup($settrx);
+    if($hitjum>0){
+    $this->akuntansi->instrx_dataup($settrx);
     }
-//    redirect('markas/core1/?rmod=area2','refresh');
+    echo 'OK';
   }
 
-  function prosesimj004(){
+  function prosesimj005b(){
     $cekkop = $this->dbcore1->routekey(get_cookie('simkop'),'d');
-    $this->dbcore1->simcok('vfile','005');
-    $file = $this->dbcore1->getcok('cfile');
-    $path = './dapur0/semstorage/' . $file;
-    $defile = $this->dbcore1->routekey(read_file($path),'d');
-    $tarrpost = json_decode($defile)->arrakn_jur;
-    $setjurp = array();
-    $this->dbcore1->simcok('detproses','jurnal-terposting');
-    $jumhit = 0;
-    foreach ($tarrpost as $apt) {
-      $jpcarr = array();
-      if($apt->akjur_sts == 0 && $apt->akjur_post == 1 && $apt->akjur_kopar == $cekkop){
-          $jpcarr[] = $apt->akjur_nomor;
-          $jpcarr[] = $apt->akjur_jns;
-          $jpcarr[] = $apt->akjur_tgl;
-          $jpcarr[] = $apt->akjur_ket;
-          $jpcarr[] = $apt->akjur_sts;
-          $jpcarr[] = 0;
-          $jpcarr[] = $apt->akjur_akses;
-          $jpcarr[] = $apt->akjur_kopar;
+    $mainjur = $this->input->post('resmainjur');
+    $arrpost1 = json_decode(str_replace('resmainjur=','',str_replace('++','+',str_replace('+',' ',json_encode($this->security->xss_clean($this->input->raw_input_stream))))));
+    $arrpost2 = json_decode($arrpost1);
 
-        $setjurp[] = $jpcarr;
-        $jumhit++;
+    $setjur = array();
+    $hitjum = 0;
+    for ($i = 0; $i <= count($arrpost2)-1 ; $i++) {
+      $jcarr = array();
+      if($arrpost2[$i]->akjur_sts == 0 && $arrpost2[$i]->akjur_post == 1 && $arrpost2[$i]->akjur_kopar == $cekkop){
+          $jcarr[] = $arrpost2[$i]->akjur_nomor;
+          $jcarr[] = $arrpost2[$i]->akjur_jns;
+          $jcarr[] = $arrpost2[$i]->akjur_tgl;
+          $jcarr[] = $arrpost2[$i]->akjur_ket;
+          $jcarr[] = $arrpost2[$i]->akjur_sts;
+          $jcarr[] = $arrpost2[$i]->akjur_post;
+          $jcarr[] = $arrpost2[$i]->akjur_akses;
+          $jcarr[] = $arrpost2[$i]->akjur_kopar;
+
+          $setjur[] = $jcarr;
+          $hitjum++;
       }
     }
-    if($jumhit>0){
-      $this->akuntansi->insjurpost_dataup($setjurp);
+    if($hitjum>0){
+    $this->akuntansi->insjurpost_dataup($setjur);
     }
-//    redirect('markas/core1/?rmod=area2','refresh');
+    echo 'OK';
   }
 
-  function prosesimj005(){
+  function prosesimj006b(){
     $cekkop = $this->dbcore1->routekey(get_cookie('simkop'),'d');
-    $file = $this->dbcore1->getcok('cfile');
-    $path = './dapur0/semstorage/' . $file;
-    $defile = $this->dbcore1->routekey(read_file($path),'d');
-    $tarrpost = json_decode($defile)->arrakn_trx;
-    $settrxp = array();
-    $jumhit = 0;
-    foreach ($tarrpost as $apt) {
-      $tpcarr = array();
-      if($apt->aktrx_mark == 0 && $apt->aktrx_post == 1 && $apt->akjur_kopar == $cekkop){
-          $tpcarr[] = $apt->aktrx_nomor;
-          $tpcarr[] = $apt->aktrx_nojur;
-          $tpcarr[] = $apt->aktrx_nama;
-          $tpcarr[] = $apt->aktrx_jns;
-          $tpcarr[] = $apt->aktrx_ket;
-          $tpcarr[] = (int)$apt->aktrx_jum;
-          $tpcarr[] = $apt->aktrx_akses;
-          $tpcarr[] = $apt->aktrx_mark;
-          $tpcarr[] = 0;
-          $tpcarr[] = $apt->akjur_kopar;
+    $mainjur = $this->input->post('resmainjur');
+    $arrpost1 = json_decode(str_replace('resmainjur=','',str_replace('++','+',str_replace('+',' ',json_encode($this->security->xss_clean($this->input->raw_input_stream))))));
+    $arrpost2 = json_decode($arrpost1);
 
-        $settrxp[] = $tpcarr;
-        $jumhit++;
+    $settrx = array();
+    $hitjum = 0;
+    for ($i = 0; $i <= count($arrpost2)-1 ; $i++) {
+      $tcarr = array();
+      if($arrpost2[$i]->aktrx_mark == 0 && $arrpost2[$i]->aktrx_post == 1 && $arrpost2[$i]->akjur_kopar == $cekkop){
+        $tcarr[] = $arrpost2[$i]->aktrx_nomor;
+        $tcarr[] = $arrpost2[$i]->aktrx_nojur;
+        $tcarr[] = $arrpost2[$i]->aktrx_nama;
+        $tcarr[] = $arrpost2[$i]->aktrx_jns;
+        $tcarr[] = $arrpost2[$i]->aktrx_ket;
+        $tcarr[] = (int)$arrpost2[$i]->aktrx_jum;
+        $tcarr[] = $arrpost2[$i]->aktrx_akses;
+        $tcarr[] = $arrpost2[$i]->aktrx_mark;
+        $tcarr[] = $arrpost2[$i]->aktrx_post;
+        $tcarr[] = $arrpost2[$i]->akjur_kopar;
+
+          $settrx[] = $tcarr;
+          $hitjum++;
       }
-      $this->dbcore1->simcok('detproses','transaksi-terposting');
     }
-    if($jumhit > 0){
-      $this->akuntansi->instrxpost_dataup($settrxp);
+    if($hitjum>0){
+    $this->akuntansi->instrxpost_dataup($settrx);
     }
-    $this->dbcore1->delcok('cfile');
-    $this->dbcore1->delcok('vfile');
-
-    unlink($path);
-//    redirect('markas/core1/?rmod=area2','refresh');
+//    unlink($path);
+    echo 'OK';
   }
+
 
 
   function downex($path){
