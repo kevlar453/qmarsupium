@@ -31,6 +31,16 @@ class Penilaian extends CI_Controller {
       echo json_encode($frmkel);
     }
 
+    function getparnl(){
+      $frmpar = $this->dbnilai->getparnil($this->input->post('searchTerm'),$this->input->post('prm'));
+      echo json_encode($frmpar);
+    }
+
+    function getnilpar(){
+      $detnilpar = $this->dbnilai->getparnildet($this->input->post('param1'),$this->input->post('param2'));
+      echo json_encode($detnilpar);
+    }
+
     function ckategori(){
       $pindi = $this->input->post('param');
       $lstindi = $this->dbnilai->gkategori($pindi);
@@ -47,64 +57,122 @@ class Penilaian extends CI_Controller {
       }
     }
 
+    function ckelompok(){
+      $prm = $this->input->post('param1');
+      $hslkode = $this->dbnilai->gkode($prm);
+      echo json_encode($hslkode);
+    }
 
-    function cindikator($pindi = false){
-      if(!$pindi){
-        $pindi = $this->input->post('param');
-      }
 
-      $lstisi = $this->dbnilai->getregio($pindi);
-      if($lstisi){
-        foreach ($lstisi as $isi1) {
-          $lstisid1 = $this->dbnilai->gisi($isi1['varid']);
-          if($lstisid1){
-            $arrval1 = array();
-            foreach ($lstisid1 as $isid1) {
-              $arrval1[] = $isid1->dettot;
-            }
-            $hslarrisi1[]=array(
-              'value'=>$arrval1,
-              'name'=>$isi1['varnama']
-            );
-            if(substr($isi1['varid'],-2)!='00'){
-              $hslarrisi2[]=$isi1['varnama'];
+    function setindikator(){
+      $coknil = $this->dbcore1->routekey($this->dbcore1->getcok('pilnil'),'d');
+      $lstisi = $this->dbnilai->getregio();
+      $cmax = array();
+
+      if($coknil == 'global'){
+        $lstisid1 = $this->dbnilai->gisi();
+        if($lstisid1){
+          $arrval1 = array();
+          foreach ($lstisid1 as $isid1) {
+            $arrval1[] = $isid1->dettot;
+          }
+          $cmax = array_merge($arrval1,$cmax);
+          $hslarrisi1[]=array(
+            'value'=>$arrval1,
+            'name'=>'Keuskupan Ketapang'
+          );
+        }
+      } else {
+        $cokdnil = $this->dbcore1->routekey($this->dbcore1->getcok('pilnild1'),'d');
+          if($lstisi){
+            foreach ($lstisi as $isi1) {
+              if($isi1['varid'] == $cokdnil){
+                $lstisid1 = $this->dbnilai->gisi($isi1['varid']);
+                if($lstisid1){
+                  $arrval1 = array();
+                  foreach ($lstisid1 as $isid1) {
+                    $arrval1[] = $isid1->dettot;
+                  }
+                  if(substr($isi1['varid'],-2)!='00'){
+                    $cmax = array_merge($arrval1,$cmax);
+                    $hslarrisi1[]=array(
+                      'value'=>$arrval1,
+                      'name'=>$isi1['varnama']
+                    );
+                    $hslarrisi2[]=$isi1['varnama'];
+                  }
+                }
+              }
             }
           }
-
-        }
       }
-      $lstindi = $this->dbnilai->gindikator($pindi);
+
+      $lstindi = $this->dbnilai->gindikator();
       foreach ($lstindi as $sar) {
         $detarr = array(
           'text'=>$sar->qnilb_nama,
-          'max'=>150
+          'max'=>max($cmax)
         );
         $hslarr[] = $detarr;
       }
       $hslarrkir = array(
         'indi'=> $hslarr,
         'isi1'=> $hslarrisi1,
-        'isi2'=> $hslarrisi2,
+        'isi2'=> '',
+        'isi3'=>$cmax
       );
+      $this->dbcore1->delcok('pilnil');
       echo json_encode($hslarrkir);
     }
 
-    function cisi($pisi = false){
-      if(!$pisi){
-        $pisi = $this->input->post('param');
+    function cindikator($pindi = false,$pindipar = FALSE){
+      if(!$pindi){
+        $pindi = $this->input->post('param1');
+        $pindipar = $this->input->post('param2');
       }
-      $lstisi = $this->dbnilai->gisi($pisi);
-      if($lstisi){
-        $hslarr = array(
-          'value'=>$lstisi,
-          'name'=>'Keuskupan'
-        );
-        if(!$pisi){
-          echo json_encode($hslarr);
-        } else {
-          return $hslarr;
+      $coknil = $this->dbcore1->routekey($this->dbcore1->getcok('pilnil'),'d');
+
+      $cmax = array();
+
+      $lstisi = $coknil == 'regio'?$this->dbnilai->getregio($pindi):$this->dbnilai->getparoki($pindi);
+
+        if($lstisi){
+          foreach ($lstisi as $isi1) {
+            $lstisid1 = $this->dbnilai->gisi($isi1['varid'],$pindipar);
+            if($lstisid1){
+              $arrval1 = array();
+              foreach ($lstisid1 as $isid1) {
+                $arrval1[] = $isid1->dettot;
+              }
+              if(substr($isi1['varid'],-2)!='00'){
+                $cmax = array_merge($arrval1,$cmax);
+                $hslarrisi1[]=array(
+                  'value'=>$arrval1,
+                  'name'=>$isi1['varnama']
+                );
+                $hslarrisi2[]=$isi1['varnama'];
+              }
+            }
+
+          }
         }
+        $lstindi = $this->dbnilai->gindikator($pindipar);
+        foreach ($lstindi as $sar) {
+          $detarr = array(
+            'text'=>$sar->qnilc_nama,
+            'max'=>max($cmax)
+          );
+          $hslarr[] = $detarr;
+        }
+        $hslarrkir = array(
+          'indi'=> $hslarr,
+          'isi1'=> $hslarrisi1,
+          'isi2'=> $hslarrisi2,
+          'isi3'=>$cmax
+        );
+        //      $this->dbcore1->delcok('pilnil');
+        echo json_encode($hslarrkir);
+
       }
-    }
 
 }

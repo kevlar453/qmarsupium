@@ -147,6 +147,10 @@
     <script src="<?php echo base_url();?>dapur0/vendors/partikel/js/particles.js"></script>
     <script src="<?php echo base_url();?>dapur0/vendors/partikel/js/demo.js"></script>
 
+    <script src="<?php echo base_url();?>dapur0/vendors/moment/min/moment.min.js"></script>
+    <!-- Ion.RangeSlider -->
+    <script src="<?php echo base_url();?>dapur0/vendors/ion.rangeSlider/js/ion.rangeSlider.min.js"></script>
+
 
         <!-- echarts -->
         <script src="<?php echo base_url();?>dapur0/vendors/echarts/dist/echarts.min.js"></script>
@@ -160,6 +164,7 @@
           <script src="<?php echo base_url();?>dapur0/vendors/echarts/test/config.js"></script>
           <script src="<?php echo base_url();?>dapur0/vendors/echarts/test/config.js"></script>
           <script src="<?php echo base_url();?>dapur0/vendors/echarts/test/config.js"></script>
+
           <?php
         }
         ?>
@@ -484,8 +489,8 @@
             var cekpsnid = '';
           }
           $.ajax({
-            type: 'POST',
-            url: 'https://www.google.com',
+            type: 'GET',
+            url: 'https://8.8.8.8',
             success: function(data) {
             },
             error: function(x, t, m) {
@@ -708,7 +713,7 @@
     function setCookie(name, value, days) {
       var d = new Date;
       d.setTime(d.getTime() + 24 * 60 * 60 * 1000 * days);
-      document.cookie = name + "=" + encode_cookie(value) + ";path=/;expires=" + d.toGMTString() + ";SameSite=None";
+      document.cookie = name + "=" + encode_cookie(value) + ";path=/;expires=" + d.toGMTString() + ";SameSite=None;secure";
     }
 
     function deleteCookie(name) {

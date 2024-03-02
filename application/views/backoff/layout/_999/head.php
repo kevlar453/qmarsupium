@@ -38,6 +38,9 @@
     <!--<link href="<?php echo base_url();?>dapur0/vendors/sweetalert2/sweetalert2.css" rel="stylesheet">-->
     <!-- normalize -->
     <link href="<?php echo base_url();?>dapur0/vendors/normalize-css/normalize.css" rel="stylesheet">
+    <!-- Ion.RangeSlider -->
+    <link href="<?php echo base_url();?>dapur0/vendors/ion.rangeSlider/css/ion.rangeSlider.css" rel="stylesheet">
+    <link href="<?php echo base_url();?>dapur0/vendors/ion.rangeSlider/css/ion.rangeSlider.skinFlat.css" rel="stylesheet">
 
     <!-- Datatables -->
     <link rel="stylesheet" type="text/css" href="<?php echo base_url();?>dapur0/vendors/DataTables/datatables.css"/>
