@@ -40,15 +40,26 @@
             <div class="menu_section">
               <h3>MENU</h3>
               <ul class="nav side-menu">
+
+                <?php
+                if($kodejob=='444'){
+                  ?>
                 <li><a href="<?php echo base_url().'markas/core1/?rmod=area1'.$swakses; ?>">Dashboard</a></li>
-                <li><a href="<?php echo base_url().'markas/core1/?rmod=area2'.$swakses; ?>" >Transaksi</a></li>
-                <li><a><i class="fa fa-file"></i> Laporan <span class="fa fa-chevron-down"></span></a>
-                  <ul class="nav child_menu">
-                    <li><a href="<?php echo base_url().'markas/core1/?rmod=area81'.$swakses; ?>">Transaksi</a></li>
-                    <li><a href="<?php echo base_url().'markas/core1/?rmod=area4'.$swakses; ?>" >Buku Besar</a></li>
-                    <?php
-                    if((int)$kodesu>=0){
-                      ?>
+                <li><a href="<?php echo base_url().'markas/core1/?rmod=area2'.$swakses; ?>" >Penilaian</a></li>
+                <?php
+              }
+              ?>
+
+
+                <?php
+                if($kodejob=='222'){
+                  ?>
+                  <li><a href="<?php echo base_url().'markas/core1/?rmod=area1'.$swakses; ?>">Dashboard</a></li>
+                  <li><a href="<?php echo base_url().'markas/core1/?rmod=area2'.$swakses; ?>" >Transaksi</a></li>
+                  <li><a><i class="fa fa-file"></i> Laporan <span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                      <li><a href="<?php echo base_url().'markas/core1/?rmod=area81'.$swakses; ?>">Transaksi</a></li>
+                      <li><a href="<?php echo base_url().'markas/core1/?rmod=area4'.$swakses; ?>" >Buku Besar</a></li>
                       <li><a href="<?php echo base_url().'markas/core1/?rmod=area82'.$swakses; ?>" >Neraca</a></li>
                       <li><a href="#" class="dark">[L1] Posisi Keuangan</a></li>
                       <li><a href="#"  class="dark">[L2] Aktivitas Keuangan</a></li>
@@ -56,17 +67,20 @@
                       <li><a href="#"  class="dark">[L4] Realisasi</a></li>
                       <li><a href="#"  class="dark">[L5] Rekap Wajib</a></li>
                       <li><a href="#"  class="dark">[L6] Rekap Alokasi</a></li>
-                      <?php
-                    }
-                    ?>
-                  </ul>
-                </li>
-                <li><a><i class="fa fa-gear"></i> Pengaturan <span class="fa fa-chevron-down"></span></a>
-                  <ul class="nav child_menu">
-                    <li><a href="<?php echo base_url().'markas/core1/?rmod=area5'.$swakses; ?>">Saldo Awal</a></li>
-                    <li><a href="<?php echo base_url().'markas/core1/?rmod=area7'.$swakses; ?>" >Perkiraan</a></li>
-                  </ul>
-                </li>
+
+                    </ul>
+                  </li>
+                  <li><a><i class="fa fa-gear"></i> Pengaturan <span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                      <li><a href="<?php echo base_url().'markas/core1/?rmod=area5'.$swakses; ?>">Saldo Awal</a></li>
+                      <li><a href="<?php echo base_url().'markas/core1/?rmod=area7'.$swakses; ?>" >Perkiraan</a></li>
+                    </ul>
+                  </li>
+                  <?php
+                }
+                ?>
+
+
                 <li><a href="<?php echo base_url().'markas/corex'; ?>"><i id="doksign" class="fa fa-info flip"></i>Admin</a></li>
               </ul>
             </div>
@@ -74,7 +88,7 @@
           <!-- /sidebar menu -->
           <!-- /menu footer buttons -->
           <div class="sidebar-footer hidden-small">
-            <a href="#top" data-toggle="tooltip" data-placement="top" title="Keatas" >
+            <a href="#" onclick="geserke('.right_col')" data-toggle="tooltip" data-placement="top" title="Keatas" >
               <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
             </a>
             <a data-toggle="tooltip" data-placement="top" title="Jam">

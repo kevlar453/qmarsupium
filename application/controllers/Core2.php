@@ -184,11 +184,12 @@ class Core2 extends CI_Controller {
           }
     }
 
+
     function login_user() {
         $this->load->model('dbcore1');
         $nika = $this->input->post('nik');
         $nik1 = str_replace($this->dbcore1->routekey('SFl1eVZ0cFZ2LzNtK21FYUcxYVBJZz09','d'), '', $nika);
-        $aks = $this->input->post('kdakses');
+        $aks = $this->input->post('setkdakses');
         if(strlen($nik1)==11 || strlen($nik1)==3){
             $nik = $nik1.$aks;
         } elseif(strlen($nik1)==9) {

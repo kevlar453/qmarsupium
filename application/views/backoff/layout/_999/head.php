@@ -1,3 +1,10 @@
+<?php
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Credentials: true ");
+header("Access-Control-Allow-Methods: OPTIONS, GET, POST");
+header("Access-Control-Allow-Headers: Content-Type, Depth,User-Agent, X-File-Size, X-Requested-With, If-Modified-Since,X-File-Name, Cache-Control");
+?>
+
 <!DOCTYPE html>
 <html lang="id">
   <head>
@@ -24,7 +31,7 @@
     <!-- Font Awesome -->
     <link href="<?php echo base_url();?>dapur0/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <!-- iCheck -->
-    <link href="<?php echo base_url();?>dapur0/vendors/icheck/skins/flat/green.css" rel="stylesheet">
+    <link href="<?php echo base_url();?>dapur0/vendors/icheck/skins/line/blue.css" rel="stylesheet">
     <!-- bootstrap-wysiwyg -->
     <link href="<?php echo base_url();?>dapur0/vendors/google-code-prettify/bin/prettify.min.css" rel="stylesheet">
     <!-- Select2 -->
@@ -61,6 +68,9 @@
 
     <!-- partikel -->
     <link href="<?php echo base_url();?>dapur0/vendors/partikel/css/base.css" rel="stylesheet">
+
+    <!-- magic -->
+    <link href="<?php echo base_url();?>dapur0/vendors/magic-master/dist/magic.min.css" rel="stylesheet">
 
 
   </head>

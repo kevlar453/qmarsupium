@@ -85,6 +85,8 @@
     <script src="<?php echo base_url();?>dapur0/vendors/jquery/dist/jquery.js"></script>
     <!-- Bootstrap -->
     <script src="<?php echo base_url();?>dapur0/vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- iCheck -->
+    <script src="<?php echo base_url();?>dapur0/vendors/icheck/icheck.js"></script>
     <!-- SweetAlert 1
     <script src="<?php echo base_url();?>dapur0/vendors/sweetalert/dist/sweetalert.min.js"></script>-->
     <!-- SweetAlert 2 -->
@@ -92,7 +94,7 @@
     <!-- FastClick -->
     <script src="<?php echo base_url();?>dapur0/vendors/fastclick/lib/fastclick.js"></script>
     <!-- NProgress -->
-    <script src="<?php echo base_url();?>dapur0/vendors/nprogress/nprogress.js"></script>
+<!--    <script src="<?php echo base_url();?>dapur0/vendors/nprogress/nprogress.js"></script>-->
     <!-- Datatables -->
     <script type="text/javascript" src="<?php echo base_url();?>dapur0/vendors/DataTables/datatables.js"></script>
     <script type="text/javascript" src="<?php echo base_url();?>dapur0/vendors/DataTables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
@@ -117,8 +119,6 @@
     <script src="<?php echo base_url();?>dapur0/vendors/pnotify/dist/pnotify.buttons.js"></script>
     <script src="<?php echo base_url();?>dapur0/vendors/pnotify/dist/pnotify.nonblock.js"></script>
 
-    <!-- iCheck -->
-    <script src="<?php echo base_url();?>dapur0/vendors/icheck/icheck.min.js"></script>
     <!-- Autosize -->
     <script src="<?php echo base_url();?>dapur0/vendors/autosize/dist/autosize.min.js"></script>
 
@@ -153,22 +153,21 @@
 
 
         <!-- echarts -->
-        <script src="<?php echo base_url();?>dapur0/vendors/echarts/dist/echarts.min.js"></script>
-        <script src="<?php echo base_url();?>dapur0/vendors/echarts/map/js/world.js"></script>
-
-        <?php
-         if(isset($kodejob) && $kodejob == '444'){
+      <?php
+         if($_GET['rmod'] == 'area2' && $kodejob == '444'){
           ?>
-          <script src="<?php echo base_url();?>dapur0/vendors/echarts/test/esl.js"></script>
-          <script src="<?php echo base_url();?>dapur0/vendors/echarts/test/config.js"></script>
-          <script src="<?php echo base_url();?>dapur0/vendors/echarts/test/config.js"></script>
-          <script src="<?php echo base_url();?>dapur0/vendors/echarts/test/config.js"></script>
-          <script src="<?php echo base_url();?>dapur0/vendors/echarts/test/config.js"></script>
+          <script src="<?php echo base_url();?>dapur0/vendors/echarts2/build/dist/echarts-all.js"></script>
 
           <?php
-        }
+        } else {
         ?>
+        <script type="text/javascript" src="<?php echo base_url()?>dapur0/vendors/echarts/echarts.min.js"></script>
+        <script type="text/javascript" src="<?php echo base_url()?>dapur0/vendors/echarts/echarts-en.min.js"></script>
+        <script type="text/javascript" src="<?php echo base_url()?>dapur0/vendors/echarts/extension/dataTool.min.js"></script>
 
+        <?php
+      }
+      ?>
 
     <script>
       var varopta = decode_cookie(getCookie('simakses'));
@@ -489,8 +488,12 @@
             var cekpsnid = '';
           }
           $.ajax({
-            type: 'GET',
-            url: 'https://8.8.8.8',
+            url: 'https://www.google.com',
+            method: 'GET',
+            dataType:'text/html',
+            cache: false,
+            async: false,
+            headers: { 'Access-Control-Allow-Origin': '*' },
             success: function(data) {
             },
             error: function(x, t, m) {
@@ -805,7 +808,7 @@
 
 
     setInterval(function() {
-      loadpesan();
+//      loadpesan();
 /* stop smtr
         setup();
         loadpesan();
@@ -912,6 +915,22 @@
     		ejaan = ejaan.replace('satu ribu', 'seribu');
     	}
     	return ejaan;
+    }
+
+    function geserke(idel){
+      var target = $(idel);
+      $('html, body').animate({
+        scrollTop: target.offset().top
+      }, 1000, function() {
+        var $target = $(target);
+        $target.focus();
+        if ($target.is(":focus")) { // Checking if the target was focused
+          return false;
+        } else {
+          $target.attr('tabindex', '-1'); // Adding tabindex for elements not focusable
+          $target.focus(); // Set focus again
+        };
+      });
     }
 
     </script>

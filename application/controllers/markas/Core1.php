@@ -52,7 +52,7 @@ class Core1 extends CI_Controller {
                   'hasil' => '',
                   'periksa' => '',
                   'operator' => $this->dbcore1->caripeg($idpeg),
-                  'kodejob' => $cekkel != '00'?$akpeg:'444',
+                  'kodejob' => $akpeg,
                     'kodejob1' => $akpeg1,
                     'kodesu' => $supeg,
                     'dafkodejur' => $akpeg=='222'||$akpeg1=='222'?$this->akuntansi->carikodejur():'',
@@ -1937,6 +1937,42 @@ public function postacceptor(){
 
 }
 
+//-------------------userdata---START----
+public function simudata(){
+  $nmudata = $this->input->post('nmu');
+  $nludata = $this->input->post('nlu');
+  $cekudata = $this->session->userdata($nmudata);
+  if($cekudata != ''){
+    $this->deludata($nmudata);
+  }
+  $this->session->set_userdata(
+    array(
+      $nmudata=>$nludata
+    )
+  );
+  $konfudata = $this->session->userdata($nmudata);
+  if($konfudata != ''){
+    echo $konfudata;
+  }
+}
+
+public function deludata($nmudata = FALSE){
+  if(!$nmudata){
+    $nmudata = $this->input->post('nmu');
+  }
+  $sess_array = array(
+      'set_value' => ''
+  );
+
+  $this->session->unset_userdata($nmudata, $sess_array);
+//  session_destroy();
+$konfudata = $this->session->userdata($nmudata);
+if($konfudata != ''){
+  echo $konfudata;
+}
+
+}
+//-------------------userdata---END------
 
 //==================cookies start=================
 public function simcok($coknm = false, $cokisi = false)

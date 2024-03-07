@@ -14,7 +14,7 @@
                 <div class="">
                     <div class="x_content">
                         <div class="row">
-                            <div class="animated fadeInUp col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                            <div class="magictime vanishIn col-lg-3 col-md-3 col-sm-6 col-xs-12">
                                 <div class="tile-stats">
                                     <div class="icon"><i class="fa fa-caret-square-o-right"></i>
                                     </div>
@@ -23,7 +23,7 @@
                                     <p>...</p>
                                 </div>
                             </div>
-                            <div class="animated fadeInUp col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                            <div class="magictime vanishIn col-lg-3 col-md-3 col-sm-6 col-xs-12">
                                 <div class="tile-stats">
                                     <div class="icon"><i class="fa fa-comments-o"></i>
                                     </div>
@@ -33,7 +33,7 @@
                                 </div>
                             </div>
 
-                            <div class="animated fadeInUp col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                            <div class="magictime vanishIn col-lg-3 col-md-3 col-sm-6 col-xs-12">
                                 <div class="tile-stats">
                                     <div class="icon"><i class="fa fa-question"></i>
                                     </div>
@@ -42,7 +42,7 @@
                                     <p id="detselisih">Nilai selisih Transaksi</p>
                                 </div>
                             </div>
-                            <div class="animated fadeInUp col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                            <div class="magictime vanishIn col-lg-3 col-md-3 col-sm-6 col-xs-12">
                                 <div class="tile-stats">
                                     <div class="icon"><i class="fa fa-check-square-o"></i>
                                     </div>
@@ -54,7 +54,7 @@
                         </div>
 
                         <div class="row">
-                          <div class="animated fadeInUp col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                          <div class="magictime boingInUp col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <div class="tile-stats">
                               <div id="mainb" style="height:400px;"></div>
                             </div>

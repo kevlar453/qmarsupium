@@ -32,10 +32,11 @@ function validate_user( $nik ) {
 
 var $details;
 
+
 function set_session($awal = FALSE) {
-  $cak1 = substr($this->details->qakjob,0,1);
-  $cak2 = substr($this->details->qakjob,1,1);
-  $cak3 = substr($this->details->qakjob,-1);
+  $cak1 = substr($this->details->qakjob,0,1);//2
+  $cak2 = substr($this->details->qakjob,1,1);//1
+  $cak3 = substr($this->details->qakjob,-1);//4
 
 
 if($awal==$cak1||$awal==$cak2||$awal==$cak3){

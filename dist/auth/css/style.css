@@ -362,3 +362,27 @@ h6 span{
   }
 
 }
+
+.btn-dark {
+    color: #E9EDEF;
+    background-color: #4B5F71;
+    border-color: #364B5F
+}
+.btn-dark:hover,
+.btn-dark:focus,
+.btn-dark:active,
+.btn-dark.active,
+.open .dropdown-toggle.btn-dark {
+    color: #FFFFFF;
+    background-color: #394D5F;
+    border-color: #394D5F
+}
+.btn-round {
+    border-radius: 30px
+}
+
+
+footer {
+	color: #f1a1a2 !important;
+    padding: 15px 5px;
+}

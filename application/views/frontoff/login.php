@@ -20,6 +20,8 @@ $infor=base_url()."core2/?rmod=xxx";
   <link href="<?php echo base_url();?>dapur0/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
   <!-- Animate.css -->
   <link href="<?php echo base_url();?>dapur0/build/css/animate.min.css" rel="stylesheet">
+  <!-- Select2 -->
+  <link href="<?php echo base_url();?>dapur0/vendors/select2-develop/dist/css/select2.css" rel="stylesheet">
 
   <!-- Custom Theme Style -->
   <link href="<?php echo base_url();?>dapur0/build/css/custom.min.css" rel="stylesheet">
@@ -37,17 +39,12 @@ $infor=base_url()."core2/?rmod=xxx";
 
           <?php
                     echo form_open('core2/login_user','id="userForm" data-parsley-validate class="form-horizontal form-label-left"');
-                    echo '<h1>VERIFIKASI PENGGUNA</h1>';
+                    echo '<h1>VERIFIKASI PENGGUNA</h1>'
                     ?>
           <div class="form-group">
-            <?php
-                    $lakses=array();
-                    $lakses = array('4'=>'Penilaian','2'=>'Keuangan');
-                    // Name Field
-                    ?>
             <input type="hidden" id="kdakses" name="kdakses" value="2">
+            <select id="setkdakses" name="setkdakses" class="form-control"></select>
             <?php
-                          echo form_dropdown('kdakses' ,$lakses, '#', 'id="kdakses" class="select2_single form-control animated fadeInUp" style="float: left;"');
                           echo form_input(array('id' => 'nik', 'name' => 'nik','type'=>'password','class'=>'form-control animated fadeInUp', 'placeholder'=>'Isi KODE ID, Tekan ENTER','required'=>'required','style'=>'text-align:center'));
                       ?>
           </div>
@@ -79,6 +76,8 @@ $infor=base_url()."core2/?rmod=xxx";
 
   <!-- jQuery -->
   <script src="<?php echo base_url();?>dapur0/vendors/jquery/dist/jquery.min.js"></script>
+  <!-- Select2 -->
+  <script src="<?php echo base_url();?>dapur0/vendors/select2-develop/dist/js/select2.full.min.js"></script>
   <script type="text/javascript">
     $(document).ready(function() {
       $('#nik').keyup(function() {
@@ -94,6 +93,16 @@ $infor=base_url()."core2/?rmod=xxx";
       })
       cleancok();
     });
+
+    $('#setkdakses').select2({
+        minimumResultsForSearch: -1,
+    	placeholder: "Platform",
+      data: [
+        {id:"2",text:"KEUANGAN"},{id:"4",text:"PENILAIAN"}
+      ],
+      }).on('select2:select', function(e) {
+        $('#kdakses').val($('#setkdakses').val());
+      });
 
     function cleancok() {
       deleteCookie('akses');

@@ -1,88 +1,138 @@
 <!-- page content -->
 <div class="right_col" role="main">
-    <div class="col-md-12 col-sm-12 col-xs-12">
-        <div class="x_panel">
-            <div class="x_title">
-                <h2>Rincian Perawatan</h2>
-                <ul class="nav navbar-right panel_toolbox">
-                  <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
-                  <li id="chisaduh"><a class="collapse-link"><i class="fa fa-heart animated infinite tada red"></i></a></li>
-                </ul>
-                <div class="clearfix"></div>
-            </div>
-            <div class="x_content">
-                <div class="container cropper">
-                    <div class="col-md-12 col-md-6 col-sm-6 col-xs-12">
-                      <?php
-                          echo form_open('',array('id'=>'bill1','class'=>'form-horizontal form-label-left'));
-                      ?>
-                        <div class="input-group input-group-sm">
-                            <?php
-                                echo form_label('Tgl.Awal','fl_tgl1',array('class'=>'input-group-addon')); ?> <?php echo form_error('fl_tgl1');
-                            ?>
-                            <input id="fl_tgl1" name="fl_tgl1" placeholder="HH/BB/TTTT" class="form-control datepicker" type="text" value="<?php echo date("d-m-Y",now());?>">
-                            <?php
-                                echo '<span class="input-group-addon">Tgl.Akhir</span>';
-                            ?>
-                            <input id="fl_tgl2" name="fl_tgl2" placeholder="HH/BB/TTTT" class="form-control datepicker" type="text" value="<?php echo date("d-m-Y",now());?>">
-
-                        </div>
-                        <?php
-                        echo form_close();
-                        ?>
-                        <div class="grid__item theme-9">
-                          <button class="umum btn btn-info"><img src="<?php echo base_url(); ?>dapur0/images/logorsk.png" width="50px" height="auto"/></button>
-                        </div>
-                        <div class="grid__item theme-10">
-                          <button class="bpjs btn btn-success"><img src="<?php echo base_url(); ?>dapur0/images/logobpjs.png" width="50px" height="auto"/></button>
-                        </div>
-                    </div>
-                    <div class="col-md-12 col-md-6 col-sm-6 col-xs-12">
-                      <div id="prosjpxri"><h2>Catatan!!!</h2><h3 class="animated infinite pulse"><strong class="red">SAVE</strong> Data Billing</h3><h3>Sebelum menggunakan Modul ini.</h3></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="x_panel">
-            <div class="x_title">
-                <h2>Daftar Rincian Perawatan</h2>
-                <ul class="nav navbar-right panel_toolbox">
-                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
-                </ul>
-                <div class="clearfix"></div>
-            </div>
-            <div class="x_content">
-                <div class="col-md-12 col-sm-12 col-xs-12">
-                    <div class="container cropper">
-                      <table id="tfillgrid" class="display table-striped" cellspacing="0" width="100%">
-                            <thead>
-                              <tr>
-                                <th>No</th>
-        				            		<th>Masuk</th>
-                                <th>Keluar</th>
-                                <th>No RM</th>
-                                <th>No. Reg</th>
-                                <th>Nama Px</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                            <tfoot>
-                              <tr>
-                                <th>No</th>
-        				            		<th>Masuk</th>
-                                <th>Keluar</th>
-                                <th>No RM</th>
-                                <th>No. Reg</th>
-                                <th>Nama Px</th>
-                              </tr>
-                            </tfoot>
-						</table>
-                        <div class="clearfix"></div>
-                    </div>
-                </div>
-            </div>
-        </div><!--/row-->
+  <div class="">
+    <div class="page-title">
+      <div class="title_left">
+        <h3>Resume</h3>
+      </div>
     </div>
+
+    <div class="clearfix"></div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="">
+          <div class="x_content">
+            <div class="row">
+              <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                <div class="tile-stats">
+                  <div style="height:80vh;">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="height:10vh;">
+                      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <h5>Rata-rata</h5>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                          <input type="radio" name="iCheck" id="ratkeus" value="global" checked>
+                          <label>Keuskupan</label>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                          <input type="radio" name="iCheck" id="ratregi" value="regio">
+                          <label>Regio</label>
+                        </div>
+                      </div>
+                  </div>
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="height:70vh;">
+                      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                      <?php
+                          echo form_label('Regio','fa_noacc',array('class'=>''));
+                          echo form_dropdown(array('id'=>'pilreg','class'=>'select2_single form-control','style'=>'float: left;'));
+                      ?>
+                      </div>
+                      <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="padding-bottom:1vh;">
+                    <?php
+                        echo form_label('Periode','pilpart',array('class'=>''));
+                        echo form_input(array('id'=>'pilpart','class'=>'form-control','style'=>'float: left;','maxlength'=>'4','placeholder'=>'Tahun'));
+                    ?>
+                    </div>
+                      <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12" style="padding-bottom:1vh;">
+                    <?php
+                        echo form_label('Paroki','pilpar',array('class'=>''));
+                        echo form_dropdown(array('id'=>'pilpar','class'=>'select2_single form-control','style'=>'float: left;'));
+                    ?>
+                    </div>
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 hidden" style="overflow-y:scroll;height:50vh;padding-top:1vh;" id="isian">
+                      <!-- start accordion -->
+                      <div class="accordion" id="accordion" role="tablist" aria-multiselectable="true">
+
+                        <div class="isi1" id="a1"></div>
+                      </div>
+                      <!-- end of accordion -->
+
+                    </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="animated fadeInUp col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                <div class="tile-stats">
+                  <div id="utama" style="height:80vh;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="row" id='kelregio'>
+              <div class="animated fadeInUp col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="tile-stats">
+                  <h3 id="jdl_a1"></h3>
+                  <hr/>
+                  <div id="reg_a1" style="height:50vh;"></div>
+                </div>
+              </div>
+              <div class="animated fadeInUp col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="tile-stats">
+                  <h3 id="jdl_a2"></h3>
+                  <hr/>
+                  <div id="reg_a2" style="height:50vh;"></div>
+                </div>
+              </div>
+              <div class="animated fadeInUp col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="tile-stats">
+                  <h3 id="jdl_a3"></h3>
+                  <hr/>
+                  <div id="reg_a3" style="height:50vh;"></div>
+                </div>
+              </div>
+              <div class="animated fadeInUp col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="tile-stats">
+                  <h3 id="jdl_a4"></h3>
+                  <hr/>
+                  <div id="reg_a4" style="height:50vh;"></div>
+                </div>
+              </div>
+              <div class="animated fadeInUp col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="tile-stats">
+                  <h3 id="jdl_a5"></h3>
+                  <hr/>
+                  <div id="reg_a5" style="height:50vh;"></div>
+                </div>
+              </div>
+              <div class="animated fadeInUp col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="tile-stats">
+                  <h3 id="jdl_a6"></h3>
+                  <hr/>
+                  <div id="reg_a6" style="height:50vh;"></div>
+                </div>
+              </div>
+              <div class="animated fadeInUp col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="tile-stats">
+                  <h3 id="jdl_a7"></h3>
+                  <hr/>
+                  <div id="reg_a7" style="height:50vh;"></div>
+                </div>
+              </div>
+              <div class="animated fadeInUp col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="tile-stats">
+                  <h3 id="jdl_a8"></h3>
+                  <hr/>
+                  <div id="reg_a8" style="height:50vh;"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-        <!-- /page content -->
+<!-- /page content -->
