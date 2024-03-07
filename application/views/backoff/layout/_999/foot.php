@@ -487,25 +487,21 @@
           } else {
             var cekpsnid = '';
           }
-          $.ajax({
-            url: 'https://www.google.com',
-            method: 'GET',
-            dataType:'text/html',
-            cache: false,
-            async: false,
-            headers: { 'Access-Control-Allow-Origin': '*' },
-            success: function(data) {
-            },
-            error: function(x, t, m) {
-              if(t==="timeout") {
-                $("#icopengguna").removeClass('red');
-                $("#icopengguna").addClass('blue');
-              } else {
-                $("#icopengguna").removeClass('blue');
-                $("#icopengguna").addClass('red');
-              }
-            }
-          });
+/*
+          console.log('Initially ' + (window.navigator.onLine ? 'on' : 'off') + 'line');
+
+          window.addEventListener('online', () => console.log('Became online'));
+          window.addEventListener('offline', () => console.log('Became offline'));
+
+          document.getElementById('statusCheck').addEventListener('click', () => console.log('window.navigator.onLine is ' + window.navigator.onLine));
+*/
+if (window.navigator.onLine){
+  $("#icopengguna").removeClass('red');
+  $("#icopengguna").addClass('blue');
+} else {
+  $("#icopengguna").removeClass('blue');
+  $("#icopengguna").addClass('red');
+}
 
           var gourl1 = '<?php echo base_url();?>markas/core1/getpesan';
           var gourl2 = '<?php echo base_url();?>markas/core1/getidpesan';
@@ -808,15 +804,15 @@
 
 
     setInterval(function() {
-//      loadpesan();
-/* stop smtr
+      loadpesan();
+
         setup();
         loadpesan();
         $.get("<?php echo base_url(); ?>markas/core1/getuser", function(jduser) {
           $(".tambahan").remove();
           $("#mntool").append(jduser);
         });
-*/
+
 /*
         $.get("<?php echo base_url(); ?>markas/core1/getyanabsen", function(jdyanmed) {
             $("#yanaktif").html(jdyanmed);
