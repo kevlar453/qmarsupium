@@ -16,9 +16,14 @@ class Core1 extends CI_Controller {
     $this->load->model('akuntansi','',TRUE);
     $this->load->model('person_model','',TRUE);
     $this->dbmain = $this->load->database('default',TRUE);
+    $this->load->library(array('ion_auth', 'form_validation'));
   }
 
     function index() {
+      if (!$this->ion_auth->logged_in())
+  		{
+  			redirect('auth/login', 'refresh');
+  		}
       $rmoda = isset($_GET['rmod'])==TRUE?$_GET["rmod"]:'';
         $idpeg = $this->session->userdata('pgpid');
         $akpeg = $this->session->userdata('pgakses');

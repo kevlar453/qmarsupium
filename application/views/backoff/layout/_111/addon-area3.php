@@ -3,6 +3,6 @@
 $(document).ready(function() {
   loadpesan('X');
   loadpesan('Y');
-  cekpfoto();
+//  cekpfoto();
 });
 </script>

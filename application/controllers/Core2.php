@@ -15,13 +15,16 @@ class Core2 extends CI_Controller {
     $this->load->model('dbcore1','',TRUE);
     $this->load->model('absen_model','',TRUE);
     $this->load->model('akuntansi','',TRUE);
-//    $this->load->model('transisi','',TRUE);
     $this->load->helper('url','form');
     $this->dbmain = $this->load->database('default',TRUE);
-//    $this->dbhis= $this->load->database('dbhis', TRUE);
+    $this->load->library(array('ion_auth', 'form_validation'));
   }
 
     function index() {
+      if (!$this->ion_auth->logged_in())
+  		{
+  			redirect('auth/login', 'refresh');
+  		}
         $rmoda = isset($_GET['rmod'])==TRUE?$_GET["rmod"]:'';
         $idpeg = $this->session->userdata('pgpid');
         $akpeg = $this->session->userdata('pgakses');
@@ -282,7 +285,7 @@ $this->dbcore1->routedqt('**'.$this->dbcore1->routekey('WXVhb2lhMVN2S3psOUR4V0Zs
         );
 
         $this->session->unset_userdata('pgpid', $sess_array);
-        session_destroy();
+//        session_destroy();
         if($set){
           redirect('core2/?rmod=xyz','refresh');
         } else {

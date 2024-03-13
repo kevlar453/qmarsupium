@@ -154,13 +154,14 @@
 
         <!-- echarts -->
       <?php
-         if($_GET['rmod'] == 'area2' && $kodejob == '444'){
+         if($kodejob == '444'){
           ?>
           <script src="<?php echo base_url();?>dapur0/vendors/echarts2/build/dist/echarts-all.js"></script>
 
           <?php
         } else {
         ?>
+        <script src="<?php echo base_url();?>dapur0/vendors/echarts2/build/dist/echarts-all.js"></script>
         <script type="text/javascript" src="<?php echo base_url()?>dapur0/vendors/echarts/echarts.min.js"></script>
         <script type="text/javascript" src="<?php echo base_url()?>dapur0/vendors/echarts/echarts-en.min.js"></script>
         <script type="text/javascript" src="<?php echo base_url()?>dapur0/vendors/echarts/extension/dataTool.min.js"></script>
@@ -222,7 +223,7 @@
         });
         deleteCookie('jspil');
 
-//      setup();
+      setup();
       loadpesan();
 //      cekuserak();
       loadsalam(pegnik);

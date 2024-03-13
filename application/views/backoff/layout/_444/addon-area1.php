@@ -12,6 +12,7 @@
     iudata('pilnil', 'global');
     $('#pilpart').val(yyyy);
     rerata('regio');
+popular();
   });
 
 
@@ -188,12 +189,10 @@
     }).done(function(data) {});
   }
 
-
-  function rerata(pilglob, pildet) {
+/*
+  function rerata1(pilglob, pildet) {
     geserke('#utama');
     $.blockUI();
-    var elid = 'utama';
-    var chart = echarts.init(document.getElementById(elid));
     var dindikator;
     var disi;
     var dkateg;
@@ -246,8 +245,6 @@
             });
             setTimeout(function() {
               $.unblockUI();
-//              alert(JSON.stringify(data1));
-              //  location.reload();
             }, 2000);
           }
 
@@ -264,12 +261,24 @@
     var dom = document.getElementById("utama");
     var myChart = echarts.init(dom);
   	var app = {};
+
   	option = null;
 
   		$.ajax({
   			type: "POST",
   			url: "<?php echo base_url(); ?>markas/penilaian/setdashboard",
   			success: function(resprx) {
+
+          var setseries = [];
+          var jumarr = 0;
+          var dtresprx;
+          dtresprx = JSON.parse(resprx);
+          jumarr = dtresprx.length;
+          setseries.push({type: 'pie',id: 'pie',radius: '30%',center: ['50%', '25%'],label: {formatter: '{b}: {@2021} ({d}%)'},encode: {itemName: 'periode',value: '2020',tooltip: '2020'}});
+          for (let i = 0; i < jumarr; i++) {
+            setseries.push({type: 'line', smooth: true, seriesLayoutBy: 'row'});
+          }
+
   				option = {
             legend: {
                 x : 'center',
@@ -291,32 +300,12 @@
   	          handleColor: '#408829'
   	      },
   		        dataset: {
-  		            source: JSON.parse(resprx)
+  		            source: dtresprx
   		        },
   		        xAxis: {type: 'category'},
   		        yAxis: {gridIndex: 0},
   		        grid: {top: '45%'},
-  		        series: [
-                {type: 'line', smooth: true, seriesLayoutBy: 'row'},
-                {type: 'line', smooth: true, seriesLayoutBy: 'row'},
-                {type: 'line', smooth: true, seriesLayoutBy: 'row'},
-                {type: 'line', smooth: true, seriesLayoutBy: 'row'},
-  		            {type: 'line', smooth: true, seriesLayoutBy: 'row'},
-  		            {
-  		                type: 'pie',
-  		                id: 'pie',
-  		                radius: '30%',
-  		                center: ['50%', '25%'],
-  		                label: {
-  		                    formatter: '{b}: {@2020-01} ({d}%)'
-  		                },
-  		                encode: {
-  		                    itemName: 'periode',
-  		                    value: '01-2020',
-  		                    tooltip: '01-2020'
-  		                }
-  		            }
-  		        ],
+  		        series: setseries,
   						dataZoom: [
   		{
   				show: true,
@@ -369,60 +358,253 @@
   	    myChart.setOption(option, true);
   	}
 
-/*
-    var opt1 = [];
-    opt1.push(JSON.stringify(option));
-    opt1.push(dash4blah);
-    alert(opt1);
-*/
-//    alert(Array.isArray(JSON.parse(option)));
-    /*
-        chart.setOption({
-        tooltip: {},
-        legend: {
-          data: dindikator.isi2
-        },
-        radar: {
-          shape: 'circle',
-          indicator: dindikator.indi
-        },
-        series: [{
-          name: 'Penilaian Paroki',
-          type: 'radar',
-          itemStyle: {
-            normal: {
-              areaStyle: {
-                type: 'default'
-              }
-            }
-          },
-          toolbox: {
-            show : true,
-            feature : {
-              mark : {show: true},
-              dataView : {show: true, readOnly: false},
-              restore : {show: true},
-              saveAsImage : {show: true}
-            }
-          },
-          label: {
-            normal: {
-              show: true
-            }
-          },
-          calculable : true,
-          data : dindikator.isi1
-        }]
-      });
-    */
-
-    /*
-      $.unblockUI();
-      if(pilglob.substr(0,3)=='det' && pilket == ''){
-        perdana(pilglob,pildet);
-      }
-      */
   }
+  */
+  function rerata(pilglob, pildet) {
+    geserke('#utama');
+    $.blockUI();
+    var dindikator;
+    var disi;
+    var dkateg;
+    var pilket = '';
+    //  $('#'+elid).empty();
+
+    $.ajax({
+      type: "post",
+      url: "<?php echo base_url(); ?>markas/penilaian/setdashboard",
+      cache: false,
+      async: false,
+      success: function(data1) {
+        //      alert(JSON.stringify(data1[0]));
+        if (data1[0] == "\n") {
+          if (pilglob == 'detparoki') {
+            Swal.fire({
+              title: "Tidak Ada Data",
+              icon: "error",
+              text: "Penilaian untuk wilayah ini belum diisi. Isi sekarang?",
+              showCancelButton: true,
+              confirmButtonColor: "#3085d6",
+              cancelButtonColor: "#d33",
+              confirmButtonText: "Ya",
+              cancelButtonText: "Tidak"
+            }).then((result) => {
+              if (result.isConfirmed) {
+                $('#kelregio').removeClass('show');
+                $('#kelregio').addClass('hidden');
+                $('#isian').removeClass('hidden');
+                $('#isian').addClass('show');
+                pilket = 'block';
+                setisian();
+                return pilket;
+              } else {
+                dudata('pilnil');
+                dudata('pilnild1');
+                dudata('periode');
+                location.reload();
+              }
+            }); //          alert(JSON.stringify(data1));
+          } else {
+            swal.fire({
+              title: "Tidak Ada Data",
+              icon: "error",
+              html: "Grafik tidak dapat ditampilkan.<br>Silahkan buka halaman penilaian untuk mengisi data.",
+              timer: 5000,
+              timerProgressBar: true,
+              allowOutsideClick: false,
+              showConfirmButton: true
+            });
+            setTimeout(function() {
+              $.unblockUI();
+            }, 2000);
+          }
+
+        } else {
+          dindikator = JSON.parse(data1);
+          return dindikator;
+        }
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        //      location.reload();
+      }
+    });
+
+    var dom = document.getElementById("utama");
+    var myChart = echarts.init(dom);
+  	var app = {};
+
+  	option = null;
+
+  		$.ajax({
+  			type: "POST",
+  			url: "<?php echo base_url(); ?>markas/penilaian/setdashboard",
+  			success: function(resprx) {
+
+          var idx = 1;
+          var dte2opt = [];
+          var dte2opt1 = [];
+          var dte2opt2 = [];
+          var dte2opt3 = [];
+          var dtresprx;
+          dtresprx = JSON.parse(resprx);
+
+          for (let j = 0; j <= dtresprx.detail.length-1; j++) {
+            dte2opt1.push({value: dtresprx.detail[j][0].value,  name:dtresprx.detail[j][0].name});
+          }
+
+          dte2opt = [
+              {
+                  title : {
+                      text: 'Keuskupan Ketapang',
+                      subtext: 'Penilaian Paroki'
+                  },
+                  tooltip : {
+                      trigger: 'item',
+                      formatter: "{a} <br/>{b} : {c} ({d}%)"
+                  },
+                  legend: {
+                      data:dtresprx.kelompok
+                  },
+                  toolbox: {
+                      show : true,
+                      feature : {
+                          magicType : {
+                              show: true,
+                              type: ['pie', 'funnel'],
+                              option: {
+                                  funnel: {
+                                      x: '25%',
+                                      width: '50%',
+                                      funnelAlign: 'left',
+                                      max: dtresprx.max
+                                  }
+                              }
+                          },
+                          restore : {show: true,title:'muat'},
+                          saveAsImage : {show: true,title:'simpan'}
+                      }
+                  },
+                  series : [
+                      {
+                          name:'Rata-rata',
+                          type:'pie',
+                          center: ['50%', '45%'],
+                          radius: '50%',
+                          data:dte2opt1
+                      }
+                  ]
+              }
+          ];
+          for (let i = 1; i <= dtresprx.periode.length-1; i++) {
+            for (let j = 0; j <= dtresprx.detail.length-1; j++) {
+              dte2opt3.push({value: dtresprx.detail[j][i].value,  name:dtresprx.detail[j][i].name});
+            }
+            dte2opt.push(
+              {
+                  series : [
+                      {
+                          name:'浏览器（数据纯属虚构）',
+                          type:'pie',
+                          data:dte2opt3
+                      }
+                  ]
+              }
+            );
+            dte2opt3 = [];
+          }
+
+
+          option = {
+              timeline : {
+                  data : dtresprx.periode,
+                  label : {
+                      formatter : function(s) {
+                          return s.slice(0, 7);
+                      }
+                  }
+              },
+              options : dte2opt
+          };
+
+          myChart.setOption(option);
+          $.unblockUI();
+        }
+  		});
+
+
+  	if (option && typeof option === "object") {
+  	    myChart.setOption(option, true);
+  	}
+
+  }
+
+  function popular(){
+    var dom = document.getElementById("cloud1");
+    var myChart = echarts.init(dom);
+  	var app = {};
+    var arropt1 = [];
+    var gnilai;
+  	option = null;
+    function createRandomItemStyle() {
+        return {
+            normal: {
+                color: 'rgb(' + [
+                    Math.round(Math.random() * 160),
+                    Math.round(Math.random() * 160),
+                    Math.round(Math.random() * 160)
+                ].join(',') + ')'
+            }
+        };
+    }
+
+    $.ajax({
+      type: "POST",
+      url: "<?php echo base_url(); ?>markas/penilaian/setdashboard2",
+      success: function(resprx) {
+
+            var cnvarr = JSON.parse(resprx);
+            for (let i = 0; i <= cnvarr.length-1; i++) {
+              arropt1.push({name: cnvarr[i].name,value: cnvarr[i].value,itemStyle: createRandomItemStyle()});
+            }
+
+
+            option = {
+                title: {
+                    text: 'Ketapang Trends',
+                    link: '#'
+                },
+                toolbox: {
+                    show : true,
+                    feature : {
+                        restore : {show: true,title:'muat'},
+                        saveAsImage : {show: true,title:'simpan'}
+                    }
+                },
+                tooltip: {
+                    show: true
+                },
+                series: [{
+                    name: 'Ketapang Trends',
+                    type: 'wordCloud',
+                    size: ['100%', '100%'],
+                    textRotation : [0, 45, 90, -45],
+                    textPadding: 0,
+                    autoSize: {
+                        enable: true,
+                        minSize: 14
+                    },
+                    data: arropt1
+                }]
+            };
+
+            myChart.setOption(option);
+      }
+    });
+  if (option && typeof option === "object") {
+      myChart.setOption(option, true);
+  }
+}
+
+
 
   function perdana(pilkat, pildet) {
     $.blockUI();
@@ -787,4 +969,263 @@
       error: function(jqXHR, textStatus, errorThrown) {}
     });
   }
+
+  function rerataX(){
+    var dom = document.getElementById("utama");
+    var myChart = echarts.init(dom);
+    var chtopt;
+    var arropt = new Array();
+    var idx = 1;
+
+    $.ajax({
+      type: "post",
+      url: "<?php echo base_url(); ?>markas/penilaian/tjx",
+      cache: false,
+      async: false,
+      data: jQuery.param({
+      }),
+      success: function(datau) {
+        chtopt = datau;
+        return chtopt;
+      },
+      error: function(jqXHR, textStatus, errorThrown) {}
+    });
+
+
+option = {
+timeline : {
+    data : [
+        '2013-01-01', '2013-02-01', '2013-03-01', '2013-04-01', '2013-05-01',
+        { name:'2013-06-01', symbol:'emptyStar6', symbolSize:8 },
+        '2013-07-01', '2013-08-01', '2013-09-01', '2013-10-01', '2013-11-01',
+        { name:'2013-12-01', symbol:'star6', symbolSize:8 }
+    ],
+    label : {
+        formatter : function(s) {
+            return s.slice(0, 7);
+        }
+    }
+},
+options : [
+    {
+        title : {
+            text: '浏览器占比变化',
+            subtext: '纯属虚构'
+        },
+        tooltip : {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        legend: {
+            data:['Chrome','Firefox','Safari','IE9+','IE8-']
+        },
+        toolbox: {
+            show : true,
+            feature : {
+                mark : {show: true},
+                dataView : {show: true, readOnly: false},
+                magicType : {
+                    show: true,
+                    type: ['pie', 'funnel'],
+                    option: {
+                        funnel: {
+                            x: '25%',
+                            width: '50%',
+                            funnelAlign: 'left',
+                            max: 1700
+                        }
+                    }
+                },
+                restore : {show: true},
+                saveAsImage : {show: true}
+            }
+        },
+        series : [
+            {
+                name:'浏览器（数据纯属虚构）',
+                type:'pie',
+                center: ['50%', '45%'],
+                radius: '50%',
+                data:[
+                    {value: idx * 128 + 80,  name:'Chrome'},
+                    {value: idx * 64  + 160,  name:'Firefox'},
+                    {value: idx * 32  + 320,  name:'Safari'},
+                    {value: idx * 16  + 640,  name:'IE9+'},
+                    {value: idx++ * 8  + 1280, name:'IE8-'}
+                ]
+            }
+        ]
+    },
+    {
+        series : [
+            {
+                name:'浏览器（数据纯属虚构）',
+                type:'pie',
+                data:[
+                    {value: idx * 128 + 80,  name:'Chrome'},
+                    {value: idx * 64  + 160,  name:'Firefox'},
+                    {value: idx * 32  + 320,  name:'Safari'},
+                    {value: idx * 16  + 640,  name:'IE9+'},
+                    {value: idx++ * 8  + 1280, name:'IE8-'}
+                ]
+            }
+        ]
+    },
+    {
+        series : [
+            {
+                name:'浏览器（数据纯属虚构）',
+                type:'pie',
+                data:[
+                    {value: idx * 128 + 80,  name:'Chrome'},
+                    {value: idx * 64  + 160,  name:'Firefox'},
+                    {value: idx * 32  + 320,  name:'Safari'},
+                    {value: idx * 16  + 640,  name:'IE9+'},
+                    {value: idx++ * 8  + 1280, name:'IE8-'}
+                ]
+            }
+        ]
+    },
+    {
+        series : [
+            {
+                name:'浏览器（数据纯属虚构）',
+                type:'pie',
+                data:[
+                    {value: idx * 128 + 80,  name:'Chrome'},
+                    {value: idx * 64  + 160,  name:'Firefox'},
+                    {value: idx * 32  + 320,  name:'Safari'},
+                    {value: idx * 16  + 640,  name:'IE9+'},
+                    {value: idx++ * 8  + 1280, name:'IE8-'}
+                ]
+            }
+        ]
+    },
+    {
+        series : [
+            {
+                name:'浏览器（数据纯属虚构）',
+                type:'pie',
+                data:[
+                    {value: idx * 128 + 80,  name:'Chrome'},
+                    {value: idx * 64  + 160,  name:'Firefox'},
+                    {value: idx * 32  + 320,  name:'Safari'},
+                    {value: idx * 16  + 640,  name:'IE9+'},
+                    {value: idx++ * 8  + 1280, name:'IE8-'}
+                ]
+            }
+        ]
+    },
+    {
+        series : [
+            {
+                name:'浏览器（数据纯属虚构）',
+                type:'pie',
+                data:[
+                    {value: idx * 128 + 80,  name:'Chrome'},
+                    {value: idx * 64  + 160,  name:'Firefox'},
+                    {value: idx * 32  + 320,  name:'Safari'},
+                    {value: idx * 16  + 640,  name:'IE9+'},
+                    {value: idx++ * 8  + 1280, name:'IE8-'}
+                ]
+            }
+        ]
+    },
+    {
+        series : [
+            {
+                name:'浏览器（数据纯属虚构）',
+                type:'pie',
+                data:[
+                    {value: idx * 128 + 80,  name:'Chrome'},
+                    {value: idx * 64  + 160,  name:'Firefox'},
+                    {value: idx * 32  + 320,  name:'Safari'},
+                    {value: idx * 16  + 640,  name:'IE9+'},
+                    {value: idx++ * 8  + 1280, name:'IE8-'}
+                ]
+            }
+        ]
+    },
+    {
+        series : [
+            {
+                name:'浏览器（数据纯属虚构）',
+                type:'pie',
+                data:[
+                    {value: idx * 128 + 80,  name:'Chrome'},
+                    {value: idx * 64  + 160,  name:'Firefox'},
+                    {value: idx * 32  + 320,  name:'Safari'},
+                    {value: idx * 16  + 640,  name:'IE9+'},
+                    {value: idx++ * 8  + 1280, name:'IE8-'}
+                ]
+            }
+        ]
+    },
+    {
+        series : [
+            {
+                name:'浏览器（数据纯属虚构）',
+                type:'pie',
+                data:[
+                    {value: idx * 128 + 80,  name:'Chrome'},
+                    {value: idx * 64  + 160,  name:'Firefox'},
+                    {value: idx * 32  + 320,  name:'Safari'},
+                    {value: idx * 16  + 640,  name:'IE9+'},
+                    {value: idx++ * 8  + 1280, name:'IE8-'}
+                ]
+            }
+        ]
+    },
+    {
+        series : [
+            {
+                name:'浏览器（数据纯属虚构）',
+                type:'pie',
+                data:[
+                    {value: idx * 128 + 80,  name:'Chrome'},
+                    {value: idx * 64  + 160,  name:'Firefox'},
+                    {value: idx * 32  + 320,  name:'Safari'},
+                    {value: idx * 16  + 640,  name:'IE9+'},
+                    {value: idx++ * 8  + 1280, name:'IE8-'}
+                ]
+            }
+        ]
+    },
+    {
+        series : [
+            {
+                name:'浏览器（数据纯属虚构）',
+                type:'pie',
+                data:[
+                    {value: idx * 128 + 80,  name:'Chrome'},
+                    {value: idx * 64  + 160,  name:'Firefox'},
+                    {value: idx * 32  + 320,  name:'Safari'},
+                    {value: idx * 16  + 640,  name:'IE9+'},
+                    {value: idx++ * 8  + 1280, name:'IE8-'}
+                ]
+            }
+        ]
+    },
+    {
+        series : [
+            {
+                name:'浏览器（数据纯属虚构）',
+                type:'pie',
+                data:[
+                    {value: idx * 128 + 80,  name:'Chrome'},
+                    {value: idx * 64  + 160,  name:'Firefox'},
+                    {value: idx * 32  + 320,  name:'Safari'},
+                    {value: idx * 16  + 640,  name:'IE9+'},
+                    {value: idx++ * 8  + 1280, name:'IE8-'}
+                ]
+            }
+        ]
+    }
+]
+};
+//    myChart.setOption(option);
+  if (option && typeof option === "object") {
+      myChart.setOption(option, true);
+  }
+}
 </script>

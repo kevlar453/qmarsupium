@@ -210,47 +210,69 @@ class Penilaian extends CI_Controller {
       }
 
       }
-
       function setdashboard(){
+        $hslgraf_fin = array();
         $hslgraf = array();
         $hslgraf1 = array();
         $hslgraf2 = array();
         $hslgraf3 = array();
         $gdbreg = array();
-        $gdbper[] = 'periode';
+        $gdbval = array();
         $cekmax = array();
         $hmax = array();
         $cperiode = $this->dbnilai->getperiode();
         foreach ($cperiode as $gdp) {
           $gdbper[] = $gdp->qnil_periode;
         }
-        $hslgraf[] = $gdbper;
+        $hslgraf['periode'] = $gdbper;
 
         foreach ($this->dbnilai->getregio() as $gdr) {
           $gdbisir = $this->dbnilai->gisi3(FALSE,$gdr['varid']);
           $hslgraf1 = array();
           for ($i = 0; $i <= count($gdbisir)-1; $i++) {
-            if($i == 0){
-              $gdbreg[]=str_replace('Regio ','Reg.',$gdbisir[$i]->nmreg);
-              $gdbreg[]=number_format($gdbisir[$i]->dettot,2);
-            } else {
-              $gdbreg[]=number_format($gdbisir[$i]->dettot,2);
+            $gdbreg[] = array(
+              'name'=>str_replace('Regio ','Reg.',$gdbisir[$i]->nmreg),
+              'value'=>number_format($gdbisir[$i]->dettot,2)
+            );
+            $gdbval[]=number_format($gdbisir[$i]->dettot,2);
+            if(array_search(str_replace('Regio ','Reg.',$gdbisir[$i]->nmreg),$hslgraf2) === false){
+              $hslgraf2[] = str_replace('Regio ','Reg.',$gdbisir[$i]->nmreg);
             }
+          }
+          $hslgraf3[] = $gdbreg;
+          $gdbreg = array();
+        }
+        $setmin = min($gdbval);
+        $setmax = max($gdbval);
+        $hslgraf['kelompok'] = $hslgraf2;
+        $hslgraf['detail'] = $hslgraf3;
+        $hslgraf['min'] = $setmin;
+        $hslgraf['max'] = $setmax;
+        echo json_encode($hslgraf);
+      }
+
+      function setdashboard2(){
+        $hslgraf = array();
+        $hslgraf1 = array();
+        $hslgraf2 = array();
+        $hslgraf3 = array();
+        $gdbreg = array();
+        $cekmax = array();
+        $hmax = array();
+        $cperiode = $this->dbnilai->getperiode();
+
+        foreach ($this->dbnilai->getparoki() as $gdr) {
+          $gdbisir = $this->dbnilai->gisi3(FALSE,$gdr['varid']);
+          $hslgraf1 = array();
+          for ($i = 0; $i <= count($gdbisir)-1; $i++) {
+              $gdbreg['name']=str_replace('Regio ','Reg.',$gdbisir[$i]->nmpar);
+              $gdbreg['value']=number_format($gdbisir[$i]->dettot*10,2);
             if($i == count($gdbisir)-1){
               $hslgraf[] = $gdbreg;
               $gdbreg = array();
             }
           }
         }
-//        $hslgraf[] = $hslgraf1;
-/*
-        foreach ($this->dbnilai->getregio() as $gdr) {
-          $gdbreg[] = $gdr['varnama'];
-        }
-*/
-        $setmin = min($gdbper);
-
-
         echo json_encode($hslgraf);
       }
 
@@ -284,6 +306,39 @@ $this->dbnilai->tambah_nil($valsimpan);
         }
 
 //        echo json_encode($valsimpan);
+      }
+
+      function tjx(){
+        $trr1 = '';
+        $trr = array();
+        $trr1 = "
+        [
+        {
+        title : {text: '浏览器占比变化',subtext: '纯属虚构'},
+        tooltip : {trigger: 'item',formatter: \"{a} <br/>{b} : {c} ({d}%)\"},
+        legend: {data:['Chrome','Firefox','Safari','IE9+','IE8-']},
+        toolbox: {show : true,feature : {mark : {show: true},dataView : {show: true, readOnly: false},
+        magicType : {show: true,type: ['pie', 'funnel'],option: {funnel: {x: '25%',width: '50%',funnelAlign: 'left',max: 1700}}},
+        restore : {show: true},saveAsImage : {show: true}}},
+        series : [
+        {
+        name:'浏览器（数据纯属虚构）',
+        type:'pie',
+        center: ['50%', '45%'],
+        radius: '50%',
+        data:[
+        {value: idx * 128 + 80,  name:'Chrome'},
+        {value: idx * 64  + 160,  name:'Firefox'},
+        {value: idx * 32  + 320,  name:'Safari'},
+        {value: idx * 16  + 640,  name:'IE9+'},
+        {value: idx++ * 8  + 1280, name:'IE8-'}
+        ]
+        }
+        ]
+        }
+        ]";
+        $trr = json_decode($trr1);
+        echo $trr;
       }
 
 }

@@ -150,8 +150,13 @@ function getparnildet($param1 = FALSE,$param2 = FALSE){
         $this->dbmain->where(array('qnil_periode'=>$param1));
       }
       if($param2){
-        $this->dbmain->where(array('qnil_kodereg'=>$param2));
-        $this->dbmain->group_by('qnil_periode');
+        if(strlen($param2)==3){
+          $this->dbmain->where(array('qnil_kodereg'=>$param2));
+          $this->dbmain->group_by('qnil_periode');
+        } else {
+          $this->dbmain->where(array('qnil_kodepar'=>$param2));
+          $this->dbmain->group_by('qnil_kodepar');
+        }
       } else {
         $this->dbmain->group_by('qnil_kodereg');
       }
@@ -159,6 +164,7 @@ function getparnildet($param1 = FALSE,$param2 = FALSE){
       $hqry2 = $qry2->result();
       return $hqry2;
     }
+
 
     function getperiode(){
       $this->dbmain->select('qnil_periode');
